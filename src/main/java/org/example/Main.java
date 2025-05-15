@@ -57,5 +57,7 @@ public class Main {
 
 
         get("/", (req, res) -> "User microservice (Hibernate + Spark) is running!");
+
+        System.out.println("Hello World!");
     }
 }

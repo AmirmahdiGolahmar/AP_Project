@@ -22,12 +22,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <version>12.10.0.jre11</version>   <!-- MUST match your DLL -->
-        </dependency>
-
-        <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>6.5.2.Final</version> <!-- or latest stable version -->
