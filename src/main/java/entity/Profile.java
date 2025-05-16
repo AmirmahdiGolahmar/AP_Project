@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "profiles")
+
 public class Profile {
     private String firstName;
     private String lastName;

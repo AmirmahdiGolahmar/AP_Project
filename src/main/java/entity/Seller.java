@@ -3,9 +3,10 @@ package entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "sellers")
 public class Seller extends User {
     @OneToOne(cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "profile_id")
     private SellerProfile profile;
 
     public SellerProfile getProfile() { return profile; }

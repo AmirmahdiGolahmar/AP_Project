@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "accounts")
 public class Account {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -18,7 +17,7 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 

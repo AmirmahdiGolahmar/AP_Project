@@ -10,6 +10,7 @@ public abstract class User {
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
     private Account account;
 
     public Long getId() { return id; }
