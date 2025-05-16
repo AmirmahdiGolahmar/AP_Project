@@ -1,63 +1,118 @@
 package org.example;
 import java.util.logging.LogManager;
 import static spark.Spark.*;
-import service.UserService;
+
+import entity.Customer;
 import entity.User;
 import entity.BankInfo;
 import com.google.gson.Gson;
 import java.util.List;
 
+import static spark.Spark.*;
+import com.google.gson.Gson;
+import service.*;
+
+import java.util.List;
+import java.util.logging.LogManager;
+
+import static spark.Spark.*;
+
+import com.google.gson.Gson;
+import entity.*;
+import service.*;
+
+import java.util.List;
+import java.util.logging.LogManager;
+
 public class Main {
     public static void main(String[] args) {
-        LogManager.getLogManager().reset();
+        LogManager.getLogManager().reset(); // disable logging spam from Hibernate
 
-        UserService userService = new UserService();
+        // Initialize service classes
+        CustomerService customerService = new CustomerService();
+        SellerService sellerService = new SellerService();
+        DeliveryService deliveryService = new DeliveryService();
+        AdminService adminService = new AdminService();
 
         port(4567);
+        Gson gson = new Gson();
 
-        post("/add", (req, res) -> {
+        // Root route
+        get("/", (req, res) -> "User microservice (Hibernate + Spark) is running!");
 
-            String bankName = req.queryParams("bankName");
-            String accountNumber = req.queryParams("accountNumber");
-            String accountHolder = req.queryParams("accountHolder");
+        // Add Customer
+        post("/addCustomer", (req, res) -> {
+            BankInfo bankInfo = new BankInfo(
+                    req.queryParams("bankName"),
+                    req.queryParams("accountNumber"),
+                    req.queryParams("accountHolder")
+            );
 
-            BankInfo bankInfo = null;
-            if (bankName != null && accountNumber != null && accountHolder != null) {
-                bankInfo = new BankInfo(bankName, accountNumber, accountHolder);
-
-            }
-
-            User user = new User(
+            customerService.createCustomer(
+                    req.queryParams("username"),
+                    req.queryParams("password"),
                     req.queryParams("firstName"),
                     req.queryParams("lastName"),
                     req.queryParams("mobile"),
                     req.queryParams("email"),
-                    req.queryParams("photo"),
                     req.queryParams("address"),
+                    req.queryParams("photo"),
                     bankInfo
             );
 
-            userService.createUser(user);
-            return "User added: " + user.getFirstName() + " " + user.getLastName();
+            return "Customer added.";
         });
 
-        delete("/remove/:id", (req, res) -> {
-            Long id = Long.parseLong(req.params(":id"));
-            userService.deleteUser(id);
-            return "User removed with id: " + id;
+        // Add Seller
+        post("/addSeller", (req, res) -> {
+            BankInfo bankInfo = new BankInfo(
+                    req.queryParams("bankName"),
+                    req.queryParams("accountNumber"),
+                    req.queryParams("accountHolder")
+            );
+
+            sellerService.createSeller(
+                    req.queryParams("username"),
+                    req.queryParams("password"),
+                    req.queryParams("firstName"),
+                    req.queryParams("lastName"),
+                    req.queryParams("mobile"),
+                    req.queryParams("email"),
+                    req.queryParams("address"),
+                    req.queryParams("photo"),
+                    bankInfo,
+                    req.queryParams("restaurantDescription")
+            );
+
+            return "Seller added.";
         });
 
-        Gson gson = new Gson();
-        get("/users", (req, res) -> {
-            List<User> users = userService.getAllUsers();
+        // Remove Customer
+        delete("/removeCustomer/:id", (req, res) -> {
+            Long id = Long.parseLong(req.params("id"));
+            customerService.delete(id);
+            return "Customer removed with ID: " + id;
+        });
+
+        // Get All Customers
+        get("/customers", (req, res) -> {
+            List<Customer> customers = customerService.getAll();
             res.type("application/json");
-            return gson.toJson(users);
+            return gson.toJson(customers);
         });
 
+        // Remove Seller
+        delete("/removeSeller/:id", (req, res) -> {
+            Long id = Long.parseLong(req.params("id"));
+            sellerService.delete(id);
+            return "Seller removed with ID: " + id;
+        });
 
-
-        get("/", (req, res) -> "User microservice (Hibernate + Spark) is running!");
-
-        System.out.println("Hello World!");
+        // Get All Sellers
+        get("/sellers", (req, res) -> {
+            List<Seller> sellers = sellerService.getAll();
+            res.type("application/json");
+            return gson.toJson(sellers);
+        });
     }
 }

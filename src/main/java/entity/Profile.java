@@ -1,11 +1,10 @@
 package entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 
-@MappedSuperclass
-public abstract class Profile {
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Profile {
     private String firstName;
     private String lastName;
     private String email;
@@ -17,6 +16,8 @@ public abstract class Profile {
 
     @Embedded
     private BankInfo bankInfo;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     public Profile() {}
 
@@ -51,4 +52,12 @@ public abstract class Profile {
 
     public BankInfo getBankInfo() { return bankInfo; }
     public void setBankInfo(BankInfo bankInfo) { this.bankInfo = bankInfo; }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }

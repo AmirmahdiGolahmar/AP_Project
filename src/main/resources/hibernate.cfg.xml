@@ -5,18 +5,28 @@
 
 <hibernate-configuration>
     <session-factory>
+
+        <!-- Database connection settings -->
         <property name="hibernate.connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
-        <property name="hibernate.connection.url">
-            jdbc:sqlserver://127.0.0.1:1433;databaseName=AP_Project;trustServerCertificate=true;
-        </property>
+        <property name="hibernate.connection.url">jdbc:sqlserver://127.0.0.1:1433;databaseName=AP_Project;trustServerCertificate=true;</property>
         <property name="hibernate.connection.username">Amirmahdi</property>
         <property name="hibernate.connection.password">138556</property>
 
+        <!-- SQL dialect and logging -->
         <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
 
+        <!-- Mapping entity classes -->
         <mapping class="entity.User"/>
+        <mapping class="entity.Customer"/>
+        <mapping class="entity.Seller"/>
+        <mapping class="entity.Admin"/>
+        <mapping class="entity.Delivery"/>
+        <mapping class="entity.Account"/>
+        <mapping class="entity.Profile"/>
+        <mapping class="entity.SellerProfile"/>
+
     </session-factory>
 </hibernate-configuration>

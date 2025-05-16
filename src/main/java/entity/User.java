@@ -4,34 +4,31 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User extends Profile {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class User {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public User(String firstName, String lastName, String mobile,String email, String photo, String address, BankInfo bankInfo) {
-        super(firstName, lastName, mobile,email, photo, address, bankInfo);
-    }
+    @OneToOne(cascade = CascadeType.ALL)
+    private Account account;
 
-    public User() {
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    }
+    public Account getAccount() { return account; }
+    public void setAccount(Account account) { this.account = account; }
 
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", firstName=" + getFirstName() +
-                ", lastName=" + getLastName() +
-                ", mobileNumber=" + getMobile() +
-                ", email=" + getEmail() +
-                ", photo=" + getPhoto() +
-                ", address=" + getAddress() +
-                ", bankInfo=" + getBankInfo() +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "User{" +
+//                "id=" + id +
+//                ", firstName=" + getFirstName() +
+//                ", lastName=" + getLastName() +
+//                ", mobileNumber=" + getMobile() +
+//                ", email=" + getEmail() +
+//                ", photo=" + getPhoto() +
+//                ", address=" + getAddress() +
+//                ", bankInfo=" + getBankInfo() +
+//                '}';
+//    }
 }
