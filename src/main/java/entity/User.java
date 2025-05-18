@@ -18,18 +18,4 @@ public abstract class User {
 
     public Account getAccount() { return account; }
     public void setAccount(Account account) { this.account = account; }
-
-//    @Override
-//    public String toString() {
-//        return "User{" +
-//                "id=" + id +
-//                ", firstName=" + getFirstName() +
-//                ", lastName=" + getLastName() +
-//                ", mobileNumber=" + getMobile() +
-//                ", email=" + getEmail() +
-//                ", photo=" + getPhoto() +
-//                ", address=" + getAddress() +
-//                ", bankInfo=" + getBankInfo() +
-//                '}';
-//    }
 }
