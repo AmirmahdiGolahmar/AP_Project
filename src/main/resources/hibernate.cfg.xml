@@ -24,7 +24,6 @@
         <mapping class="entity.Seller"/>
         <mapping class="entity.Admin"/>
         <mapping class="entity.Delivery"/>
-        <mapping class="entity.Account"/>
         <mapping class="entity.Profile"/>
         <mapping class="entity.SellerProfile"/>
 

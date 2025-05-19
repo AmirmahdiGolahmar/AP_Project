@@ -17,29 +17,43 @@ public class UserService {
         this.deliveryDao = new DeliveryDao();
     }
 
-    public void createCustomer(String username, String password, String firstName, String lastName,
-                               String mobile, String email, String address, String photo, BankInfo bankInfo) {
+    public <T extends User> void createUser(Class<T> userType,
+                                         String username, String password,
+                                         String firstName, String lastName,
+                                         String mobile, String email,
+                                         String address, String photo,
+                                         String bankName, String accountNumber,
+                                         String shebaNumber, String accountHolder,
+                                         String restaurantDescription, UserRole role) {
 
-        Account account = new Account();
-        account.setUsername(username);
-        account.setPassword(password);
-        account.setRole(UserRole.CUSTOMER);
+        try {
+            T user = userType.getDeclaredConstructor().newInstance();
 
-        Profile profile = new Profile();
-        profile.setFirstName(firstName);
-        profile.setLastName(lastName);
-        profile.setMobile(mobile);
-        profile.setEmail(email);
-        profile.setAddress(address);
-        profile.setPhoto(photo);
-        profile.setBankInfo(bankInfo);
+            BankInfo bankInfo = new BankInfo(bankName, accountNumber, shebaNumber, accountHolder);
 
-        Customer customer = new Customer();
-        customer.setAccount(account);
-        customer.setProfile(profile);
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setRole(role);
 
-        customerDao.save(customer);
+            if (user.getRole() == UserRole.CUSTOMER) {
+                Customer customer = (Customer) user;
+                customer.setProfile(new Profile(firstName, lastName, mobile, email, photo, address, bankInfo));
+                customerDao.save(customer);
+            } else if (user.getRole() == UserRole.DELIVERY) {
+                Delivery delivery = (Delivery) user;
+                delivery.setProfile(new Profile(firstName, lastName, mobile, email, photo, address, bankInfo));
+                deliveryDao.save(delivery);
+            }else if (user.getRole() == UserRole.SELLER) {
+                Seller seller = (Seller) user;
+                seller.setProfile(new SellerProfile(firstName, lastName, mobile, email, photo, address, bankInfo, restaurantDescription));
+                sellerDao.save(seller);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create user", e);
+        }
     }
+
 
     public void updateCustomer(Customer customer) {
         customerDao.update(customer);
@@ -56,32 +70,6 @@ public class UserService {
     public List<Customer> findAllCustomers() { return customerDao.findAll(); }
 
 
-    public void createSeller(String username, String password, String firstName, String lastName,
-                             String mobile, String email, String address, String photo,
-                             BankInfo bankInfo, String restaurantDescription) {
-
-        Account account = new Account();
-        account.setUsername(username);
-        account.setPassword(password);
-        account.setRole(UserRole.SELLER);
-
-        SellerProfile profile = new SellerProfile();
-        profile.setFirstName(firstName);
-        profile.setLastName(lastName);
-        profile.setMobile(mobile);
-        profile.setEmail(email);
-        profile.setAddress(address);
-        profile.setPhoto(photo);
-        profile.setBankInfo(bankInfo);
-        profile.setRestaurantDescription(restaurantDescription);
-
-        Seller seller = new Seller();
-        seller.setAccount(account);
-        seller.setProfile(profile);
-
-        sellerDao.save(seller);
-    }
-
     public void updateSeller(Seller seller) {
         sellerDao.update(seller);
     }
@@ -95,31 +83,6 @@ public class UserService {
     }
 
     public List<Seller> findAllSellers() { return sellerDao.findAll(); }
-
-
-    public void createDelivery(String username, String password, String firstName, String lastName,
-                               String mobile, String email, String address, String photo, BankInfo bankInfo) {
-
-        Account account = new Account();
-        account.setUsername(username);
-        account.setPassword(password);
-        account.setRole(UserRole.DELIVERY);
-
-        Profile profile = new Profile();
-        profile.setFirstName(firstName);
-        profile.setLastName(lastName);
-        profile.setMobile(mobile);
-        profile.setEmail(email);
-        profile.setAddress(address);
-        profile.setPhoto(photo);
-        profile.setBankInfo(bankInfo);
-
-        Delivery delivery = new Delivery();
-        delivery.setAccount(account);
-        delivery.setProfile(profile);
-
-        deliveryDao.save(delivery);
-    }
 
     public void updateDelivery(Delivery delivery) {
         deliveryDao.update(delivery);

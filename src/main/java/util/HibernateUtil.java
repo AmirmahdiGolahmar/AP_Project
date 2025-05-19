@@ -10,8 +10,6 @@ public class HibernateUtil {
         try {
             return new Configuration()
                     .configure()  // reads hibernate.cfg.xml
-                    .addAnnotatedClass(entity.User.class)
-                    .addAnnotatedClass(entity.Account.class)
                     .buildSessionFactory();
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);

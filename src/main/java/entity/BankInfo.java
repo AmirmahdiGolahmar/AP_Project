@@ -7,13 +7,15 @@ import java.util.Objects;
 public class BankInfo {
     private String bankName;
     private String accountNumber;
+    private String shebaNumber;
     private String accountHolder;
 
     public BankInfo() {}
 
-    public BankInfo(String bankName, String accountNumber, String accountHolder) {
+    public BankInfo(String bankName, String accountNumber, String shebaNumber,String accountHolder) {
         this.bankName = bankName;
         this.accountNumber = accountNumber;
+        this.shebaNumber = shebaNumber;
         this.accountHolder = accountHolder;
     }
 

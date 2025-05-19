@@ -6,16 +6,36 @@ import jakarta.persistence.*;
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
+
+    public User() { }
+
+    public User(String username, String password, UserRole role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
-    public Account getAccount() { return account; }
-    public void setAccount(Account account) { this.account = account; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public UserRole getRole() { return role; }
+    public void setRole(UserRole role) { this.role = role; }
+
 }
