@@ -2,6 +2,8 @@ package entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "customers")
 public class Customer extends User {
@@ -11,4 +13,12 @@ public class Customer extends User {
 
     public Profile getProfile() { return profile; }
     public void setProfile(Profile profile) { this.profile = profile; }
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Cart> carts;
+
+
 }

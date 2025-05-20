@@ -27,6 +27,9 @@ public abstract class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Wallet wallet;
+
     public Long getId() { return id; }
 
     public String getUsername() { return username; }
