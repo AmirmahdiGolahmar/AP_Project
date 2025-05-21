@@ -27,7 +27,7 @@ import java.util.logging.LogManager;
 
 public class Main {
     public static void main(String[] args) {
-        LogManager.getLogManager().reset(); // disable logging spam from Hibernate
+        LogManager.getLogManager().reset();
 
         port(4567);
         UserController.initRoutes();
