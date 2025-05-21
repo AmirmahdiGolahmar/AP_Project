@@ -18,34 +18,37 @@ public class UserService {
     }
 
     public <T extends User> void createUser(Class<T> userType,
-                                         String username, String password,
+                                         String password,
                                          String firstName, String lastName,
                                          String mobile, String email,
                                          String address, String photo,
                                          String bankName, String accountNumber,
-                                         String shebaNumber, String accountHolder,
                                          String restaurantDescription, UserRole role) {
 
         try {
             T user = userType.getDeclaredConstructor().newInstance();
 
-            BankInfo bankInfo = new BankInfo(bankName, accountNumber, shebaNumber, accountHolder);
+            BankInfo bankInfo = new BankInfo(bankName, accountNumber);
 
-            user.setUsername(username);
             user.setPassword(password);
             user.setRole(role);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setMobile(mobile);
+            user.setEmail(email);
+            user.setAddress(address);
+            user.setPhoto(photo);
+            user.setBankInfo(bankInfo);
 
             if (user.getRole() == UserRole.CUSTOMER) {
                 Customer customer = (Customer) user;
-                customer.setProfile(new Profile(firstName, lastName, mobile, email, photo, address, bankInfo));
                 customerDao.save(customer);
             } else if (user.getRole() == UserRole.DELIVERY) {
                 Delivery delivery = (Delivery) user;
-                delivery.setProfile(new Profile(firstName, lastName, mobile, email, photo, address, bankInfo));
                 deliveryDao.save(delivery);
             }else if (user.getRole() == UserRole.SELLER) {
                 Seller seller = (Seller) user;
-                seller.setProfile(new SellerProfile(firstName, lastName, mobile, email, photo, address, bankInfo, restaurantDescription));
+                seller.setRestaurantDescription(restaurantDescription);
                 sellerDao.save(seller);
             }
 
@@ -133,5 +136,17 @@ public class UserService {
     }
 
 
+    public User login(String mobile, String password) {
+        User user = customerDao.findByMobile(mobile);
+        if (user == null) user = sellerDao.findByMobile(mobile);
+        if (user == null) user = deliveryDao.findByMobile(mobile);
+
+        if (user == null) throw new RuntimeException("User not found.");
+        if (!user.getPassword().equals(password))
+            throw new RuntimeException("Invalid credentials.");
+
+        return user;
+    }
 
 }
+

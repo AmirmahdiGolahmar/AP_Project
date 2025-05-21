@@ -1,5 +1,6 @@
 package dao;
 
+import entity.Delivery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import util.HibernateUtil;
@@ -81,4 +82,5 @@ public abstract class GenericDao<T> {
             if (session != null) session.close();
         }
     }
+
 }

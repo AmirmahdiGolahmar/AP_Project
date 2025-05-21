@@ -5,10 +5,11 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "customers")
 public class Customer extends User {
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "profile_id")
-    private Profile profile;
 
-    public Profile getProfile() { return profile; }
-    public void setProfile(Profile profile) { this.profile = profile; }
+    public Customer() {}
+    public Customer(String firstName,String lastName, String mobile,UserRole role,String email, String photo,
+                    String address, BankInfo bankInfo, String password) {
+      super(firstName,lastName,mobile,role,email, photo,
+        address, bankInfo, password);
+    }
 }
