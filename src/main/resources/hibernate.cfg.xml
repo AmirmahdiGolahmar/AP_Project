@@ -24,8 +24,8 @@
         <mapping class="entity.Seller"/>
         <mapping class="entity.Admin"/>
         <mapping class="entity.Delivery"/>
-        <mapping class="entity.Profile"/>
-        <mapping class="entity.SellerProfile"/>
+        <mapping class="entity.BankInfo"/>
+
 
     </session-factory>
 </hibernate-configuration>

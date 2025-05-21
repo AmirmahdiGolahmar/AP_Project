@@ -1,30 +1,37 @@
 package controller;
 
 import com.google.gson.Gson;
+import dto.LoginRequest;
 import entity.BankInfo;
+import io.jsonwebtoken.Claims;
 import service.UserService;
 
 import static spark.Spark.*;
 
 import dao.*;
 import entity.*;
+import util.JwtUtil;
+
+import java.util.Map;
 
 public class UserController {
     private static final UserService userService = new UserService();
     private static final Gson gson = new Gson();
 
     public static void initRoutes() {
+
         path("/api/user", () -> {
 
             post("/customer", (req, res) -> {
+
                 CustomerRequest body = gson.fromJson(req.body(), CustomerRequest.class);
                 userService.createUser(
                         Customer.class,
-                        body.username, body.password,
+                        body.password,
                         body.firstName, body.lastName,
                         body.mobile, body.email, body.address,
                         body.photo, body.bankName, body.accountNumber,
-                        body.shebaNumber, body.accountHolder,null, UserRole.CUSTOMER
+                        null, UserRole.CUSTOMER
                 );
                 res.status(201);
                 return "Customer created";
@@ -34,11 +41,11 @@ public class UserController {
                 SellerRequest body = gson.fromJson(req.body(), SellerRequest.class);
                 userService.createUser(
                         Seller.class,
-                        body.username, body.password,
+                        body.password,
                         body.firstName, body.lastName,
                         body.mobile, body.email, body.address,
                         body.photo, body.bankName, body.accountNumber,
-                        body.shebaNumber, body.accountHolder,body.restaurantDescription, UserRole.SELLER
+                        body.restaurantDescription, UserRole.SELLER
                 );
                 res.status(201);
                 return "Seller created";
@@ -48,11 +55,11 @@ public class UserController {
                 DeliveryRequest body = gson.fromJson(req.body(), DeliveryRequest.class);
                 userService.createUser(
                         Delivery.class,
-                        body.username, body.password,
+                        body.password,
                         body.firstName, body.lastName,
                         body.mobile, body.email, body.address,
                         body.photo, body.bankName, body.accountNumber,
-                        body.shebaNumber, body.accountHolder, null, UserRole.DELIVERY
+                        null, UserRole.DELIVERY
                 );
                 res.status(201);
                 return "Delivery agent created";
@@ -84,13 +91,60 @@ public class UserController {
             userService.deleteUser(id);
             return "User deleted with id: " + id;
         });
+
+        post("/login", (req, res) -> {
+            LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
+
+            try {
+                User user = userService.login(loginRequest.getMobile(), loginRequest.getPassword());
+                String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
+
+                res.status(200);
+                return gson.toJson(Map.of(
+                        "token", token,
+                            "full name", user.getFirstName()+ " " + user.getLastName(),
+                        "id", user.getId(),
+                        "role", user.getRole().toString()
+                ));
+            } catch (RuntimeException e) {
+                res.status(401);
+                return gson.toJson(Map.of("error", e.getMessage()));
+            }
+        });
+
+        get("/me", (req, res) -> {
+            String authHeader = req.headers("Authorization");
+
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                res.status(401);
+                return gson.toJson(Map.of("error", "Missing or invalid Authorization header"));
+            }
+
+            String token = authHeader.substring(7);
+
+            try {
+                Claims claims = JwtUtil.verifyToken(token);
+                Long userId = Long.valueOf(claims.getSubject());
+                String role = claims.get("role", String.class);
+
+                return gson.toJson(Map.of(
+                        "userId", userId,
+                        "role", role
+                ));
+            } catch (RuntimeException e) {
+                res.status(401);
+                return gson.toJson(Map.of("error", e.getMessage()));
+            }
+        });
+
+
     };
 
     // Inner classes for request bodies
     static class CustomerRequest {
-        String username, password, firstName, lastName;
+        String password, firstName, lastName;
         String mobile, email, address, photo;
-        String bankName, accountNumber, shebaNumber, accountHolder;
+        String bankName, accountNumber;
     }
 
     static class SellerRequest extends CustomerRequest {

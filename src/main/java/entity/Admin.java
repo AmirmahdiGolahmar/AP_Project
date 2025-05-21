@@ -5,6 +5,7 @@ import java.util.List;
 
 @Entity
 public class Admin extends User {
+<<<<<<< HEAD
 
     @OneToOne(cascade = CascadeType.ALL)
     private Profile profile;
@@ -43,3 +44,7 @@ public class Admin extends User {
         this.orders = orders;
     }
 }
+=======
+
+}
+>>>>>>> master

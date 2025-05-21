@@ -7,16 +7,13 @@ import java.util.Objects;
 public class BankInfo {
     private String bankName;
     private String accountNumber;
-    private String shebaNumber;
-    private String accountHolder;
+
 
     public BankInfo() {}
 
-    public BankInfo(String bankName, String accountNumber, String shebaNumber,String accountHolder) {
+    public BankInfo(String bankName, String accountNumber) {
         this.bankName = bankName;
         this.accountNumber = accountNumber;
-        this.shebaNumber = shebaNumber;
-        this.accountHolder = accountHolder;
     }
 
     public String getBankName() {
@@ -35,20 +32,11 @@ public class BankInfo {
         this.accountNumber = accountNumber;
     }
 
-    public String getAccountHolder() {
-        return accountHolder;
-    }
-
-    public void setIban(String accountHolder) {
-        this.accountHolder = accountHolder;
-    }
-
     @Override
     public String toString() {
         return "BankInfo{" +
                 "bankName='" + bankName + '\'' +
                 ", accountNumber='" + accountNumber + '\'' +
-                ", accountHolder='" + accountHolder + '\'' +
                 '}';
     }
 
@@ -58,12 +46,11 @@ public class BankInfo {
         if (!(o instanceof BankInfo)) return false;
         BankInfo bankInfo = (BankInfo) o;
         return Objects.equals(bankName, bankInfo.bankName) &&
-                Objects.equals(accountNumber, bankInfo.accountNumber) &&
-                Objects.equals(accountHolder, bankInfo.accountHolder);
+                Objects.equals(accountNumber, bankInfo.accountNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bankName, accountNumber, accountHolder);
+        return Objects.hash(bankName, accountNumber);
     }
 }
