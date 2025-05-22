@@ -11,8 +11,8 @@ public class Seller extends User {
 
     public Seller() {}
 
-    public Seller(String firstName, String lastName,String mobile,
+    public Seller(String fullName,String mobile,
                          String email, String photo, String address, BankInfo bankInfo,String password) {
-        super(firstName, lastName, mobile,UserRole.SELLER, email, photo, address, bankInfo, password);
+        super(fullName, mobile,UserRole.SELLER, email, photo, address, bankInfo, password);
     }
 }

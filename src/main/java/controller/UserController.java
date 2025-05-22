@@ -48,6 +48,7 @@ public class UserController {
 
                 } catch (Exception e) {
                     res.status(500);
+                    e.printStackTrace();
                     return gson.toJson(Map.of("error", "Internal server error"));
                 }
             });

@@ -1,9 +1,12 @@
 package dao;
 
 import entity.Delivery;
+import exception.AlreadyExistsException;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 import util.HibernateUtil;
 
 import java.util.List;

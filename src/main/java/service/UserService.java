@@ -1,15 +1,14 @@
 package service;
-
-import dao.CustomerDao;
-import dao.DeliveryDao;
-import dao.SellerDao;
 import dto.UserRegistrationRequest;
 import entity.*;
 import java.util.List;
 import exception.*;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceException;
+import org.hibernate.exception.ConstraintViolationException;
 import validator.*;
 import dto.UserRegistrationRequest;
+import dao.*;
 
 public class UserService {
     private final CustomerDao customerDao;
@@ -24,43 +23,39 @@ public class UserService {
 
     public void createUser(UserRegistrationRequest request) {
 
-        try {
-            UserValidator.validateUser(request);
+        UserValidator.validateUser(request);
 
-            User user = new User();
-            BankInfo bankInfo = new BankInfo(request.getBankName(), request.getAccountNumber());
-            if(request.getRole().equalsIgnoreCase("buyer")
-                    || request.getRole().equalsIgnoreCase("customer")) {
-                user.setRole(UserRole.CUSTOMER);
-            }else if(request.getRole().equalsIgnoreCase("seller")) {
-                user.setRole(UserRole.SELLER);
-            }else {
-                user.setRole(UserRole.DELIVERY);
-            }
+        BankInfo bankInfo = new BankInfo(request.getBankName(), request.getAccountNumber());
+        UserRole userRole;
+        switch (request.getRole().toLowerCase()) {
+            case "buyer":
+            case "customer":
+                userRole = UserRole.CUSTOMER;
+                break;
+            case "seller":
+                userRole = UserRole.SELLER;
+                break;
+            default:
+                userRole = UserRole.DELIVERY;
+        }
 
-            user.setPassword(request.getPassword());
-            user.setFullName(request.getFullName());
-            user.setMobile(request.getMobile());
-            user.setEmail(request.getEmail());
-            user.setAddress(request.getAddress());
-            user.setPhoto(request.getPhoto());
-            user.setBankInfo(bankInfo);
+        if (userRole == UserRole.CUSTOMER) {
+            Customer customer = new Customer();
+            fillUserFields(customer, request);
+            saveWithDuplicationCheck(customerDao, customer);
 
-            if (user.getRole() == UserRole.CUSTOMER) {
-                Customer customer = (Customer) user;
-                customerDao.save(customer);
-            } else if (user.getRole() == UserRole.DELIVERY) {
-                Delivery delivery = (Delivery) user;
-                deliveryDao.save(delivery);
-            }else if (user.getRole() == UserRole.SELLER) {
-                Seller seller = (Seller) user;
-                sellerDao.save(seller);
-            }
+        } else if (userRole == UserRole.SELLER) {
+            Seller seller = new Seller();
+            fillUserFields(seller, request);
+            saveWithDuplicationCheck(sellerDao, seller);
 
-        } catch (Exception  e) {
-            throw new AlreadyExistsException("Phone number already exists");
+        } else {
+            Delivery delivery = new Delivery();
+            fillUserFields(delivery, request);
+            saveWithDuplicationCheck(deliveryDao, delivery);
         }
     }
+
 
 
     public void updateCustomer(Customer customer) {
@@ -166,6 +161,40 @@ public class UserService {
             throw new InvalidCredentialsException();
 
         return user;
+    }
+
+    private <T> void saveWithDuplicationCheck(GenericDao<T> dao, T entity) {
+        try {
+            dao.save(entity);
+        } catch (ConstraintViolationException e) {
+            throw new AlreadyExistsException("Phone number already exists");
+        } catch (PersistenceException e) {
+            if (e.getCause() instanceof ConstraintViolationException) {
+                throw new AlreadyExistsException("Phone number already exists");
+            }
+            throw e;
+        }
+    }
+
+    private void fillUserFields(User user, UserRegistrationRequest request) {
+        user.setPassword(request.getPassword());
+        user.setFullName(request.getFullName());
+        user.setMobile(request.getMobile());
+        user.setEmail(request.getEmail());
+        user.setAddress(request.getAddress());
+        user.setPhoto(request.getPhoto());
+        user.setBankInfo(new BankInfo(request.getBankName(), request.getAccountNumber()));
+        switch (request.getRole().toLowerCase()) {
+            case "buyer":
+            case "customer":
+                user.setRole(UserRole.CUSTOMER);
+                break;
+            case "seller":
+                user.setRole(UserRole.SELLER);
+                break;
+            default:
+                user.setRole(UserRole.DELIVERY);
+        }
     }
 
 

@@ -17,9 +17,9 @@ public class Delivery extends User {
     public Delivery() {
     }
 
-    public Delivery(String firstName, String lastName, String mobile, UserRole role, String email,
+    public Delivery(String fullName, String mobile, UserRole role, String email,
                     String photo, String address, BankInfo bankInfo, String password) {
-        super(firstName, lastName, mobile, role, email, photo, address, bankInfo, password);
+        super(fullName, mobile, role, email, photo, address, bankInfo, password);
         this.totalDeliveries = 0;
         this.available = false;
         this.averageRating = 0.0;
