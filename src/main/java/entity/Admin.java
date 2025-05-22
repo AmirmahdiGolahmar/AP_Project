@@ -5,28 +5,14 @@ import java.util.List;
 
 @Entity
 public class Admin extends User {
-<<<<<<< HEAD
-
-    @OneToOne(cascade = CascadeType.ALL)
-    private Profile profile;
 
     @OneToMany
-    @JoinColumn(name = "admin_id") // در جدول User یک ستون admin_id ایجاد می‌شود
+    @JoinColumn(name = "admin_id")
     private List<User> users;
 
     @OneToMany
-    @JoinColumn(name = "admin_id") // در جدول Order یک ستون admin_id ایجاد می‌شود
+    @JoinColumn(name = "admin_id")
     private List<Order> orders;
-
-    // Getters and Setters
-
-    public Profile getProfile() {
-        return profile;
-    }
-
-    public void setProfile(Profile profile) {
-        this.profile = profile;
-    }
 
     public List<User> getUsers() {
         return users;
@@ -44,7 +30,4 @@ public class Admin extends User {
         this.orders = orders;
     }
 }
-=======
 
-}
->>>>>>> master

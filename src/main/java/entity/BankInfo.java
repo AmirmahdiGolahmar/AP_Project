@@ -1,56 +1,61 @@
 package entity;
 
-import jakarta.persistence.Embeddable;
-import java.util.Objects;
+import jakarta.persistence.*;
 
-@Embeddable
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
 public class BankInfo {
-    private String bankName;
-    private String accountNumber;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    private String accountNumber;
+    private String bankName;
+    private double balance;
+
+    @OneToMany(mappedBy = "bankInfo", cascade = CascadeType.ALL)
+    private List<Transaction> transactions;
 
     public BankInfo() {}
 
     public BankInfo(String bankName, String accountNumber) {
         this.bankName = bankName;
         this.accountNumber = accountNumber;
+        this.balance = 0.0;
+        this.transactions = new ArrayList<Transaction>();
     }
 
-    public String getBankName() {
-        return bankName;
-    }
-
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
+    public Long getId() {
+        return id;
     }
 
     public String getAccountNumber() {
         return accountNumber;
     }
-
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
 
-    @Override
-    public String toString() {
-        return "BankInfo{" +
-                "bankName='" + bankName + '\'' +
-                ", accountNumber='" + accountNumber + '\'' +
-                '}';
+    public String getBankName() {
+        return bankName;
+    }
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BankInfo)) return false;
-        BankInfo bankInfo = (BankInfo) o;
-        return Objects.equals(bankName, bankInfo.bankName) &&
-                Objects.equals(accountNumber, bankInfo.accountNumber);
+    public double getBalance() {
+        return balance;
+    }
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(bankName, accountNumber);
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }

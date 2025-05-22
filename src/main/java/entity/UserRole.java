@@ -1,8 +1,8 @@
 package entity;
 
 public enum UserRole {
-    ADMIN,
-    SELLER,
-    CUSTOMER,
-    DELIVERY
+    ADMIN,     //ادمین
+    SELLER,    //فروشنده
+    CUSTOMER,  //مشتری
+    DELIVERY   //پیک
 }

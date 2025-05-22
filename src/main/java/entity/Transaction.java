@@ -24,12 +24,12 @@ public class Transaction {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private TransactionType type; // پرداخت، برداشت، افزایش اعتبار
+    private TransactionType type;
 
     private double amount;
 
     @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod; // آنلاین یا کیف پول
+    private PaymentMethod paymentMethod;
 
     private LocalDateTime timestamp;
 
@@ -40,8 +40,6 @@ public class Transaction {
     public Transaction() {
         this.timestamp = LocalDateTime.now();
     }
-
-    // Getters and Setters
 
     public Long getId() { return id; }
 

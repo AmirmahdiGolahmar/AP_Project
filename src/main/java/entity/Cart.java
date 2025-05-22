@@ -35,7 +35,17 @@ public class Cart {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Getters and Setters ...
+    public Cart(Long id, String userNote, String deliveryAddress, double totalPrice, LocalDateTime createdAt,
+                Customer customer, Restaurant restaurant, List<CartItem> cartItems) {
+        this.id = id;
+        this.userNote = userNote;
+        this.deliveryAddress = deliveryAddress;
+        this.totalPrice = totalPrice;
+        this.createdAt = createdAt;
+        this.customer = customer;
+        this.restaurant = restaurant;
+        this.cartItems = cartItems;
+    }
 
     public Long getId() { return id; }
 

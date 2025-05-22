@@ -20,21 +20,19 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    private String customerName;
+    @ManyToOne
+    private Customer customer;
 
-    private String customerPhone;
-
-    private String assignedTo; // مثلاً نام پیک
+    @ManyToOne
+    @JoinColumn(name = "delivery")
+    private Delivery assignedTo; // مثلاً نام پیک
 
     private LocalDateTime confirmedAt;
 
-    // Constructors
     public Order() {
         this.confirmedAt = LocalDateTime.now();
         this.status = OrderStatus.PENDING;
     }
-
-    // Getters & Setters
 
     public Long getId() { return id; }
 
@@ -44,14 +42,11 @@ public class Order {
     public OrderStatus getStatus() { return status; }
     public void setStatus(OrderStatus status) { this.status = status; }
 
-    public String getCustomerName() { return customerName; }
-    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public Customer getCustomer() { return customer; }
+    public void setCustomer(Customer customer) { this.customer = customer; }
 
-    public String getCustomerPhone() { return customerPhone; }
-    public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
-
-    public String getAssignedTo() { return assignedTo; }
-    public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
+    public Delivery getAssignedTo() { return assignedTo; }
+    public void setAssignedTo(Delivery assignedTo) { this.assignedTo = assignedTo; }
 
     public LocalDateTime getConfirmedAt() { return confirmedAt; }
     public void setConfirmedAt(LocalDateTime confirmedAt) { this.confirmedAt = confirmedAt; }

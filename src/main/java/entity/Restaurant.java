@@ -10,15 +10,20 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "seller_id", nullable = false)
+    private Seller seller;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<Item> items;
+
     private String address;
-
     private String phone;
-
-    private String logo; // می‌تونه URL باشه یا Base64
-
+    private String logo;
+    private String description;
     private String workingHours; // مثلاً: "08:00 - 23:00"
-
-    private Double rating;
+    private int totalOrders;
+    private double averageRating;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -28,6 +33,6 @@ public class Restaurant {
     )
     private List<Category> categories;
 
-    // Getters and Setters ...
+
 }
 

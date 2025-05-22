@@ -21,9 +21,11 @@ public class Item {
 
     private int inventory;
 
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
-    private String keywords; // به صورت string ذخیره می‌کنیم (مثلاً "spicy,vegan,fastfood")
+    private String keywords;
 
     private double rating;
 
@@ -34,10 +36,23 @@ public class Item {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
-    // Constructors
     public Item() {}
 
-    // Getters and Setters
+    public Item(Long id, String name, String photo, String description, double price,
+                int inventory, String category, String keywords, double rating,
+                Restaurant restaurant, List<Comment> comments) {
+        this.id = id;
+        this.name = name;
+        this.photo = photo;
+        this.description = description;
+        this.price = price;
+        this.inventory = inventory;
+        //Complete the category handling
+        this.keywords = keywords;
+        this.rating = rating;
+        this.restaurant = restaurant;
+        this.comments = comments;
+    }
 
     public Long getId() { return id; }
 
@@ -56,8 +71,8 @@ public class Item {
     public int getInventory() { return inventory; }
     public void setInventory(int inventory) { this.inventory = inventory; }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
 
     public String getKeywords() { return keywords; }
     public void setKeywords(String keywords) { this.keywords = keywords; }

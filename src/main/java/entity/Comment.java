@@ -2,6 +2,8 @@ package entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "comments")
@@ -13,7 +15,10 @@ public class Comment {
 
     private String description;
 
-    private String photo; // می‌تونه URL یا Base64 باشه
+    @ElementCollection
+    @CollectionTable(name = "customer_images", joinColumns = @JoinColumn(name = "customer_id"))
+    @Column(name = "image_url")
+    private List<String> imageUrls = new ArrayList<>();
 
     private int rating;
 
@@ -45,13 +50,11 @@ public class Comment {
         this.description = description;
     }
 
-    public String getPhoto() {
-        return photo;
+    public List<String> getPhoto() {
+        return imageUrls;
     }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
+    //Adding photo to the comment object
 
     public int getRating() {
         return rating;
