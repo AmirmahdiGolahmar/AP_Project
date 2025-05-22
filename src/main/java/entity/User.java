@@ -5,14 +5,13 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User {
+public class User {
 
     public User() { }
 
-    public User(String firstName,String lastName, String mobile,UserRole role,String email, String photo,
+    public User(String fullName, String mobile,UserRole role,String email, String photo,
                 String address, BankInfo bankInfo, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.fullName = fullName;
         this.mobile = mobile;
         this.role = role;
         this.email = email;
@@ -20,7 +19,7 @@ public abstract class User {
         this.address = address;
         this.bankInfo = bankInfo;
         this.password = password;
-        this.username = firstName + "-" + lastName + "-" + mobile;
+        this.username = fullName + "-" + mobile;
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,10 +37,7 @@ public abstract class User {
     private BankInfo bankInfo;
 
     @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
+    private String fullName;
 
     private String email;
 
@@ -64,11 +60,8 @@ public abstract class User {
     public UserRole getRole() { return role; }
     public void setRole(UserRole role) { this.role = role; }
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
-
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getFullName() { return fullName; }
+    public void setFullName(String firstName) { this.fullName = firstName; }
 
     public String getMobile() { return mobile; }
     public void setMobile(String mobile) { this.mobile = mobile; }

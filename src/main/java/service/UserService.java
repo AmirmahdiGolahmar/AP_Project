@@ -3,10 +3,13 @@ package service;
 import dao.CustomerDao;
 import dao.DeliveryDao;
 import dao.SellerDao;
+import dto.UserRegistrationRequest;
 import entity.*;
 import java.util.List;
 import exception.*;
 import jakarta.persistence.NoResultException;
+import validator.*;
+import dto.UserRegistrationRequest;
 
 public class UserService {
     private final CustomerDao customerDao;
@@ -19,27 +22,28 @@ public class UserService {
         this.deliveryDao = new DeliveryDao();
     }
 
-    public <T extends User> void createUser(Class<T> userType,
-                                         String password,
-                                         String firstName, String lastName,
-                                         String mobile, String email,
-                                         String address, String photo,
-                                         String bankName, String accountNumber,
-                                         String restaurantDescription, UserRole role) {
+    public void createUser(UserRegistrationRequest request) {
 
         try {
-            T user = userType.getDeclaredConstructor().newInstance();
+            UserValidator.validateUser(request);
 
-            BankInfo bankInfo = new BankInfo(bankName, accountNumber);
+            User user = new User();
+            BankInfo bankInfo = new BankInfo(request.getBankName(), request.getAccountNumber());
+            if(request.getRole().equalsIgnoreCase("buyer")
+                    || request.getRole().equalsIgnoreCase("customer")) {
+                user.setRole(UserRole.CUSTOMER);
+            }else if(request.getRole().equalsIgnoreCase("seller")) {
+                user.setRole(UserRole.SELLER);
+            }else {
+                user.setRole(UserRole.DELIVERY);
+            }
 
-            user.setPassword(password);
-            user.setRole(role);
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setMobile(mobile);
-            user.setEmail(email);
-            user.setAddress(address);
-            user.setPhoto(photo);
+            user.setPassword(request.getPassword());
+            user.setFullName(request.getFullName());
+            user.setMobile(request.getMobile());
+            user.setEmail(request.getEmail());
+            user.setAddress(request.getAddress());
+            user.setPhoto(request.getPhoto());
             user.setBankInfo(bankInfo);
 
             if (user.getRole() == UserRole.CUSTOMER) {
@@ -53,8 +57,8 @@ public class UserService {
                 sellerDao.save(seller);
             }
 
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create user", e);
+        } catch (Exception  e) {
+            throw new AlreadyExistsException("Phone number already exists");
         }
     }
 

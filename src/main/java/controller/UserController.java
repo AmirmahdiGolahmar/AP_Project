@@ -17,6 +17,8 @@ import util.LocalDateTimeAdapter;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import dto.UserRegistrationRequest;
+
 public class UserController {
     private static final UserService userService = new UserService();
     //private static final Gson gson = new Gson();
@@ -27,50 +29,29 @@ public class UserController {
 
     public static void initRoutes() {
 
-        path("/api/user", () -> {
+        path("/auth", () -> {
 
-            post("/customer", (req, res) -> {
+            post("/register", (req, res) -> {
+                UserRegistrationRequest request = gson.fromJson(req.body(), UserRegistrationRequest.class);
+                try {
+                    userService.createUser(request);
+                    res.status(201);
+                    return gson.toJson(Map.of("message", "User registered successfully"));
 
-                CustomerRequest body = gson.fromJson(req.body(), CustomerRequest.class);
-                userService.createUser(
-                        Customer.class,
-                        body.password,
-                        body.firstName, body.lastName,
-                        body.mobile, body.email, body.address,
-                        body.photo, body.bankName, body.accountNumber,
-                        null, UserRole.CUSTOMER
-                );
-                res.status(201);
-                return "Customer created";
+                } catch (AlreadyExistsException e) {
+                    res.status(409);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+
+                } catch (InvalidInputException e) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+
+                } catch (Exception e) {
+                    res.status(500);
+                    return gson.toJson(Map.of("error", "Internal server error"));
+                }
             });
 
-            post("/seller", (req, res) -> {
-                SellerRequest body = gson.fromJson(req.body(), SellerRequest.class);
-                userService.createUser(
-                        Seller.class,
-                        body.password,
-                        body.firstName, body.lastName,
-                        body.mobile, body.email, body.address,
-                        body.photo, body.bankName, body.accountNumber,
-                        body.restaurantDescription, UserRole.SELLER
-                );
-                res.status(201);
-                return "Seller created";
-            });
-
-            post("/delivery", (req, res) -> {
-                DeliveryRequest body = gson.fromJson(req.body(), DeliveryRequest.class);
-                userService.createUser(
-                        Delivery.class,
-                        body.password,
-                        body.firstName, body.lastName,
-                        body.mobile, body.email, body.address,
-                        body.photo, body.bankName, body.accountNumber,
-                        null, UserRole.DELIVERY
-                );
-                res.status(201);
-                return "Delivery agent created";
-            });
         });
 
         get("/customers", (req, res) -> {
@@ -109,7 +90,7 @@ public class UserController {
                 res.status(200);
                 return gson.toJson(Map.of(
                         "token", token,
-                        "full name", user.getFirstName() + " " + user.getLastName(),
+                        "full name", user.getFullName(),
                         "id", user.getId(),
                         "role", user.getRole().toString()
                 ));
@@ -157,18 +138,5 @@ public class UserController {
 
     };
 
-    // Inner classes for request bodies
-    static class CustomerRequest {
-        String password, firstName, lastName;
-        String mobile, email, address, photo;
-        String bankName, accountNumber;
-    }
-
-    static class SellerRequest extends CustomerRequest {
-        String restaurantDescription;
-    }
-
-    static class DeliveryRequest extends CustomerRequest {
-    }
 }
 

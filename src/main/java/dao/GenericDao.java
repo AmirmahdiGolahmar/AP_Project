@@ -1,6 +1,7 @@
 package dao;
 
 import entity.Delivery;
+import jakarta.persistence.NoResultException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import util.HibernateUtil;
@@ -17,14 +18,16 @@ public abstract class GenericDao<T> {
     public void save(T entity) {
         Transaction tx = null;
         Session session = null;
+
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
             session.save(entity);
             tx.commit();
+
         } catch (Exception e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
+            throw e;
         } finally {
             if (session != null) session.close();
         }
