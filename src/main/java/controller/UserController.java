@@ -5,7 +5,6 @@ import dto.LoginRequest;
 import entity.BankInfo;
 import io.jsonwebtoken.Claims;
 import service.UserService;
-
 import static spark.Spark.*;
 
 import dao.*;
