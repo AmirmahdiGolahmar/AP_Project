@@ -34,8 +34,9 @@ public class Transaction {
     private LocalDateTime timestamp;
 
     @ManyToOne
-    @JoinColumn(name = "wallet_id")
-    private Wallet wallet;
+    @JoinColumn(name = "bank_info_id", nullable = false)
+    private BankInfo bankInfo;
+
 
     public Transaction() {
         this.timestamp = LocalDateTime.now();
@@ -53,8 +54,5 @@ public class Transaction {
     public void setPaymentMethod(PaymentMethod paymentMethod) { this.paymentMethod = paymentMethod; }
 
     public LocalDateTime getTimestamp() { return timestamp; }
-
-    public Wallet getWallet() { return wallet; }
-    public void setWallet(Wallet wallet) { this.wallet = wallet; }
 }
 
