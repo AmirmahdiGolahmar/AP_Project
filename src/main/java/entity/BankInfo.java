@@ -5,18 +5,13 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Embeddable
 public class BankInfo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private String accountNumber;
     private String bankName;
-    private double balance;
+    private Double balance;
 
-    @OneToMany(mappedBy = "bankInfo", cascade = CascadeType.ALL)
-    private List<Transaction> transactions;
 
     public BankInfo() {}
 
@@ -24,11 +19,6 @@ public class BankInfo {
         this.bankName = bankName;
         this.accountNumber = accountNumber;
         this.balance = 0.0;
-        this.transactions = new ArrayList<Transaction>();
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getAccountNumber() {
@@ -50,12 +40,5 @@ public class BankInfo {
     }
     public void setBalance(double balance) {
         this.balance = balance;
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
     }
 }

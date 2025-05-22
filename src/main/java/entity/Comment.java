@@ -13,6 +13,10 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+
     private String description;
 
     @ElementCollection
@@ -83,5 +87,8 @@ public class Comment {
     public void setOrder(Order Order) {
         this.Order = Order;
     }
+
+    public Item getItem() { return item; }
+    public void setItem(Item item) { this.item = item; }
 }
 

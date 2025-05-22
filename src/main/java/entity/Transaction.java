@@ -33,8 +33,7 @@ public class Transaction {
 
     private LocalDateTime timestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "bank_info_id", nullable = false)
+    @Embedded
     private BankInfo bankInfo;
 
 

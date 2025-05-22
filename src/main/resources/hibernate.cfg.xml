@@ -12,6 +12,7 @@
         <property name="hibernate.connection.username">Amirmahdi</property>
         <property name="hibernate.connection.password">138556</property>
 
+
         <!-- SQL dialect and logging -->
         <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
         <property name="hibernate.show_sql">true</property>
@@ -19,12 +20,21 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <!-- Mapping entity classes -->
-        <mapping class="entity.User"/>
-        <mapping class="entity.Customer"/>
-        <mapping class="entity.Seller"/>
         <mapping class="entity.Admin"/>
+        <mapping class="entity.Cart"/>
+        <mapping class="entity.CartItem"/>
+        <mapping class="entity.Category"/>
+        <mapping class="entity.Comment"/>
+        <mapping class="entity.Customer"/>
         <mapping class="entity.Delivery"/>
-        <mapping class="entity.BankInfo"/>
+        <mapping class="entity.Discount"/>
+        <mapping class="entity.Item"/>
+        <mapping class="entity.Order"/>
+        <mapping class="entity.Restaurant"/>
+        <mapping class="entity.Seller"/>
+        <mapping class="entity.Transaction"/>
+        <mapping class="entity.User"/>
+
 
 
     </session-factory>

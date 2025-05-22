@@ -6,7 +6,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "confirmed_orders")
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -24,7 +24,7 @@ public class Order {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "delivery")
+    @JoinColumn(name = "delivery_id")
     private Delivery assignedTo; // مثلاً نام پیک
 
     private LocalDateTime confirmedAt;

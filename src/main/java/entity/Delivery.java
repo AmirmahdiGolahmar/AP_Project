@@ -6,9 +6,6 @@ import jakarta.persistence.*;
 @Table(name = "deliveries")
 public class Delivery extends User {
 
-    @OneToOne(mappedBy = "delivery", cascade = CascadeType.ALL)
-    private Order order;
-
     private boolean available;
 
     private double latitude;
@@ -17,7 +14,8 @@ public class Delivery extends User {
     private double averageRating;
     private int totalDeliveries;
 
-    public Delivery() {}
+    public Delivery() {
+    }
 
     public Delivery(String firstName, String lastName, String mobile, UserRole role, String email,
                     String photo, String address, BankInfo bankInfo, String password) {

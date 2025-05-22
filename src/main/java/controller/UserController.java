@@ -1,6 +1,7 @@
 package controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dto.LoginRequest;
 import entity.BankInfo;
 import io.jsonwebtoken.Claims;
@@ -11,12 +12,18 @@ import exception.*;
 import dao.*;
 import entity.*;
 import util.JwtUtil;
+import util.LocalDateTimeAdapter;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public class UserController {
     private static final UserService userService = new UserService();
-    private static final Gson gson = new Gson();
+    //private static final Gson gson = new Gson();
+    private static final Gson gson =  new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .create();
+
 
     public static void initRoutes() {
 
