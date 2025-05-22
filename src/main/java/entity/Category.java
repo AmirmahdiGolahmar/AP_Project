@@ -17,14 +17,12 @@ public class Category {
     @ManyToMany(mappedBy = "categories")
     private List<Restaurant> restaurants;
 
-    // Constructors
     public Category() {}
 
     public Category(String name) {
         this.name = name;
     }
 
-    // Getters & Setters
     public Long getId() { return id; }
 
     public String getName() { return name; }

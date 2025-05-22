@@ -19,9 +19,12 @@ public class Discount {
 
     private int usedCount;
 
-    private double percentage; // مثلاً 15 برای 15 درصد
+    private double percentage;
 
     private LocalDateTime expiryDate;
+
+    @ManyToOne
+    private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "item_id")
@@ -34,6 +37,33 @@ public class Discount {
     public Discount() {
         this.code = generateCode();
         this.usedCount = 0;
+    }
+
+    public Discount(String code, int maxUsages, double percentage, LocalDateTime expiryDate, Customer customer) {
+        this.code = code;
+        this.maxUsages = maxUsages;
+        this.usedCount = 0;
+        this.percentage = percentage;
+        this.expiryDate = expiryDate;
+        this.customer = customer;
+    }
+
+    public Discount(String code, int maxUsages, double percentage, LocalDateTime expiryDate, Item item) {
+        this.code = code;
+        this.maxUsages = maxUsages;
+        this.usedCount = 0;
+        this.percentage = percentage;
+        this.expiryDate = expiryDate;
+        this.item = item;
+    }
+
+    public Discount(String code, int maxUsages, double percentage, LocalDateTime expiryDate, Category category) {
+        this.code = code;
+        this.maxUsages = maxUsages;
+        this.usedCount = 0;
+        this.percentage = percentage;
+        this.expiryDate = expiryDate;
+        this.category = category;
     }
 
     private String generateCode() {

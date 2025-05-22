@@ -20,7 +20,7 @@ public abstract class User {
         this.address = address;
         this.bankInfo = bankInfo;
         this.password = password;
-        this.username = firstName + mobile + lastName;
+        this.username = firstName + "-" + lastName + "-" + mobile;
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,11 +39,15 @@ public abstract class User {
 
     @Column(nullable = false)
     private String firstName;
+
     @Column(nullable = false)
     private String lastName;
+
     private String email;
+
     @Column(nullable = false)
     private String photo;
+
     @Column(nullable = false)
     private String address;
 
