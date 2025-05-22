@@ -48,7 +48,6 @@ public class UserService {
                 deliveryDao.save(delivery);
             }else if (user.getRole() == UserRole.SELLER) {
                 Seller seller = (Seller) user;
-                seller.setRestaurantDescription(restaurantDescription);
                 sellerDao.save(seller);
             }
 
