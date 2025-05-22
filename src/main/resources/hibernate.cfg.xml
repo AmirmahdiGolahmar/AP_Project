@@ -9,8 +9,8 @@
         <!-- Database connection settings -->
         <property name="hibernate.connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
         <property name="hibernate.connection.url">jdbc:sqlserver://127.0.0.1:1433;databaseName=AP_Project;trustServerCertificate=true;</property>
-        <property name="hibernate.connection.username">Behrad</property>
-        <property name="hibernate.connection.password">1385</property>
+        <property name="hibernate.connection.username">Amirmahdi</property>
+        <property name="hibernate.connection.password">138556</property>
 
         <!-- SQL dialect and logging -->
         <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>

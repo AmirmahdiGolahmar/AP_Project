@@ -6,6 +6,7 @@ import entity.BankInfo;
 import io.jsonwebtoken.Claims;
 import service.UserService;
 import static spark.Spark.*;
+import exception.*;
 
 import dao.*;
 import entity.*;
@@ -101,15 +102,25 @@ public class UserController {
                 res.status(200);
                 return gson.toJson(Map.of(
                         "token", token,
-                            "full name", user.getFirstName()+ " " + user.getLastName(),
+                        "full name", user.getFirstName() + " " + user.getLastName(),
                         "id", user.getId(),
                         "role", user.getRole().toString()
                 ));
-            } catch (RuntimeException e) {
+
+            } catch (UserNotFoundException e) {
+                res.status(404);
+                return gson.toJson(Map.of("error", e.getMessage()));
+
+            } catch (InvalidCredentialsException e) {
                 res.status(401);
                 return gson.toJson(Map.of("error", e.getMessage()));
+
+            } catch (Exception e) {
+                res.status(500);
+                return gson.toJson(Map.of("error", "Internal server error"));
             }
         });
+
 
         get("/me", (req, res) -> {
             String authHeader = req.headers("Authorization");
