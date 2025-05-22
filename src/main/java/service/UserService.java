@@ -4,6 +4,10 @@ import dao.CustomerDao;
 import dao.DeliveryDao;
 import dao.SellerDao;
 import entity.*;
+import exception.InvalidCredentialsException;
+import exception.UserNotFoundException;
+import jakarta.persistence.NoResultException;
+
 import java.util.List;
 
 public class UserService {
@@ -137,16 +141,32 @@ public class UserService {
 
 
     public User login(String mobile, String password) {
-        User user = customerDao.findByMobile(mobile);
-        if (user == null) user = sellerDao.findByMobile(mobile);
-        if (user == null) user = deliveryDao.findByMobile(mobile);
+        User user = null;
 
-        if (user == null) throw new RuntimeException("User not found.");
+        try {
+            user = customerDao.findByMobile(mobile);
+        } catch (NoResultException ignored) {}
+
+        if (user == null) {
+            try {
+                user = sellerDao.findByMobile(mobile);
+            } catch (NoResultException ignored) {}
+        }
+
+        if (user == null) {
+            try {
+                user = deliveryDao.findByMobile(mobile);
+            } catch (NoResultException ignored) {}
+        }
+
+        if (user == null) throw new UserNotFoundException(mobile);
+
         if (!user.getPassword().equals(password))
-            throw new RuntimeException("Invalid credentials.");
+            throw new InvalidCredentialsException();
 
         return user;
     }
+
 
 }
 
