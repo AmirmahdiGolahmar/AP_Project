@@ -36,15 +36,14 @@ public class Cart {
     }
 
     public Cart(Long id, String userNote, String deliveryAddress, double totalPrice, LocalDateTime createdAt,
-                Customer customer, Restaurant restaurant, List<CartItem> cartItems) {
+                Customer customer, Restaurant restaurant) {
         this.id = id;
         this.userNote = userNote;
         this.deliveryAddress = deliveryAddress;
-        this.totalPrice = totalPrice;
         this.createdAt = createdAt;
         this.customer = customer;
         this.restaurant = restaurant;
-        this.cartItems = cartItems;
+        this.totalPrice = 0;
     }
 
     public Long getId() { return id; }
@@ -55,8 +54,12 @@ public class Cart {
     public String getDeliveryAddress() { return deliveryAddress; }
     public void setDeliveryAddress(String deliveryAddress) { this.deliveryAddress = deliveryAddress; }
 
-    public double getTotalPrice() { return totalPrice; }
-    public void setTotalPrice(double totalPrice) { this.totalPrice = totalPrice; }
+    public double getTotalPrice() {
+        for (CartItem cartItem : cartItems){
+            this.totalPrice += cartItem.getTotalPriceCartItem();
+        }
+        return totalPrice;
+    }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 
@@ -67,5 +70,5 @@ public class Cart {
     public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
 
     public List<CartItem> getCartItems() { return cartItems; }
-    public void setCartItems(List<CartItem> cartItems) { this.cartItems = cartItems; }
+    public void addCartItems(List<CartItem> cartItems) { this.cartItems = cartItems; }
 }

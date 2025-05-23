@@ -10,16 +10,16 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    private List<Item> items;
-
     private String address;
     private String phone;
     private String logo;
+    private String image;
     private String description;
     private String workingHours; // مثلاً: "08:00 - 23:00"
     private int totalOrders;
@@ -32,6 +32,9 @@ public class Restaurant {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<Item> items;
 
 
 }

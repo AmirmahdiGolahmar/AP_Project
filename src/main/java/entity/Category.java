@@ -27,7 +27,7 @@ public class Category {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
-    public List<Restaurant> getRestaurants() { return restaurants; }
-    public void setRestaurants(List<Restaurant> restaurants) { this.restaurants = restaurants; }
+//
+//    public List<Restaurant> getRestaurants() { return restaurants; }
+//    public void setRestaurants(List<Restaurant> restaurants) { this.restaurants = restaurants; }
 }

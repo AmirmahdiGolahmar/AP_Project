@@ -13,17 +13,21 @@ public class Item {
 
     private String name;
 
-    private String photo; // URL یا Base64
+    private String photo;
 
     private String description;
 
     private double price;
 
-    private int inventory;
+    private int supply;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @ManyToMany
+    @JoinTable(
+            name = "item_categories",
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> categories;
 
     private String keywords;
 
@@ -33,27 +37,24 @@ public class Item {
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    private List<Comment> comments;
-
     public Item() {}
 
     public Item(Long id, String name, String photo, String description, double price,
-                int inventory, String category, String keywords, double rating,
+                int supply, List<Category> categories, String keywords, double rating,
                 Restaurant restaurant, List<Comment> comments) {
         this.id = id;
         this.name = name;
         this.photo = photo;
         this.description = description;
         this.price = price;
-        this.inventory = inventory;
-        //Complete the category handling
+        this.supply = supply;
+        this.categories = categories;
         this.keywords = keywords;
         this.rating = rating;
         this.restaurant = restaurant;
-        this.comments = comments;
     }
 
+    // Getters and Setters
     public Long getId() { return id; }
 
     public String getName() { return name; }
@@ -68,11 +69,11 @@ public class Item {
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
 
-    public int getInventory() { return inventory; }
-    public void setInventory(int inventory) { this.inventory = inventory; }
+    public int getSupply() { return supply; }
+    public void setSupply(int supply) { this.supply = supply; }
 
-    public Category getCategory() { return category; }
-    public void setCategory(Category category) { this.category = category; }
+    public List<Category> getCategories() { return categories; }
+    public void setCategories(List<Category> categories) { this.categories = categories; }
 
     public String getKeywords() { return keywords; }
     public void setKeywords(String keywords) { this.keywords = keywords; }
@@ -82,8 +83,4 @@ public class Item {
 
     public Restaurant getRestaurant() { return restaurant; }
     public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
-
-    public List<Comment> getComments() { return comments; }
-    public void setComments(List<Comment> comments) { this.comments = comments; }
 }
-

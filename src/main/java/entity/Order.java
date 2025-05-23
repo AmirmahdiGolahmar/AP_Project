@@ -10,10 +10,10 @@ import java.util.List;
 public class Order {
 
     @Id
-    private Long id; // همون شناسه‌ی Cart (سبد خرید)
+    private Long id;
 
     @OneToOne
-    @MapsId // برای اینکه id این کلاس، id همون cart باشه
+    @MapsId
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
@@ -25,7 +25,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "delivery_id")
-    private Delivery assignedTo; // مثلاً نام پیک
+    private Delivery assignedTo;
 
     private LocalDateTime confirmedAt;
 
