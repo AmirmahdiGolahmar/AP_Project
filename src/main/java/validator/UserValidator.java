@@ -1,8 +1,11 @@
 package validator;
 
 
+import dto.LoginRequest;
 import exception.InvalidInputException;
 import dto.UserRegistrationRequest;
+
+import java.util.Map;
 
 public class UserValidator {
 
@@ -15,7 +18,8 @@ public class UserValidator {
             throw new InvalidInputException("Invalid field full name");
         }
 
-        if (request.getMobile() == null || request.getMobile().length() != 11) {
+        if (request.getMobile() == null || request.getMobile().length() != 11
+                || !request.getMobile().startsWith("09")) {
             throw new InvalidInputException("Invalid field mobile");
         }
 
@@ -31,4 +35,11 @@ public class UserValidator {
             throw new InvalidInputException("Invalid field role");
         }
     }
+
+    public static void validateLogin(LoginRequest request) {
+        if (request.getMobile() == null || request.getPassword() == null) {
+            throw new InvalidInputException("Phone and password must be provided");
+        }
+    }
+
 }

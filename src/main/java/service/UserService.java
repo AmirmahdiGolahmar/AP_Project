@@ -1,14 +1,26 @@
 package service;
+import dto.LoginRequest;
 import dto.UserRegistrationRequest;
 import entity.*;
 import java.util.List;
 import exception.*;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
+import org.hibernate.query.Query;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
+import util.HibernateUtil;
 import validator.*;
 import dto.UserRegistrationRequest;
 import dao.*;
+import entity.User;
+import org.hibernate.Session;
+import util.HibernateUtil;
+import exception.AuthenticationException;
+
+
 
 public class UserService {
     private final CustomerDao customerDao;
@@ -56,8 +68,6 @@ public class UserService {
         }
     }
 
-
-
     public void updateCustomer(Customer customer) {
         customerDao.update(customer);
     }
@@ -71,7 +81,6 @@ public class UserService {
     }
 
     public List<Customer> findAllCustomers() { return customerDao.findAll(); }
-
 
     public void updateSeller(Seller seller) {
         sellerDao.update(seller);
@@ -135,32 +144,28 @@ public class UserService {
         return null;
     }
 
+    public User authenticateUser(String mobile, String password) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query query = session.createQuery(
+                    "FROM User WHERE mobile = :mobile", User.class);
+            query.setParameter("mobile", mobile);
+            User user = (User) query.getSingleResultOrNull();
 
-    public User login(String mobile, String password) {
-        User user = null;
+            if (user == null)
+                throw new InvalidCredentialsException("User not found with mobile: " + mobile);
+            if (!user.getPassword().equals(password)) {
+                throw new InvalidCredentialsException("Invalid password");
+            }
+            return user;
 
-        try {
-            user = customerDao.findByMobile(mobile);
-        } catch (NoResultException ignored) {}
-
-        if (user == null) {
-            try {
-                user = sellerDao.findByMobile(mobile);
-            } catch (NoResultException ignored) {}
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to authenticate user", e);
         }
+    }
 
-        if (user == null) {
-            try {
-                user = deliveryDao.findByMobile(mobile);
-            } catch (NoResultException ignored) {}
-        }
-
-        if (user == null) throw new UserNotFoundException(mobile);
-
-        if (!user.getPassword().equals(password))
-            throw new InvalidCredentialsException();
-
-        return user;
+    public User login(LoginRequest request) {
+        UserValidator.validateLogin(request);
+        return authenticateUser(request.getMobile(), request.getPassword());
     }
 
     private <T> void saveWithDuplicationCheck(GenericDao<T> dao, T entity) {

@@ -3,13 +3,12 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.LoginRequest;
-import entity.BankInfo;
+import dto.LoginResponse;
 import io.jsonwebtoken.Claims;
 import service.UserService;
 import static spark.Spark.*;
 import exception.*;
 
-import dao.*;
 import entity.*;
 import util.JwtUtil;
 import util.LocalDateTimeAdapter;
@@ -35,15 +34,15 @@ public class UserController {
                 UserRegistrationRequest request = gson.fromJson(req.body(), UserRegistrationRequest.class);
                 try {
                     userService.createUser(request);
-                    res.status(201);
+                    res.status(200);
                     return gson.toJson(Map.of("message", "User registered successfully"));
-
-                } catch (AlreadyExistsException e) {
-                    res.status(409);
-                    return gson.toJson(Map.of("error", e.getMessage()));
 
                 } catch (InvalidInputException e) {
                     res.status(400);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+
+                } catch (AlreadyExistsException e) {
+                    res.status(409);
                     return gson.toJson(Map.of("error", e.getMessage()));
 
                 } catch (Exception e) {
@@ -52,6 +51,100 @@ public class UserController {
                     return gson.toJson(Map.of("error", "Internal server error"));
                 }
             });
+
+            post("/login", (req, res) -> {
+
+                try {
+                    LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
+                    User user = userService.login(loginRequest);
+                    String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
+                    LoginResponse userDto = new LoginResponse(user);
+
+                    res.status(200);
+                    return gson.toJson(Map.of(
+                            "message", "Login successful",
+                            "token", token,
+                            "user", userDto
+                    ));
+
+                } catch (InvalidInputException iie) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", iie.getMessage()));
+
+                } catch (InvalidCredentialsException ice){
+                    res.status(401);
+                    return gson.toJson(Map.of("error", "Unauthorized request"));
+
+                } catch (RuntimeException e) {
+                    res.status(500);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+                }
+
+
+            });
+
+            get("/profile", (req, res) -> {
+                String authHeader = req.headers("Authorization");
+
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", "Missing or invalid Authorization header"));
+                }
+
+                String token = authHeader.substring(7);
+                Claims claims;
+                try {
+                    claims = JwtUtil.verifyToken(token);
+                } catch (Exception e) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", "Invalid token"));
+                }
+
+                Long userId = Long.valueOf(claims.getSubject());
+                User user = userService.findUserById(userId);
+                if (user == null) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", "User not found"));
+                }
+                res.status(200);
+                return gson.toJson(user);
+
+            });
+
+//            put("/profile", (req, res) -> {
+//                String authHeader = req.headers("Authorization");
+//
+//                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//                    res.status(401);
+//                    return gson.toJson(Map.of("error", "Missing or invalid Authorization header"));
+//                }
+//
+//                String token = authHeader.substring(7);
+//                Claims claims;
+//                try {
+//                    claims = JwtUtil.verifyToken(token);
+//                } catch (Exception e) {
+//                    res.status(401);
+//                    return gson.toJson(Map.of("error", "Invalid token"));
+//                }
+//
+//                Long userId = Long.valueOf(claims.getSubject());
+//                User user = userService.findUserById(userId);
+//
+//                try {
+//                    switch (user) {
+////                        case Customer customer -> userService.updateCustomer();
+////                        case Seller seller -> userService.updateSeller();
+////                        case Delivery delivery -> userService.updateDelivery();
+//                        case null, default -> throw new InvalidCredentialsException();
+//                    }
+//                    res.status(200);
+//                    return gson.toJson(Map.of("message", "Profile updated successfully"));
+//                } catch (InvalidInputException e) {
+//                    res.status(400);
+//                    return gson.toJson(Map.of("error", e.getMessage()));
+//                }
+//            });
 
         });
 
@@ -80,36 +173,6 @@ public class UserController {
             userService.deleteUser(id);
             return "User deleted with id: " + id;
         });
-
-        post("/login", (req, res) -> {
-            LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
-
-            try {
-                User user = userService.login(loginRequest.getMobile(), loginRequest.getPassword());
-                String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
-
-                res.status(200);
-                return gson.toJson(Map.of(
-                        "token", token,
-                        "full name", user.getFullName(),
-                        "id", user.getId(),
-                        "role", user.getRole().toString()
-                ));
-
-            } catch (UserNotFoundException e) {
-                res.status(404);
-                return gson.toJson(Map.of("error", e.getMessage()));
-
-            } catch (InvalidCredentialsException e) {
-                res.status(401);
-                return gson.toJson(Map.of("error", e.getMessage()));
-
-            } catch (Exception e) {
-                res.status(500);
-                return gson.toJson(Map.of("error", "Internal server error"));
-            }
-        });
-
 
         get("/me", (req, res) -> {
             String authHeader = req.headers("Authorization");
