@@ -2,6 +2,7 @@ package org.example;
 import java.util.logging.LogManager;
 import static spark.Spark.*;
 
+import controller.RestaurantController;
 import controller.UserController;
 import entity.Customer;
 import entity.User;
@@ -31,5 +32,6 @@ public class Main {
 
         port(4567);
         UserController.initRoutes();
+        RestaurantController.initRoutes();
     }
 }

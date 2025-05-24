@@ -1,21 +1,21 @@
 package util;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
-import java.security.Key;
-import java.util.Date;
-
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
 public class JwtUtil {
-    private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final long EXPIRATION_TIME = 86400000; // 1 روز
+
+    private static final String SECRET = "s3cUr3JwtK3yForHmacSha256_2025!@#";
+    private static final Key secretKey = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+
+    private static final long EXPIRATION_TIME = 86400000L;
 
     public static String generateToken(Long userId, String role) {
         return Jwts.builder()
@@ -23,14 +23,14 @@ public class JwtUtil {
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(key)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public static Claims verifyToken(String token) {
+    public static Claims decodeJWT(String token) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
@@ -39,4 +39,3 @@ public class JwtUtil {
         }
     }
 }
-

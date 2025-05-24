@@ -122,7 +122,7 @@ public class UserController {
             String token = authHeader.substring(7);
 
             try {
-                Claims claims = JwtUtil.verifyToken(token);
+                Claims claims = JwtUtil.decodeJWT(token);
                 Long userId = Long.valueOf(claims.getSubject());
                 String role = claims.get("role", String.class);
 
@@ -135,7 +135,6 @@ public class UserController {
                 return gson.toJson(Map.of("error", e.getMessage()));
             }
         });
-
 
     };
 
