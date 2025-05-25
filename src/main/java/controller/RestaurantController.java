@@ -15,6 +15,7 @@ import io.jsonwebtoken.Claims;
 import service.UserService;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
+import static validator.SellerValidator.validateSellerAndRestaurant;
 
 import exception.*;
 
@@ -67,37 +68,28 @@ public class RestaurantController {
             });
 
             put("/:id", (req, res) -> {
-                String userId = authorizeAndExtractUserId(req, res, gson);
-                User seller = new UserDao().findById(Long.parseLong(userId));
-                if (seller == null || seller.getRole() != UserRole.SELLER) {
-                    res.status(403);
-                    return gson.toJson(Map.of("error", "Only sellers can edit restaurant info"));
-                }
-                String idParam = req.params(":id");
-                Long restaurantId;
-                try {
-                    restaurantId = Long.parseLong(idParam);
-                } catch (NumberFormatException e) {
-                    res.status(400);
-                    return gson.toJson(Map.of("error", "Invalid restaurant ID"));
-                }
+                res.type("application/json");
 
-                Restaurant restaurant = restaurantService.findById(restaurantId);
-                if (restaurant == null) {
-                    res.status(404);
-                    return gson.toJson(Map.of("error", "Restaurant not found"));
-                }
-                if (!restaurant.getSeller().getId().equals(seller.getId())) {
-                    res.status(403);
-                    return gson.toJson(Map.of("error", "You are not authorized to update this restaurant"));
-                }
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                Long restaurantId = Long.parseLong(req.params(":id"));
+
+                validateSellerAndRestaurant(userId, restaurantId);
 
                 RestaurantUpdateRequest updateRequest = gson.fromJson(req.body(), RestaurantUpdateRequest.class);
 
                 try {
-                    RestaurantResponse updatedRestaurant = restaurantService.updateRestaurant(restaurantId, updateRequest);
+                    RestaurantResponse updatedRestaurant =
+                            restaurantService.updateRestaurant(restaurantId, updateRequest);
+
                     res.status(200);
                     return gson.toJson(updatedRestaurant);
+                } catch (SellerNotFoundException | NotFoundException e) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+                }
+                catch (AccessDeniedException e) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", e.getMessage()));
                 } catch (IllegalArgumentException e) {
                     res.status(400);
                     return gson.toJson(Map.of("error", e.getMessage()));
@@ -106,6 +98,9 @@ public class RestaurantController {
                     return gson.toJson(Map.of("error", "Internal server error"));
                 }
             });
+
+
+
 
         });
     }

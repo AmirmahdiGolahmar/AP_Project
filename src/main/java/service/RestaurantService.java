@@ -7,7 +7,9 @@ import dto.RestaurantUpdateRequest;
 import entity.Restaurant;
 import entity.Seller;
 import entity.User;
+import exception.AccessDeniedException;
 import exception.AlreadyExistsException;
+import exception.NotFoundException;
 import jakarta.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
 
@@ -47,10 +49,7 @@ public class RestaurantService {
 
     public RestaurantResponse updateRestaurant(Long restaurantId, RestaurantUpdateRequest request) {
         Restaurant restaurant = restaurantDao.findById(restaurantId);
-        if (restaurant == null) {
-            throw new IllegalArgumentException("Restaurant not found");
-        }
-
+        // اعتبارسنجی و آپدیت
         if (request.getName() != null) {
             restaurant.setName(request.getName());
         }
@@ -70,18 +69,17 @@ public class RestaurantService {
         if (request.getTax_fee() != null) {
             if (request.getTax_fee() < 0)
                 throw new IllegalArgumentException("Tax fee cannot be negative");
+            restaurant.setTaxFee(request.getTax_fee());
         }
 
         if (request.getAdditional_fee() != null) {
             if (request.getAdditional_fee() < 0)
                 throw new IllegalArgumentException("Additional fee cannot be negative");
-            restaurant.setAdditionalFee(request.getAdditional_fee().doubleValue());
+            restaurant.setAdditionalFee(request.getAdditional_fee());
         }
 
         restaurantDao.update(restaurant);
-
         return new RestaurantResponse(restaurant);
     }
-
 
 }
