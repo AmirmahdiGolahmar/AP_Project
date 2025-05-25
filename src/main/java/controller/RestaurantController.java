@@ -2,8 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dto.RestaurantRegistrationRequest;
-import dto.UserRegistrationRequest;
+import dto.*;
 import service.RestaurantService;
 import service.UserService;
 import util.LocalDateTimeAdapter;
@@ -11,11 +10,12 @@ import util.LocalDateTimeAdapter;
 import java.time.LocalDateTime;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dto.LoginRequest;
 import entity.BankInfo;
 import io.jsonwebtoken.Claims;
 import service.UserService;
 import static spark.Spark.*;
+import static util.AuthorizationHandler.authorizeAndExtractUserId;
+
 import exception.*;
 
 import dao.*;
@@ -36,30 +36,13 @@ public class RestaurantController {
     public static void initRoutes(){
         path("/restaurant", () -> {
             post("", (req, res) -> {
-                // 1. خواندن Authorization header
-                String authHeader = req.headers("Authorization");
-                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                    res.status(401);
-                    return gson.toJson(Map.of("error", "Authorization header is missing or invalid"));
-                }
 
-                // 2. استخراج توکن و اعتبارسنجی
-                String token = authHeader.substring(7); // Remove "Bearer "
-                Claims claims;
-                try {
-                    claims = JwtUtil.decodeJWT(token);
-                } catch (Exception e) {
-                    res.status(401);
-                    return gson.toJson(Map.of("error", "Invalid token"));
-                }
-
-                // 3. گرفتن mobile از توکن و پیدا کردن یوزر
-                String userId = claims.getSubject();
+                String userId = authorizeAndExtractUserId(req, res, gson);
                 User seller = new UserDao().findById(Long.parseLong(userId)); // فرض بر اینه که متدش وجود داره
 
                 if (seller == null || seller.getRole() != UserRole.SELLER) {
                     res.status(403); // Forbidden
-                    return gson.toJson(Map.of("error", "Only sellers can create restaurants" + seller.getRole()));
+                    return gson.toJson(Map.of("error", "Only sellers can create restaurants"));
                 }
 
                 // 4. ساختن رستوران
@@ -73,8 +56,57 @@ public class RestaurantController {
 
             get("/mine", (req, res) -> {
                 res.type("application/json");
-                return gson.toJson(restaurantService.findAllRestaurants());
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                User seller = new UserDao().findById(Long.parseLong(userId)); // فرض بر اینه که متدش وجود داره
+
+                if (seller == null || seller.getRole() != UserRole.SELLER) {
+                    res.status(403); // Forbidden
+                    return gson.toJson(Map.of("error", "Only sellers can see restaurant"));
+                }
+                return gson.toJson(restaurantService.findRestaurantsByISellerId(seller.getId()));
             });
+
+            put("/:id", (req, res) -> {
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                User seller = new UserDao().findById(Long.parseLong(userId));
+                if (seller == null || seller.getRole() != UserRole.SELLER) {
+                    res.status(403);
+                    return gson.toJson(Map.of("error", "Only sellers can edit restaurant info"));
+                }
+                String idParam = req.params(":id");
+                Long restaurantId;
+                try {
+                    restaurantId = Long.parseLong(idParam);
+                } catch (NumberFormatException e) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", "Invalid restaurant ID"));
+                }
+
+                Restaurant restaurant = restaurantService.findById(restaurantId);
+                if (restaurant == null) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", "Restaurant not found"));
+                }
+                if (!restaurant.getSeller().getId().equals(seller.getId())) {
+                    res.status(403);
+                    return gson.toJson(Map.of("error", "You are not authorized to update this restaurant"));
+                }
+
+                RestaurantUpdateRequest updateRequest = gson.fromJson(req.body(), RestaurantUpdateRequest.class);
+
+                try {
+                    RestaurantResponse updatedRestaurant = restaurantService.updateRestaurant(restaurantId, updateRequest);
+                    res.status(200);
+                    return gson.toJson(updatedRestaurant);
+                } catch (IllegalArgumentException e) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+                } catch (Exception e) {
+                    res.status(500);
+                    return gson.toJson(Map.of("error", "Internal server error"));
+                }
+            });
+
         });
     }
 }

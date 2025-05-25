@@ -13,13 +13,13 @@ public class CustomerDao extends GenericDao<Customer> {
         super(Customer.class);
     }
 
-    public Customer findByMobile(String mobile) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery(
-                            "FROM Customer WHERE mobile = :mobile", Customer.class)
-                    .setParameter("mobile", mobile)
-                    .uniqueResult();
-        }
-    }
+//    public Customer findByMobile(String mobile) {
+//        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+//            return session.createQuery(
+//                            "FROM Customer WHERE mobile = :mobile", Customer.class)
+//                    .setParameter("mobile", mobile)
+//                    .uniqueResult();
+//        }
+//    }
 
 }

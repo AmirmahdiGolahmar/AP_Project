@@ -11,12 +11,12 @@ public class SellerDao extends GenericDao<Seller> {
         super(Seller.class);
     }
 
-    public Seller findByMobile(String mobile) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery(
-                            "FROM Seller WHERE mobile = :mobile", Seller.class)
-                    .setParameter("mobile", mobile)
-                    .uniqueResult();
-        }
-    }
+//    public Seller findByMobile(String mobile) {
+//        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+//            return session.createQuery(
+//                            "FROM Seller WHERE mobile = :mobile", Seller.class)
+//                    .setParameter("mobile", mobile)
+//                    .uniqueResult();
+//        }
+//    }
 }
