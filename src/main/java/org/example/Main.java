@@ -188,5 +188,95 @@ module DFF (
 
         endmodule
 
+
+        `timescale 1ns/1ps
+
+module tb_SecureSystem();
+
+    reg clk = 0;
+    reg reset;
+    reg request;
+    reg confirm;
+    reg [3:0] data_in;
+    wire [3:0] reg1_out;
+    wire [3:0] reg2_out;
+    wire [2:0] fsm_state;
+
+    // Instantiate DUT
+    SecureSystem dut (
+        .clk(clk),
+        .reset(reset),
+        .request(request),
+        .confirm(confirm),
+        .data_in(data_in),
+        .reg1_out(reg1_out),
+        .reg2_out(reg2_out),
+        .fsm_state(fsm_state)
+    );
+
+    // Generate clock
+    always #5 clk = ~clk;
+
+    // Stimulus
+    initial begin
+        $display("Starting simulation...");
+        $dumpfile("SecureSystem.vcd");  // For GTKWave
+        $dumpvars(0, tb_SecureSystem);
+
+        // Initial values
+        reset = 1;
+        request = 0;
+        confirm = 0;
+        data_in = 4'b0000;
+
+        #10 reset = 0;
+
+        // Step 1: فعال‌سازی سامانه (request)
+        #10 request = 1;
+
+        // Step 2: وارد کردن رمز صحیح
+        #10 data_in = 4'b1010;  // CORRECT password
+        #10 confirm = 1;  // ورود رمز
+        #10 confirm = 0;
+
+        // Step 3: وارد کردن داده‌ی فرد (مثلاً 5)
+        #10 data_in = 4'b0101;  // فرد
+        #10 confirm = 1;        // ذخیره داده
+        #10 confirm = 0;
+
+        // انتظار برای ذخیره
+        #10;
+
+        // بررسی مقدار ذخیره‌شده
+        $display("reg1 (odd): %b, reg2 (even): %b", reg1_out, reg2_out);
+
+        // Step 4: وارد کردن رمز اشتباه
+        #10 request = 0;  // بازگشت به IDLE
+        #10 request = 1;
+        #10 data_in = 4'b1111;  // WRONG password
+        #10 confirm = 1;
+        #10 confirm = 0;
+
+        // Step 5: وارد کردن داده‌ی زوج (مثلاً 8) با رمز صحیح
+        #10 request = 0;
+        #10 request = 1;
+        #10 data_in = 4'b1010;  // صحیح
+        #10 confirm = 1;
+        #10 confirm = 0;
+
+        #10 data_in = 4'b1000;  // زوج
+        #10 confirm = 1;
+        #10 confirm = 0;
+
+        #10;
+
+        $display("reg1 (odd): %b, reg2 (even): %b", reg1_out, reg2_out);
+
+        #20 $finish;
+    end
+
+endmodule
+
+
  */
 
