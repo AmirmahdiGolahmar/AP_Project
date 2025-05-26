@@ -1,10 +1,15 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
+@Getter
+@Setter
 public class User {
 
     public User() { }
@@ -23,8 +28,10 @@ public class User {
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.PRIVATE)
     private Long id;
 
+    @Setter(AccessLevel.PRIVATE)
     private String username;
 
     @Column(nullable = false)
@@ -50,32 +57,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String mobile;
 
-    public Long getId() { return id; }
-
-    public String getUsername() { return username; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-
-    public UserRole getRole() { return role; }
-    public void setRole(UserRole role) { this.role = role; }
-
-    public String getFullName() { return fullName; }
-    public void setFullName(String firstName) { this.fullName = firstName; }
-
-    public String getMobile() { return mobile; }
-    public void setMobile(String mobile) { this.mobile = mobile; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getPhoto() { return photo; }
-    public void setPhoto(String photo) { this.photo = photo; }
-
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-    public BankInfo getBankInfo() { return bankInfo; }
-    public void setBankInfo(BankInfo bankInfo) { this.bankInfo = bankInfo; }
+   public void setBankName(String bankName) {
+       this.bankInfo.setBankName(bankName);
+   }
+   public void setAccountNumber(String accountNumber) {
+       this.bankInfo.setAccountNumber(accountNumber);
+   }
 
 }

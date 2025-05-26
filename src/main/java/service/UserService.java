@@ -1,5 +1,5 @@
 package service;
-import dto.UserRegistrationRequest;
+import dto.*;
 import entity.*;
 import java.util.List;
 import exception.*;
@@ -14,18 +14,20 @@ public class UserService {
     private final CustomerDao customerDao;
     private final SellerDao sellerDao;
     private final DeliveryDao deliveryDao;
+    private final UserDao userDao;
 
     public UserService() {
         this.customerDao = new CustomerDao();
         this.sellerDao = new SellerDao();
         this.deliveryDao = new DeliveryDao();
+        this.userDao = new UserDao();
     }
 
     public void createUser(UserRegistrationRequest request) {
 
         UserValidator.validateUser(request);
 
-        BankInfo bankInfo = new BankInfo(request.getBankName(), request.getAccountNumber());
+        BankInfo bankInfo = new BankInfo(request.getBank_name(), request.getAccount_number());
         UserRole userRole;
         switch (request.getRole().toLowerCase()) {
             case "buyer":
@@ -57,47 +59,9 @@ public class UserService {
     }
 
 
-
-    public void updateCustomer(Customer customer) {
-        customerDao.update(customer);
-    }
-
-    public void deleteCustomer(Long customerId) {
-        customerDao.delete(customerId);
-    }
-
-    public Customer findCustomerById(Long id) {
-        return customerDao.findById(id);
-    }
-
     public List<Customer> findAllCustomers() { return customerDao.findAll(); }
 
-
-    public void updateSeller(Seller seller) {
-        sellerDao.update(seller);
-    }
-
-    public void deleteSeller(Long sellerId) {
-        sellerDao.delete(sellerId);
-    }
-
-    public Seller findSellerById(Long id) {
-        return sellerDao.findById(id);
-    }
-
     public List<Seller> findAllSellers() { return sellerDao.findAll(); }
-
-    public void updateDelivery(Delivery delivery) {
-        deliveryDao.update(delivery);
-    }
-
-    public void deleteDelivery(Long deliveryId) {
-        deliveryDao.delete(deliveryId);
-    }
-
-    public Delivery findDeliveryById(Long id) {
-        return deliveryDao.findById(id);
-    }
 
     public List<Delivery> findAllDeliveries() { return deliveryDao.findAll(); }
 
@@ -178,12 +142,12 @@ public class UserService {
 
     private void fillUserFields(User user, UserRegistrationRequest request) {
         user.setPassword(request.getPassword());
-        user.setFullName(request.getFullName());
+        user.setFullName(request.getFull_name());
         user.setMobile(request.getMobile());
         user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
         user.setPhoto(request.getPhoto());
-        user.setBankInfo(new BankInfo(request.getBankName(), request.getAccountNumber()));
+        user.setBankInfo(new BankInfo(request.getBank_name(), request.getAccount_number()));
         switch (request.getRole().toLowerCase()) {
             case "buyer":
             case "customer":
@@ -197,6 +161,32 @@ public class UserService {
         }
     }
 
+    public void updateProfile(Long userId, UserProfileUpdateRequest request) {
+        User user = userDao.findById(userId);
 
+        if (request.getFull_name() != null) {
+            user.setFullName(request.getFull_name());
+        }
+        if (request.getPhone() != null) {
+            user.setMobile(request.getPhone());
+        }
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+        }
+        if (request.getAddress() != null) {
+            user.setAddress(request.getAddress());
+        }
+        if (request.getProfileImageBase64() != null) {
+            user.setPhoto(request.getProfileImageBase64());
+        }
+        if(request.getBank_name() != null) {
+            user.setBankName(request.getBank_name());
+        }
+        if (request.getAccount_number() != null) {
+            user.setAccountNumber(request.getAccount_number());
+        }
+
+        userDao.update(user);
+    }
 }
 

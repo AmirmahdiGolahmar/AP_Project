@@ -11,7 +11,7 @@ public class UserValidator {
             throw new InvalidInputException("Invalid field password");
         }
 
-        if (request.getFullName() == null || request.getFullName().isEmpty()) {
+        if (request.getFull_name() == null || request.getFull_name().isEmpty()) {
             throw new InvalidInputException("Invalid field full name");
         }
 

@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public class UserRegistrationRequest {
     String password;
-    String fullName;
+    String full_name;
     String mobile, email, address, photo;
-    String bankName, accountNumber;
+    String bank_name, account_number;
     String role;
 }
