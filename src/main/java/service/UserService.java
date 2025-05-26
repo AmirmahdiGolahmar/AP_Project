@@ -144,28 +144,9 @@ public class UserService {
         return null;
     }
 
-    public User authenticateUser(String mobile, String password) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query query = session.createQuery(
-                    "FROM User WHERE mobile = :mobile", User.class);
-            query.setParameter("mobile", mobile);
-            User user = (User) query.getSingleResultOrNull();
-
-            if (user == null)
-                throw new InvalidCredentialsException("User not found with mobile: " + mobile);
-            if (!user.getPassword().equals(password)) {
-                throw new InvalidCredentialsException("Invalid password");
-            }
-            return user;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to authenticate user", e);
-        }
-    }
-
     public User login(LoginRequest request) {
         UserValidator.validateLogin(request);
-        return authenticateUser(request.getMobile(), request.getPassword());
+        return UserValidator.authenticateUser(request.getMobile(), request.getPassword());
     }
 
     private <T> void saveWithDuplicationCheck(GenericDao<T> dao, T entity) {

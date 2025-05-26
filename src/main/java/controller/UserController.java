@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.LoginRequest;
 import dto.LoginResponse;
+import entity.BankInfo;
 import io.jsonwebtoken.Claims;
 import service.UserService;
 import static spark.Spark.*;
 import exception.*;
 
+import dao.*;
 import entity.*;
 import util.JwtUtil;
 import util.LocalDateTimeAdapter;
@@ -58,6 +60,7 @@ public class UserController {
                     LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
                     User user = userService.login(loginRequest);
                     String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
+
                     LoginResponse userDto = new LoginResponse(user);
 
                     res.status(200);

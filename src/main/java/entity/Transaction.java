@@ -18,40 +18,36 @@ enum PaymentMethod {
 @Entity
 @Table(name = "transactions")
 public class Transaction {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private TransactionType type;
+    @ManyToOne
+    @JoinColumn(name = "customerMobile")
+    private Customer customer;
 
-    private double amount;
+    private TransactionType transactionType;
 
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
-
-    private LocalDateTime timestamp;
-
-    @Embedded
-    private BankInfo bankInfo;
-
-
-    public Transaction() {
-        this.timestamp = LocalDateTime.now();
+    public Transaction() {}
+    public Transaction(Customer customer, TransactionType transactionType) {
+        this.customer = customer;
+        this.transactionType = transactionType;
     }
 
-    public Long getId() { return id; }
+    public Customer getCustomer() {
+        return customer;
+    }
 
-    public TransactionType getType() { return type; }
-    public void setType(TransactionType type) { this.type = type; }
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-    public double getAmount() { return amount; }
-    public void setAmount(double amount) { this.amount = amount; }
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
 
-    public PaymentMethod getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(PaymentMethod paymentMethod) { this.paymentMethod = paymentMethod; }
-
-    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
 }
 

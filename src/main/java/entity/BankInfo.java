@@ -2,30 +2,17 @@ package entity;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Embeddable
 public class BankInfo {
-
-    private String accountNumber;
     private String bankName;
-    private Double balance;
-
+    private String accountNumber;
+    private Double walletBalance;
 
     public BankInfo() {}
-
     public BankInfo(String bankName, String accountNumber) {
         this.bankName = bankName;
         this.accountNumber = accountNumber;
-        this.balance = 0.0;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+        this.walletBalance = 0.0;
     }
 
     public String getBankName() {
@@ -35,10 +22,18 @@ public class BankInfo {
         this.bankName = bankName;
     }
 
-    public double getBalance() {
-        return balance;
+
+    public String getAccountNumber() {
+        return accountNumber;
     }
-    public void setBalance(double balance) {
-        this.balance = balance;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public Double getWalletBalance() {
+        return walletBalance;
+    }
+    public void setWalletBalance(Double walletBalance) {
+        this.walletBalance = walletBalance;
     }
 }

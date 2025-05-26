@@ -1,7 +1,11 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -9,45 +13,73 @@ import java.util.List;
 @Table(name = "orders")
 public class Order {
 
+    @Getter
     @Id
-    private Long id; // همون شناسه‌ی Cart (سبد خرید)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Getter
+    @Setter
     @OneToOne
-    @MapsId // برای اینکه id این کلاس، id همون cart باشه
+    @MapsId
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
+    @Setter
+    @Getter
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @Setter
+    @Getter
+    private String address;
+    @Setter
+    @Getter
+    private double rawPrice;
+    @Setter
+    @Getter
+    private double taxFee;
+    @Setter
+    @Getter
+    private double deliveryFee;
+    @Setter
+    @Getter
+    private double totalPrice;
+
+    @Setter
+    @Getter
     @ManyToOne
     private Customer customer;
 
+    @Setter
+    @Getter
     @ManyToOne
     @JoinColumn(name = "delivery_id")
-    private Delivery assignedTo; // مثلاً نام پیک
+    private Delivery assignedTo;
 
+    @Setter
+    @Getter
     private LocalDateTime confirmedAt;
+    private LocalDateTime updatedAt;
 
-    public Order() {
-        this.confirmedAt = LocalDateTime.now();
+    @OneToMany(mappedBy = "order")
+    private List<Comment> comments;
+
+    public Order() {}
+
+    public Order(Cart cart, String address, double rawPrice, double taxFee,
+                 double deliveryFee, double totalPrice, Customer customer, Delivery assignedTo) {
+        this.cart = cart;
         this.status = OrderStatus.PENDING;
+        this.confirmedAt = LocalDateTime.now();
+        this.address = address;
+        this.rawPrice = rawPrice;
+        this.taxFee = taxFee;
+        this.deliveryFee = deliveryFee;
+        this.totalPrice = totalPrice;
+        this.customer = customer;
+        this.assignedTo = assignedTo;
+        this.comments = new ArrayList<>();
     }
 
-    public Long getId() { return id; }
-
-    public Cart getCart() { return cart; }
-    public void setCart(Cart cart) { this.cart = cart; }
-
-    public OrderStatus getStatus() { return status; }
-    public void setStatus(OrderStatus status) { this.status = status; }
-
-    public Customer getCustomer() { return customer; }
-    public void setCustomer(Customer customer) { this.customer = customer; }
-
-    public Delivery getAssignedTo() { return assignedTo; }
-    public void setAssignedTo(Delivery assignedTo) { this.assignedTo = assignedTo; }
-
-    public LocalDateTime getConfirmedAt() { return confirmedAt; }
-    public void setConfirmedAt(LocalDateTime confirmedAt) { this.confirmedAt = confirmedAt; }
 }

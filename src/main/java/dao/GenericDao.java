@@ -1,6 +1,8 @@
 package dao;
 
+import entity.Customer;
 import entity.Delivery;
+import entity.User;
 import exception.AlreadyExistsException;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
@@ -85,6 +87,19 @@ public abstract class GenericDao<T> {
             session = HibernateUtil.getSessionFactory().openSession();
             return session.createQuery("FROM " + clazz.getSimpleName(), clazz).list();
         } finally {
+            if (session != null) session.close();
+        }
+    }
+
+    public User findByMobile(String mobile) {
+        Session session = null;
+        try  {
+            session = HibernateUtil.getSessionFactory().openSession();
+            return session.createQuery(
+                            "FROM User WHERE mobile = :mobile", User.class)
+                    .setParameter("mobile", mobile)
+                    .uniqueResult();
+        }finally {
             if (session != null) session.close();
         }
     }

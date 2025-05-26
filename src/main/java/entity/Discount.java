@@ -1,10 +1,14 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+
 @Entity
+@Getter
 @Table(name = "discounts")
 public class Discount {
 
@@ -15,15 +19,19 @@ public class Discount {
     @Column(unique = true, length = 12)
     private String code;
 
-    private int maxUsages;
+    private int quantity;
 
     private int usedCount;
 
+    private double amount;
     private double percentage;
 
-    private LocalDateTime expiryDate;
+    private LocalDateTime createdAt;
+    private int duration;
+
 
     @ManyToOne
+    @JoinColumn(name = "customer_mobile")
     private Customer customer;
 
     @ManyToOne
@@ -34,36 +42,28 @@ public class Discount {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
+
     public Discount() {
         this.code = generateCode();
         this.usedCount = 0;
     }
 
-    public Discount(String code, int maxUsages, double percentage, LocalDateTime expiryDate, Customer customer) {
-        this.code = code;
-        this.maxUsages = maxUsages;
+    public Discount(int quantity, double amount, double percentage, LocalDateTime createdAt,
+                    int duration, Customer customer, Item item, Category category, Restaurant restaurant) {
+        this.code = generateCode();
+        this.quantity = quantity;
         this.usedCount = 0;
-        this.percentage = percentage;
-        this.expiryDate = expiryDate;
-        this.customer = customer;
-    }
-
-    public Discount(String code, int maxUsages, double percentage, LocalDateTime expiryDate, Item item) {
-        this.code = code;
-        this.maxUsages = maxUsages;
-        this.usedCount = 0;
-        this.percentage = percentage;
-        this.expiryDate = expiryDate;
-        this.item = item;
-    }
-
-    public Discount(String code, int maxUsages, double percentage, LocalDateTime expiryDate, Category category) {
-        this.code = code;
-        this.maxUsages = maxUsages;
-        this.usedCount = 0;
-        this.percentage = percentage;
-        this.expiryDate = expiryDate;
-        this.category = category;
+        this.amount = amount; //nullable
+        this.percentage = percentage; //nullable
+        this.createdAt = LocalDateTime.now();
+        this.duration = duration; //nullable
+        this.customer = customer; //nullable
+        this.item = item; //nullable
+        this.category = category; //nullable
+        this.restaurant = restaurant; //nullable
     }
 
     private String generateCode() {
@@ -72,29 +72,4 @@ public class Discount {
                 .substring(0, 12)
                 .toUpperCase();
     }
-
-    // Getters and Setters
-
-    public Long getId() { return id; }
-
-    public String getCode() { return code; }
-    public void setCode(String code) { this.code = code; }
-
-    public int getMaxUsages() { return maxUsages; }
-    public void setMaxUsages(int maxUsages) { this.maxUsages = maxUsages; }
-
-    public int getUsedCount() { return usedCount; }
-    public void setUsedCount(int usedCount) { this.usedCount = usedCount; }
-
-    public double getPercentage() { return percentage; }
-    public void setPercentage(double percentage) { this.percentage = percentage; }
-
-    public LocalDateTime getExpiryDate() { return expiryDate; }
-    public void setExpiryDate(LocalDateTime expiryDate) { this.expiryDate = expiryDate; }
-
-    public Item getItem() { return item; }
-    public void setItem(Item item) { this.item = item; }
-
-    public Category getCategory() { return category; }
-    public void setCategory(Category category) { this.category = category; }
 }

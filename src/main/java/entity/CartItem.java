@@ -20,8 +20,6 @@ public class CartItem {
 
     private int quantity;
 
-    private double priceAtOrder;
-
     public Long getId() { return id; }
 
     public Item getItem() { return item; }
@@ -33,6 +31,5 @@ public class CartItem {
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
 
-    public double getPriceAtOrder() { return priceAtOrder; }
-    public void setPriceAtOrder(double priceAtOrder) { this.priceAtOrder = priceAtOrder; }
+    public double getTotalPriceCartItem() { return this.item.getPrice()*quantity; }
 }
