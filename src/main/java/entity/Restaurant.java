@@ -1,9 +1,16 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Restaurant {
 
     @Id
@@ -21,7 +28,6 @@ public class Restaurant {
     private String logo;
     private String image;
     private String description;
-    private String workingHours; // مثلاً: "08:00 - 23:00"
     private int totalOrders;
     private double averageRating;
 
@@ -35,7 +41,5 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<Item> items;
-
-
 }
 
