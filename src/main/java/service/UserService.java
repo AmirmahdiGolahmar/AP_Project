@@ -23,7 +23,7 @@ public class UserService {
         this.userDao = new UserDao();
     }
 
-    public void createUser(UserRegistrationRequest request) {
+    public User createUser(UserRegistrationRequest request) {
 
         UserValidator.validateUser(request);
 
@@ -45,16 +45,19 @@ public class UserService {
             Customer customer = new Customer();
             fillUserFields(customer, request);
             saveWithDuplicationCheck(customerDao, customer);
+            return customer;
 
         } else if (userRole == UserRole.SELLER) {
             Seller seller = new Seller();
             fillUserFields(seller, request);
             saveWithDuplicationCheck(sellerDao, seller);
+            return seller;
 
         } else {
             Delivery delivery = new Delivery();
             fillUserFields(delivery, request);
             saveWithDuplicationCheck(deliveryDao, delivery);
+            return delivery;
         }
     }
 
@@ -87,13 +90,16 @@ public class UserService {
     }
 
     public User findUserById(Long id) {
-        User user = customerDao.findById(id);
-        if (user != null) return user;
+//        User user = customerDao.findById(id);
+//        if (user != null) return user;
+//
+//        user = sellerDao.findById(id);
+//        if (user != null) return user;
+//
+//        user = deliveryDao.findById(id);
+//        if (user != null) return user;
 
-        user = sellerDao.findById(id);
-        if (user != null) return user;
-
-        user = deliveryDao.findById(id);
+       User user = userDao.findById(id);
         if (user != null) return user;
 
         return null;

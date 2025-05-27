@@ -12,40 +12,26 @@ import com.google.gson.Gson;
 
 public class AuthorizationHandler {
     public static String authorizeAndExtractUserId(Request req, Response res, Gson gson) {
-        String authHeader = req.headers("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            res.status(401);
-            res.body(gson.toJson(Map.of("error", "Authorization header is missing or invalid")));
-            return null;
-        }
-
-        String token = authHeader.substring(7);
-
-        System.out.println("**** BlackList : " + TokenBlacklist.blacklist);
-
-        if (TokenBlacklist.contains(token)) {
-            res.status(403);
-            res.body(gson.toJson(Map.of("error", "please login")));
-            return null;
-        }
-
-        Claims claims;
         try {
-            claims = JwtUtil.decodeJWT(token);
+            String authHeader = req.headers("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new AuthenticationException("login first");
+            }
+
+            String token = authHeader.substring(7);
+
+            if (TokenBlacklist.contains(token)) {
+                throw new AuthenticationException("login first");
+            }
+
+            Claims claims = JwtUtil.decodeJWT(token);
+            return claims.getSubject();
+
+        } catch (AuthenticationException e) {
+            throw e;
         } catch (Exception e) {
-            res.status(401);
-            res.body(gson.toJson(Map.of("error", "Invalid token")));
-            return null;
+            throw new AuthenticationException("invalid token");
         }
-
-        String userId = claims.getSubject();
-        if(userId == null) {
-            res.status(401);
-            res.body(gson.toJson(Map.of("error", "Authorization header is missing or invalid")));
-            return null;
-        }
-
-        return userId;
     }
 
 }

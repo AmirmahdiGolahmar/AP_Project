@@ -37,7 +37,7 @@ public class UserController {
             post("/register", (req, res) -> {
                 UserRegistrationRequest request = gson.fromJson(req.body(), UserRegistrationRequest.class);
                 try {
-                    userService.createUser(request);
+                    User user = userService.createUser(request);
                     res.status(201);
                     return gson.toJson(Map.of("message", "User registered successfully"));
 
@@ -86,11 +86,17 @@ public class UserController {
             });
 
             get("/profile", (req, res) ->{
-                res.type("application/json");
-                String userId = authorizeAndExtractUserId(req, res, gson);
-                UserProfileResponse user =
-                        new UserProfileResponse(userService.findUserById((long) Integer.parseInt(userId)));
-                return gson.toJson(user);
+                try{
+                    res.type("application/json");
+                    String userId = authorizeAndExtractUserId(req, res, gson);
+                    UserProfileResponse user =
+                            new UserProfileResponse(userService.findUserById((long) Integer.parseInt(userId)));
+                    return gson.toJson(user);
+                }catch (AuthenticationException e) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+                }
+
             });
 
             put("/profile", (req, res) -> {
