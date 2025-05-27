@@ -1,24 +1,28 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
-
-    public User() { }
 
     public User(String fullName, String mobile,UserRole role,String email, String photo,
                 String address, BankInfo bankInfo, String password) {
         this.fullName = fullName;
         this.mobile = mobile;
-        this.role = role;
         this.email = email;
-        this.photo = photo;
-        this.address = address;
-        this.bankInfo = bankInfo;
         this.password = password;
+        this.role = role;
+        this.address = address;
+        this.photo = photo;
+        this.bankInfo = bankInfo;
         this.username = fullName + "-" + mobile;
     }
 
@@ -49,33 +53,5 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String mobile;
-
-    public Long getId() { return id; }
-
-    public String getUsername() { return username; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-
-    public UserRole getRole() { return role; }
-    public void setRole(UserRole role) { this.role = role; }
-
-    public String getFullName() { return fullName; }
-    public void setFullName(String firstName) { this.fullName = firstName; }
-
-    public String getMobile() { return mobile; }
-    public void setMobile(String mobile) { this.mobile = mobile; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getPhoto() { return photo; }
-    public void setPhoto(String photo) { this.photo = photo; }
-
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-    public BankInfo getBankInfo() { return bankInfo; }
-    public void setBankInfo(BankInfo bankInfo) { this.bankInfo = bankInfo; }
 
 }

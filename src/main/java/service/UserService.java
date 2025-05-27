@@ -33,7 +33,7 @@ public class UserService {
         this.deliveryDao = new DeliveryDao();
     }
 
-    public void createUser(UserRegistrationRequest request) {
+    public User createUser(UserRegistrationRequest request) {
 
         UserValidator.validateUser(request);
 
@@ -55,16 +55,20 @@ public class UserService {
             Customer customer = new Customer();
             fillUserFields(customer, request);
             saveWithDuplicationCheck(customerDao, customer);
+            return customer;
 
         } else if (userRole == UserRole.SELLER) {
             Seller seller = new Seller();
             fillUserFields(seller, request);
             saveWithDuplicationCheck(sellerDao, seller);
+            return seller;
 
         } else {
             Delivery delivery = new Delivery();
             fillUserFields(delivery, request);
             saveWithDuplicationCheck(deliveryDao, delivery);
+            return delivery;
+
         }
     }
 

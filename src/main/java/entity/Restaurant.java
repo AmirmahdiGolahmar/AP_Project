@@ -28,8 +28,14 @@ public class Restaurant {
     private String logo;
     private String image;
     private String description;
+    private int taxFee;
+    private int additionalFee;
+
     private int totalOrders;
-    private double averageRating;
+    private double rating;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    private List<Item> items;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -39,7 +45,5 @@ public class Restaurant {
     )
     private List<Category> categories;
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    private List<Item> items;
 }
 
