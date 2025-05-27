@@ -95,7 +95,7 @@ public class UserService {
     }
 
     public Seller findSellerById(Long id) {
-        return sellerDao.findById(id);
+        return (Seller) sellerDao.findById(id);
     }
 
     public List<Seller> findAllSellers() { return sellerDao.findAll(); }

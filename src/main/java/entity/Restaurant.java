@@ -28,8 +28,8 @@ public class Restaurant {
     private String logo;
     private String image;
     private String description;
-    private int taxFee;
-    private int additionalFee;
+    private double tax_fee;
+    private double additional_fee;
 
     private int totalOrders;
     private double rating;

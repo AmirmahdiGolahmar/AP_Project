@@ -35,27 +35,20 @@ public class RestaurantController {
             .create();
 
     public static void initRoutes(){
+
         path("/restaurants", () -> {
             post("", (req, res) -> {
-
-                String userId = authorizeAndExtractUserId(req, res, gson);
-                User seller = new UserDao().findById(Long.parseLong(userId)); // فرض بر اینه که متدش وجود داره
-
-                if (seller == null || seller.getRole() != UserRole.SELLER) {
-                    res.status(403); // Forbidden
-                    return gson.toJson(Map.of("error", "Only sellers can create restaurants"));
-                }
-
-                // 4. ساختن رستوران
-                RestaurantRegistrationRequest request = gson.fromJson(req.body(), RestaurantRegistrationRequest.class);
-                restaurantService.createRestaurant(request, seller); // seller رو به متد پاس بده
-
-                res.status(201);
-                return gson.toJson(Map.of("message", "Restaurant created successfully"));
+            res.type("application/json");
 
                 try {
-                    res.status(200);
-                    return gson.toJson(Map.of("message", "User registered successfully"));
+
+                    RestaurantRegistrationRequest restaurantRegistrationRequest = gson.fromJson(req.body(), RestaurantRegistrationRequest.class);
+                    Restaurant restaurant = restaurantService.createRestaurant(req, restaurantRegistrationRequest);
+
+                    RestaurantResponse restaurantResponse = new RestaurantResponse(restaurant);
+
+                    res.status(201);
+                    return gson.toJson(restaurantResponse);
 
                 } catch (InvalidInputException iie) {
                     res.status(400);
@@ -98,18 +91,10 @@ public class RestaurantController {
 
             get("/mine", (req, res) -> {
                 res.type("application/json");
-                String userId = authorizeAndExtractUserId(req, res, gson);
-                User seller = new UserDao().findById(Long.parseLong(userId)); // فرض بر اینه که متدش وجود داره
-
-                if (seller == null || seller.getRole() != UserRole.SELLER) {
-                    res.status(403); // Forbidden
-                    return gson.toJson(Map.of("error", "Only sellers can see restaurant"));
-                }
-                return gson.toJson(restaurantService.findRestaurantsByISellerId(seller.getId()));
 
                 try {
                     res.status(200);
-                    return gson.toJson(Map.of("message", "User registered successfully"));
+                    return gson.toJson(Map.of("message", ""));
 
                 } catch (InvalidInputException iie) {
                     res.status(400);

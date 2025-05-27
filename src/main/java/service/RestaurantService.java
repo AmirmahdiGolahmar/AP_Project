@@ -7,33 +7,47 @@ import dto.RestaurantUpdateRequest;
 import entity.Restaurant;
 import entity.Seller;
 import entity.User;
-import exception.AccessDeniedException;
-import exception.AlreadyExistsException;
-import exception.NotFoundException;
-import jakarta.persistence.PersistenceException;
-import org.hibernate.exception.ConstraintViolationException;
+import entity.UserRole;
+import exception.ForbiddenException;
+import spark.Request;
+import util.AuthorizationHandler;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RestaurantService {
     private final RestaurantDao restaurantDao;
+    private final UserService userService = new UserService();
 
     public RestaurantService() {
         this.restaurantDao = new RestaurantDao();
     }
 
-    public void createRestaurant(RestaurantRegistrationRequest request, User seller) {
+    public Restaurant createRestaurant(Request request, RestaurantRegistrationRequest restaurantRegistrationRequest) {
+
+        String userId = AuthorizationHandler.authorizeAndExtractUserId(request);
+        Seller seller = userService.findSellerById(Long.parseLong(userId));
+        if (seller == null || seller.getRole() != UserRole.SELLER) {
+            throw new ForbiddenException("Only sellers can create restaurants");
+        }
+        return createRestaurant(restaurantRegistrationRequest, seller);
+
+    }
+
+    public Restaurant createRestaurant(RestaurantRegistrationRequest restaurantRegistrationRequest, Seller seller) {
+
         Restaurant restaurant = new Restaurant();
-        restaurant.setName(request.getName());
-        restaurant.setAddress(request.getAddress());
-        restaurant.setPhone(request.getPhone());
-        restaurant.setLogo(request.getLogoBase64());
-        restaurant.setTaxFee(request.getTax_fee());
-        restaurant.setAdditionalFee(request.getAdditional_fee());
-        restaurant.setSeller((Seller) seller);
+        restaurant.setName(restaurantRegistrationRequest.getName());
+        restaurant.setAddress(restaurantRegistrationRequest.getAddress());
+        restaurant.setPhone(restaurantRegistrationRequest.getPhone());
+        restaurant.setLogo(restaurantRegistrationRequest.getLogoBase64());
+        restaurant.setTax_fee(restaurantRegistrationRequest.getTax_fee());
+        restaurant.setAdditional_fee(restaurantRegistrationRequest.getAdditional_fee());
+        restaurant.setSeller(seller);
 
         restaurantDao.save(restaurant);
+
+        return restaurant;
     }
 
     public List<RestaurantReturnDto> findRestaurantsByISellerId(Long id) {
@@ -69,13 +83,13 @@ public class RestaurantService {
         if (request.getTax_fee() != null) {
             if (request.getTax_fee() < 0)
                 throw new IllegalArgumentException("Tax fee cannot be negative");
-            restaurant.setTaxFee(request.getTax_fee());
+            restaurant.setTax_fee(request.getTax_fee());
         }
 
         if (request.getAdditional_fee() != null) {
             if (request.getAdditional_fee() < 0)
                 throw new IllegalArgumentException("Additional fee cannot be negative");
-            restaurant.setAdditionalFee(request.getAdditional_fee());
+            restaurant.setAdditional_fee(request.getAdditional_fee());
         }
 
         restaurantDao.update(restaurant);
