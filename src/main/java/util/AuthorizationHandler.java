@@ -1,5 +1,6 @@
 package util;
 
+import exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import spark.HaltException;
 import spark.Request;
@@ -19,6 +20,15 @@ public class AuthorizationHandler {
         }
 
         String token = authHeader.substring(7);
+
+        System.out.println("**** BlackList : " + TokenBlacklist.blacklist);
+
+        if (TokenBlacklist.contains(token)) {
+            res.status(403);
+            res.body(gson.toJson(Map.of("error", "please login")));
+            return null;
+        }
+
         Claims claims;
         try {
             claims = JwtUtil.decodeJWT(token);

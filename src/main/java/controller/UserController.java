@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import dto.UserRegistrationRequest;
+import util.TokenBlacklist;
 
 public class UserController {
     private static final UserService userService = new UserService();
@@ -114,6 +115,23 @@ public class UserController {
                     return gson.toJson(Map.of("error", "Internal server error"));
                 }
             });
+
+            post("/logout", (req, res) -> {
+                res.type("application/json");
+
+                String authHeader = req.headers("Authorization");
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", "No token provided"));
+                }
+
+                String token = authHeader.substring(7);
+                TokenBlacklist.add(token);
+
+                res.status(200);
+                return gson.toJson(Map.of("message", "Logged out successfully"));
+            });
+
         });
 
         get("/customers", (req, res) -> {

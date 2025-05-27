@@ -146,7 +146,7 @@ public class UserService {
         user.setMobile(request.getMobile());
         user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
-        user.setPhoto(request.getPhoto());
+        user.setPhoto(request.getProfileImageBase64());
         user.setBankInfo(new BankInfo(request.getBank_name(), request.getAccount_number()));
         switch (request.getRole().toLowerCase()) {
             case "buyer":
