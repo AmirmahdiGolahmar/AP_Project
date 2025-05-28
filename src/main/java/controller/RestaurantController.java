@@ -38,20 +38,59 @@ public class RestaurantController {
         path("/restaurant", () -> {
             post("", (req, res) -> {
 
-                String userId = authorizeAndExtractUserId(req, res, gson);
-                User seller = new UserDao().findById(Long.parseLong(userId)); // فرض بر اینه که متدش وجود داره
+                try{
+                    String userId = authorizeAndExtractUserId(req, res, gson);
+                    User seller = new UserDao().findById(Long.parseLong(userId)); // فرض بر اینه که متدش وجود داره
 
-                if (seller == null || seller.getRole() != UserRole.SELLER) {
-                    res.status(403); // Forbidden
-                    return gson.toJson(Map.of("error", "Only sellers can create restaurants"));
+                    if (seller == null || seller.getRole() != UserRole.SELLER) {
+                        res.status(403); // Forbidden
+                        return gson.toJson(Map.of("error", "Only sellers can create restaurants"));
+                    }
+
+                    // 4. ساختن رستوران
+                    RestaurantRegistrationRequest request = gson.fromJson(req.body(), RestaurantRegistrationRequest.class);
+                    restaurantService.createRestaurant(request, seller); // seller رو به متد پاس بده
+
+                    res.status(201);
+                    return gson.toJson(Map.of("message", "Restaurant created successfully"));
+                } catch (InvalidInputException iie) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", "Invalid input"));
+
+                } catch (UnauthorizedUserException uue) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", "Unauthorized"));
+
+                } catch (ForbiddenException fe) {
+                    res.status(403);
+                    return gson.toJson(Map.of("error", "Forbidden"));
+
+                } catch (NotFoundException nfe) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", "Not found"));
+
+                } catch (AlreadyExistsException aee) {
+                    res.status(409);
+                    return gson.toJson(Map.of("error", "Phone number already exists"));
+
+                } catch (UnsupportedMediaTypeException umte) {
+                    res.status(415);
+                    return gson.toJson(Map.of("error", "Unsupported Media Type"));
+
+                } catch(TooManyRequestsException tmre) {
+                    res.status(429);
+                    return gson.toJson(Map.of("error", "Too Many Requests"));
+
+                } catch (Exception e) {
+                    res.status(500);
+                    e.printStackTrace();
+                    return gson.toJson(Map.of("error", "Internal server error"));
+                } finally {
+
                 }
 
-                // 4. ساختن رستوران
-                RestaurantRegistrationRequest request = gson.fromJson(req.body(), RestaurantRegistrationRequest.class);
-                restaurantService.createRestaurant(request, seller); // seller رو به متد پاس بده
 
-                res.status(201);
-                return gson.toJson(Map.of("message", "Restaurant created successfully"));
+
             });
 
 
