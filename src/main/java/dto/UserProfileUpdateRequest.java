@@ -10,8 +10,8 @@ import com.google.gson.annotations.SerializedName;
 @Getter
 @Setter
 public class UserProfileUpdateRequest {
-    @SerializedName("full_name")
-    private String full_name;
+    @SerializedName("fullName")
+    private String fullName;
     @SerializedName("phone")
     private String phone;
     @SerializedName("email")
@@ -20,8 +20,8 @@ public class UserProfileUpdateRequest {
     private String address;
     @SerializedName("profileImageBase64")
     private String profileImageBase64;
-    @SerializedName("bank_name")
-    private String bank_name;
-    @SerializedName("account_number")
-    private String account_number;
+    @SerializedName("bankName")
+    private String bankName;
+    @SerializedName("accountNumber")
+    private String accountNumber;
 }

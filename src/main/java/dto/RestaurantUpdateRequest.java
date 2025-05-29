@@ -10,8 +10,8 @@ public class RestaurantUpdateRequest {
     private String address;
     private String phone;
     private String logoBase64;
-    private Integer tax_fee;
-    private Integer additional_fee;
+    private Integer taxFee;
+    private Integer additionalFee;
 
     public RestaurantUpdateRequest() {
     }

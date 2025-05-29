@@ -220,8 +220,8 @@ public class UserService {
     public void updateProfile(Long userId, UserProfileUpdateRequest request) {
         User user = userDao.findById(userId);
 
-        if (request.getFull_name() != null) {
-            user.setFullName(request.getFull_name());
+        if (request.getFullName() != null) {
+            user.setFullName(request.getFullName());
         }
         if (request.getPhone() != null) {
             user.setMobile(request.getPhone());
@@ -235,11 +235,11 @@ public class UserService {
         if (request.getProfileImageBase64() != null) {
             user.setPhoto(request.getProfileImageBase64());
         }
-        if(request.getBank_name() != null) {
-            user.setBankName(request.getBank_name());
+        if(request.getBankName() != null) {
+            user.setBankName(request.getBankName());
         }
-        if (request.getAccount_number() != null) {
-            user.setAccountNumber(request.getAccount_number());
+        if (request.getAccountNumber() != null) {
+            user.setAccountNumber(request.getAccountNumber());
         }
 
         userDao.update(user);
