@@ -1,4 +1,4 @@
-package exception;
+package exception.common;
 
 public class TooManyRequestsException extends RuntimeException {
     public TooManyRequestsException() {}

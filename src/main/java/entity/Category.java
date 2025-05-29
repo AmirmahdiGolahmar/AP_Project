@@ -14,17 +14,20 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @ManyToMany(mappedBy = "categories")
+    private List<Restaurant> restaurants;
+
     public Category() {}
 
     public Category(String name) {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
+    public Long getId() { return id; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+//
+//    public List<Restaurant> getRestaurants() { return restaurants; }
+//    public void setRestaurants(List<Restaurant> restaurants) { this.restaurants = restaurants; }
 }

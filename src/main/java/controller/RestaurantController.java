@@ -3,8 +3,11 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.*;
+import exception.auth.ForbiddenException;
+import exception.auth.UnauthorizedUserException;
+import exception.common.*;
+import exception.user.InvalidCredentialsException;
 import service.RestaurantService;
-import util.AuthorizationHandler;
 import util.LocalDateTimeAdapter;
 
 import java.time.LocalDateTime;
@@ -12,8 +15,6 @@ import java.time.LocalDateTime;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
 import static validator.SellerValidator.validateSellerAndRestaurant;
-
-import exception.*;
 
 import entity.*;
 
@@ -103,7 +104,7 @@ public class RestaurantController {
                     res.status(403);
                     return gson.toJson(Map.of("error", "Forbidden"));
 
-                } catch (SellerNotFoundException | NotFoundException snfe) {
+                } catch (NotFoundException nfe) {
                     res.status(404);
                     return gson.toJson(Map.of("error", "Not found"));
 
@@ -157,7 +158,7 @@ public class RestaurantController {
                     res.status(403);
                     return gson.toJson(Map.of("error", "Forbidden"));
 
-                } catch (SellerNotFoundException | NotFoundException nfe) {
+                } catch (NotFoundException nfe) {
                     res.status(404);
                     return gson.toJson(Map.of("error", "Not found"));
 

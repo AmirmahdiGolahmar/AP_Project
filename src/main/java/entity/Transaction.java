@@ -1,6 +1,9 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 enum TransactionType {
@@ -17,37 +20,29 @@ enum PaymentMethod {
 
 @Entity
 @Table(name = "transactions")
+@Getter
+@Setter
 public class Transaction {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "customerMobile")
-    private Customer customer;
-
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
-    public Transaction() {}
-    public Transaction(Customer customer, TransactionType transactionType) {
-        this.customer = customer;
-        this.transactionType = transactionType;
-    }
+    private double amount;
 
-    public Customer getCustomer() {
-        return customer;
-    }
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
+    private LocalDateTime timestamp;
 
-    public TransactionType getTransactionType() {
-        return transactionType;
-    }
+    @Embedded
+    private BankInfo bankInfo;
 
-    public void setTransactionType(TransactionType transactionType) {
-        this.transactionType = transactionType;
+
+    public Transaction() {
+        this.timestamp = LocalDateTime.now();
     }
 }
 

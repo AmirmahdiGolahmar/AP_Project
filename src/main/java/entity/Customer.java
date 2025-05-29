@@ -9,9 +9,6 @@ import java.util.List;
 @Table(name = "customers")
 public class Customer extends User {
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Address> addresses = new ArrayList<>();
-
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
 
@@ -22,5 +19,10 @@ public class Customer extends User {
     private List<Comment> comments = new ArrayList<>();
 
     public Customer() {}
+    public Customer(String fullName, String mobile,UserRole role,String email, String photo,
+                    String address, BankInfo bankInfo, String password) {
+      super(fullName,mobile,role,email, photo,
+        address, bankInfo, password);
+    }
 }
 

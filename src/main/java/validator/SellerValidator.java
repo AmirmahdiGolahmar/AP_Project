@@ -5,11 +5,8 @@ import dao.UserDao;
 import entity.Restaurant;
 import entity.User;
 import entity.UserRole;
-import exception.AccessDeniedException;
-import exception.NotFoundException;
-import exception.SellerNotFoundException;
-
-import java.util.Map;
+import exception.auth.ForbiddenException;
+import exception.common.NotFoundException;
 
 
 public class SellerValidator {
@@ -19,11 +16,11 @@ public class SellerValidator {
 
         User seller = new UserDao().findById(Long.parseLong(userId));
         if (seller == null) {
-           throw new SellerNotFoundException("there is no seller with this mobile");
+           throw new NotFoundException("there is no seller with this mobile");
         }
 
         if(seller.getRole() != UserRole.SELLER){
-            throw new AccessDeniedException("only seller can edit restaurant info");
+            throw new ForbiddenException("only seller can edit restaurant info");
         }
 
         if (restaurant == null) {
@@ -31,7 +28,7 @@ public class SellerValidator {
         }
 
         if (!restaurant.getSeller().getId().equals(seller.getId())) {
-            throw new AccessDeniedException("You are not authorized to update this restaurant");
+            throw new ForbiddenException("You are not authorized to update this restaurant");
         }
     }
 }

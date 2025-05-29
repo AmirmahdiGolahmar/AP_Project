@@ -1,6 +1,7 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,8 +28,10 @@ public class User {
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.PRIVATE)
     private Long id;
 
+    @Setter(AccessLevel.PRIVATE)
     private String username;
 
     @Column(nullable = false)
@@ -53,5 +56,12 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String mobile;
+
+   public void setBankName(String bankName) {
+       this.bankInfo.setBankName(bankName);
+   }
+   public void setAccountNumber(String accountNumber) {
+       this.bankInfo.setAccountNumber(accountNumber);
+   }
 
 }

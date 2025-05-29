@@ -26,10 +26,9 @@ public class Restaurant {
     private String address;
     private String phone;
     private String logo;
-    private String image;
     private String description;
-    private double tax_fee;
-    private double additional_fee;
+    private Integer taxFee;
+    private Integer additionalFee;
 
     private int totalOrders;
     private double rating;
@@ -44,6 +43,20 @@ public class Restaurant {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
+
+    public void addCategory(Category category) {
+        categories.add(category);
+    }
+    public void removeCategory(Category category) {
+        categories.remove(category);
+    }
+
+    public void addItem(Item item) {
+        items.add(item);
+    }
+    public void removeItem(Item item) {
+        items.remove(item);
+    }
 
 }
 

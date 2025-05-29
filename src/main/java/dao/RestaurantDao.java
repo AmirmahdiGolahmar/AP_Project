@@ -7,7 +7,6 @@ import org.hibernate.Transaction;
 import util.HibernateUtil;
 
 import java.util.List;
-import java.util.Stack;
 
 public class RestaurantDao extends GenericDao<Restaurant> {
     public RestaurantDao() {
@@ -15,13 +14,16 @@ public class RestaurantDao extends GenericDao<Restaurant> {
     }
 
     public static List<Restaurant> findAllRestaurantsBySellerId(Long sellerId) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "FROM Restaurant r WHERE r.seller.id = :sellerId";
-            return session.createQuery(hql, Restaurant.class)
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            return session.createQuery(
+                            "FROM Restaurant r WHERE r.seller.id = :sellerId", Restaurant.class)
                     .setParameter("sellerId", sellerId)
-                    .getResultList();
+                    .list();
+        }finally {
+            session.close();
         }
     }
-
 
 }

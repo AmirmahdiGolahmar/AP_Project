@@ -10,6 +10,6 @@ public class RestaurantRegistrationRequest {
     String address;
     String phone;
     String logoBase64;
-    Double tax_fee;
-    Double additional_fee;
+    Integer tax_fee;
+    Integer additional_fee;
 }

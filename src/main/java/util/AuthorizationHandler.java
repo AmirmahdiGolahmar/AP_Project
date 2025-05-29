@@ -1,6 +1,6 @@
 package util;
 
-import exception.UnauthorizedUserException;
+import exception.auth.UnauthorizedUserException;
 import io.jsonwebtoken.Claims;
 import spark.HaltException;
 import spark.Request;
@@ -12,26 +12,26 @@ import com.google.gson.Gson;
 
 public class AuthorizationHandler {
     public static String authorizeAndExtractUserId(Request req) {
-        String authHeader = req.headers("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new UnauthorizedUserException("Authorization header is missing or invalid");
-            return null;
-        }
-
-        String token = authHeader.substring(7);
-        Claims claims;
         try {
-            claims = JwtUtil.decodeJWT(token);
+            String authHeader = req.headers("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new UnauthorizedUserException("login first");
+            }
+
+            String token = authHeader.substring(7);
+
+            if (TokenBlacklist.contains(token)) {
+                throw new UnauthorizedUserException("login first");
+            }
+
+            Claims claims = JwtUtil.decodeJWT(token);
+            return claims.getSubject();
+
+        } catch (UnauthorizedUserException uue) {
+            throw uue;
         } catch (Exception e) {
-            throw new UnauthorizedUserException("Invalid token");
+            throw new UnauthorizedUserException("invalid token");
         }
-
-        String userId = claims.getSubject();
-        if(userId == null) {
-            throw new UnauthorizedUserException("Authorization header is missing or invalid");
-        }
-
-        return userId;
     }
 
 }

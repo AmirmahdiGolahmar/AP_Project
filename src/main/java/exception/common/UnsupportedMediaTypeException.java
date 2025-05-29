@@ -1,4 +1,4 @@
-package exception;
+package exception.common;
 
 public class UnsupportedMediaTypeException extends RuntimeException{
     public UnsupportedMediaTypeException(){}

@@ -1,40 +1,44 @@
 package service;
-import dto.LoginRequest;
+import dto.UserProfileUpdateRequest;
 import dto.UserRegistrationRequest;
 import entity.*;
 import java.util.List;
 import exception.*;
+import exception.auth.ForbiddenException;
+import exception.common.AlreadyExistsException;
+import exception.common.NotFoundException;
+import exception.user.InvalidCredentialsException;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
 import validator.*;
 import dao.*;
 import entity.User;
 
-
 public class UserService {
-    private final UserDao userDao;
     private final CustomerDao customerDao;
     private final SellerDao sellerDao;
     private final DeliveryDao deliveryDao;
+    private final UserDao userDao;
 
     public UserService() {
-        this.userDao = new UserDao();
         this.customerDao = new CustomerDao();
         this.sellerDao = new SellerDao();
         this.deliveryDao = new DeliveryDao();
+        this.userDao = new UserDao();
     }
 
     public Customer isCustomer(long id) {
         User user = userDao.findById(id);
         if (user == null)
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
 
         if (user.getRole() != UserRole.CUSTOMER)
-            throw new CustomerNotFoundException("Customer not found");
+            throw new NotFoundException("Customer not found");
 
         Customer customer = customerDao.findById(id);
         if (customer == null)
-            throw new CustomerNotFoundException("Customer not found");
+            throw new NotFoundException("Customer not found");
 
         return customer;
     }
@@ -74,49 +78,25 @@ public class UserService {
             fillUserFields(delivery, request);
             saveWithDuplicationCheck(deliveryDao, delivery);
             return delivery;
-
         }
     }
 
-    public void updateCustomer(Customer customer) {
-        customerDao.update(customer);
-    }
-
-    public void deleteCustomer(Long customerId) {
-        customerDao.delete(customerId);
-    }
-
-    public Customer findCustomerById(Long id) {
-        return customerDao.findById(id);
-    }
 
     public List<Customer> findAllCustomers() { return customerDao.findAll(); }
 
     public Seller isSeller(Long id) {
         User user = userDao.findById(id);
         if (user == null)
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
 
         if (user.getRole() != UserRole.SELLER)
-            throw new SellerNotFoundException("Seller not found");
+            throw new ForbiddenException("Not allowed");
 
         Seller seller = sellerDao.findById(id);
         if (seller == null)
-            throw new SellerNotFoundException("Seller not found");
+            throw new NotFoundException("Seller not found");
 
         return seller;
-    }
-
-    public void updateSeller(Seller seller) {
-        sellerDao.update(seller);
-    }
-
-    public void deleteSeller(Long sellerId) {
-        sellerDao.delete(sellerId);
-    }
-
-    public Seller findSellerById(Long id) {
-        return (Seller) sellerDao.findById(id);
     }
 
     public List<Seller> findAllSellers() { return sellerDao.findAll(); }
@@ -124,28 +104,16 @@ public class UserService {
     public Delivery isDelivery(long id) {
         User user = userDao.findById(id);
         if (user == null)
-            throw new UserNotFoundException("User not found");
+            throw new NotFoundException("User not found");
 
         if (user.getRole() != UserRole.DELIVERY)
-            throw new DeliveryNotFoundException("Delivery not found");
+            throw new NotFoundException("Delivery not found");
 
         Delivery delivery = deliveryDao.findById(id);
         if (delivery == null)
-            throw new CustomerNotFoundException("Delivery not found");
+            throw new NotFoundException("Delivery not found");
 
         return delivery;
-    }
-
-    public void updateDelivery(Delivery delivery) {
-        deliveryDao.update(delivery);
-    }
-
-    public void deleteDelivery(Long deliveryId) {
-        deliveryDao.delete(deliveryId);
-    }
-
-    public Delivery findDeliveryById(Long id) {
-        return deliveryDao.findById(id);
     }
 
     public List<Delivery> findAllDeliveries() { return deliveryDao.findAll(); }
@@ -172,21 +140,47 @@ public class UserService {
     }
 
     public User findUserById(Long id) {
-        User user = customerDao.findById(id);
-        if (user != null) return user;
+//        User user = customerDao.findById(id);
+//        if (user != null) return user;
+//
+//        user = sellerDao.findById(id);
+//        if (user != null) return user;
+//
+//        user = deliveryDao.findById(id);
+//        if (user != null) return user;
 
-        user = sellerDao.findById(id);
-        if (user != null) return user;
-
-        user = deliveryDao.findById(id);
+       User user = userDao.findById(id);
         if (user != null) return user;
 
         return null;
     }
 
-    public User login(LoginRequest request) {
-        UserValidator.validateLogin(request);
-        return UserValidator.authenticateUser(request.getMobile(), request.getPassword());
+
+    public User login(String mobile, String password) {
+        User user = null;
+
+        try {
+            user = customerDao.findByMobile(mobile);
+        } catch (NoResultException ignored) {}
+
+        if (user == null) {
+            try {
+                user = sellerDao.findByMobile(mobile);
+            } catch (NoResultException ignored) {}
+        }
+
+        if (user == null) {
+            try {
+                user = deliveryDao.findByMobile(mobile);
+            } catch (NoResultException ignored) {}
+        }
+
+        if (user == null) throw new NotFoundException(mobile);
+
+        if (!user.getPassword().equals(password))
+            throw new InvalidCredentialsException("Wrong password");
+
+        return user;
     }
 
     private <T> void saveWithDuplicationCheck(GenericDao<T> dao, T entity) {
@@ -208,7 +202,7 @@ public class UserService {
         user.setMobile(request.getMobile());
         user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
-        user.setPhoto(request.getPhoto());
+        user.setPhoto(request.getProfileImageBase64());
         user.setBankInfo(new BankInfo(request.getBankName(), request.getAccountNumber()));
         switch (request.getRole().toLowerCase()) {
             case "buyer":
@@ -223,6 +217,32 @@ public class UserService {
         }
     }
 
+    public void updateProfile(Long userId, UserProfileUpdateRequest request) {
+        User user = userDao.findById(userId);
 
+        if (request.getFull_name() != null) {
+            user.setFullName(request.getFull_name());
+        }
+        if (request.getPhone() != null) {
+            user.setMobile(request.getPhone());
+        }
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+        }
+        if (request.getAddress() != null) {
+            user.setAddress(request.getAddress());
+        }
+        if (request.getProfileImageBase64() != null) {
+            user.setPhoto(request.getProfileImageBase64());
+        }
+        if(request.getBank_name() != null) {
+            user.setBankName(request.getBank_name());
+        }
+        if (request.getAccount_number() != null) {
+            user.setAccountNumber(request.getAccount_number());
+        }
+
+        userDao.update(user);
+    }
 }
 

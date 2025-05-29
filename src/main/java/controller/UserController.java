@@ -3,15 +3,16 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.LoginRequest;
-import dto.LoginResponse;
-import entity.BankInfo;
+import dto.UserProfileResponse;
+import dto.UserProfileUpdateRequest;
+import exception.auth.ForbiddenException;
+import exception.auth.UnauthorizedUserException;
+import exception.common.*;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.UnsupportedJwtException;
 import service.UserService;
 import static spark.Spark.*;
-import exception.*;
+import static util.AuthorizationHandler.authorizeAndExtractUserId;
 
-import dao.*;
 import entity.*;
 import util.JwtUtil;
 import util.LocalDateTimeAdapter;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import dto.UserRegistrationRequest;
+import util.TokenBlacklist;
 
 public class UserController {
     private static final UserService userService = new UserService();
@@ -33,239 +35,245 @@ public class UserController {
 
         path("/auth", () -> {
 
-                    post("/register", (req, res) -> {
-                        UserRegistrationRequest request = gson.fromJson(req.body(), UserRegistrationRequest.class);
-                        try {
-                            User user = userService.createUser(request);
-                            String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
+            post("/register", (req, res) -> {
+                UserRegistrationRequest request = gson.fromJson(req.body(), UserRegistrationRequest.class);
+                try {
+                    User user = userService.createUser(request);
+                    res.status(201);
+                    return gson.toJson(Map.of("message", "User registered successfully"));
 
-                            res.status(200);
-                            return gson.toJson(Map.of(
-                                    "message", "User registered successfully",
-                                    "user_id", user.getId(),
-                                    "token", token
-                            ));
+                } catch (InvalidInputException iie) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", "Invalid input"));
 
-                        } catch (InvalidInputException iie) {
-                            res.status(400);
-                            return gson.toJson(Map.of("error", "Invalid input"));
+                } catch (UnauthorizedUserException uue) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", "Unauthorized"));
 
-                        } catch (UnauthorizedUserException uue) {
-                            res.status(401);
-                            return gson.toJson(Map.of("error", "Unauthorized"));
+                } catch (ForbiddenException fe) {
+                    res.status(403);
+                    return gson.toJson(Map.of("error", "Forbidden"));
 
-                        } catch (ForbiddenException fe) {
-                            res.status(403);
-                            return gson.toJson(Map.of("error", "Forbidden"));
+                } catch (NotFoundException nfe) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", "Not found"));
 
-                        } catch (NotFoundException nfe) {
-                            res.status(404);
-                            return gson.toJson(Map.of("error", "Not found"));
+                } catch (AlreadyExistsException aee) {
+                    res.status(409);
+                    return gson.toJson(Map.of("error", "Phone number already exists"));
 
-                        } catch (AlreadyExistsException aee) {
-                            res.status(409);
-                            return gson.toJson(Map.of("error", "Phone number already exists"));
+                } catch (UnsupportedMediaTypeException umte) {
+                    res.status(415);
+                    return gson.toJson(Map.of("error", "Unsupported Media Type"));
 
-                        } catch (UnsupportedMediaTypeException umte) {
-                            res.status(415);
-                            return gson.toJson(Map.of("error", "Unsupported Media Type"));
+                } catch(TooManyRequestsException tmre) {
+                    res.status(429);
+                    return gson.toJson(Map.of("error", "Too Many Requests"));
 
-                        } catch(TooManyRequestsException tmre) {
-                            res.status(429);
-                            return gson.toJson(Map.of("error", "Too Many Requests"));
+                } catch (Exception e) {
+                    res.status(500);
+                    e.printStackTrace();
+                    return gson.toJson(Map.of("error", "Internal server error"));
+                }
+            });
 
-                        } catch (Exception e) {
-                            res.status(500);
-                            e.printStackTrace();
-                            return gson.toJson(Map.of("error", "Internal server error"));
-                        }
-                    });
+            post("/login", (req, res) -> {
+                LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
 
-                    //ناقص
-                    post("/login", (req, res) -> {
+                try {
+                    User user = userService.login(loginRequest.getMobile(), loginRequest.getPassword());
+                    String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
 
-                        try {
-                            LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
-                            User user = userService.login(loginRequest);
-                            String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
+                    res.status(200);
+                    return gson.toJson(Map.of(
+                            "token", token,
+                            "full name", user.getFullName(),
+                            "id", user.getId(),
+                            "role", user.getRole().toString()
+                    ));
 
-                            LoginResponse userDto = new LoginResponse(user);
+                } catch (InvalidInputException iie) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", "Invalid input"));
 
-                            res.status(200);
-                            return gson.toJson(Map.of(
-                                    "message", "Login successful",
-                                    "token", token,
-                                    "user", userDto
-                            ));
+                } catch (UnauthorizedUserException uue) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", "Unauthorized"));
 
-                        } catch (InvalidInputException iie) {
-                            res.status(400);
-                            return gson.toJson(Map.of("error", "Invalid input"));
+                } catch (ForbiddenException fe) {
+                    res.status(403);
+                    return gson.toJson(Map.of("error", "Forbidden"));
 
-                        } catch (UnauthorizedUserException uue) {
-                            res.status(401);
-                            return gson.toJson(Map.of("error", "Unauthorized"));
+                } catch (NotFoundException nfe) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", "Not found"));
 
-                        } catch (ForbiddenException fe) {
-                            res.status(403);
-                            return gson.toJson(Map.of("error", "Forbidden"));
+                } catch (AlreadyExistsException aee) {
+                    res.status(409);
+                    return gson.toJson(Map.of("error", "Phone number already exists"));
 
-                        } catch (NotFoundException nfe) {
-                            res.status(404);
-                            return gson.toJson(Map.of("error", "Not found"));
+                } catch (UnsupportedMediaTypeException umte) {
+                    res.status(415);
+                    return gson.toJson(Map.of("error", "Unsupported Media Type"));
 
-                        } catch (AlreadyExistsException aee) {
-                            res.status(409);
-                            return gson.toJson(Map.of("error", "Phone number already exists"));
+                } catch(TooManyRequestsException tmre) {
+                    res.status(429);
+                    return gson.toJson(Map.of("error", "Too Many Requests"));
 
-                        } catch (UnsupportedMediaTypeException umte) {
-                            res.status(415);
-                            return gson.toJson(Map.of("error", "Unsupported Media Type"));
+                } catch (Exception e) {
+                    res.status(500);
+                    e.printStackTrace();
+                    return gson.toJson(Map.of("error", "Internal server error"));
+                }
+            });
 
-                        } catch(TooManyRequestsException tmre) {
-                            res.status(429);
-                            return gson.toJson(Map.of("error", "Too Many Requests"));
+            get("/profile", (req, res) ->{
+                try {
+                    res.type("application/json");
+                    String userId = authorizeAndExtractUserId(req);
+                    UserProfileResponse user =
+                            new UserProfileResponse(userService.findUserById((long) Integer.parseInt(userId)));
+                    res.status(200);
+                    return gson.toJson(user);
+                } catch (InvalidInputException iie) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", "Invalid input"));
 
-                        } catch (Exception e) {
-                            res.status(500);
-                            e.printStackTrace();
-                            return gson.toJson(Map.of("error", "Internal server error"));
-                        }
+                } catch (UnauthorizedUserException uue) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", "Unauthorized"));
 
+                } catch (ForbiddenException fe) {
+                    res.status(403);
+                    return gson.toJson(Map.of("error", "Forbidden"));
 
-                    });
+                } catch (NotFoundException nfe) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", "Not found"));
 
-                    get("/profile", (req, res) -> {
+                } catch (AlreadyExistsException aee) {
+                    res.status(409);
+                    return gson.toJson(Map.of("error", "Phone number already exists"));
 
-                        try {
-                            res.status(200);
+                } catch (UnsupportedMediaTypeException umte) {
+                    res.status(415);
+                    return gson.toJson(Map.of("error", "Unsupported Media Type"));
+
+                } catch(TooManyRequestsException tmre) {
+                    res.status(429);
+                    return gson.toJson(Map.of("error", "Too Many Requests"));
+
+                } catch (Exception e) {
+                    res.status(500);
+                    e.printStackTrace();
+                    return gson.toJson(Map.of("error", "Internal server error"));
+                } finally {
+
+                }
+
+            });
+
+            put("/profile", (req, res) -> {
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req);
+                UserProfileUpdateRequest updateRequest = gson.fromJson(req.body(), UserProfileUpdateRequest.class);
+                System.out.println("Parsed full name: " + updateRequest.getFull_name());
+                System.out.println("req.body :\n" + req.body());
+                try{
+                    res.status(200);
                             return gson.toJson(Map.of("message", "User registered successfully"));
 
                         } catch (InvalidInputException iie) {
                             res.status(400);
                             return gson.toJson(Map.of("error", "Invalid input"));
 
-                        } catch (UnauthorizedUserException uue) {
-                            res.status(401);
+                } catch (UnauthorizedUserException uue) {
+                    res.status(401);
                             return gson.toJson(Map.of("error", "Unauthorized"));
 
-                        } catch (ForbiddenException fe) {
-                            res.status(403);
-                            return gson.toJson(Map.of("error", "Forbidden"));
+                } catch (ForbiddenException fe) {
+                    res.status(403);
+                    return gson.toJson(Map.of("error", "Forbidden"));
 
-                        } catch (NotFoundException nfe) {
-                            res.status(404);
-                            return gson.toJson(Map.of("error", "Not found"));
+                } catch (NotFoundException nfe) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", "Not found"));
 
-                        } catch (AlreadyExistsException aee) {
-                            res.status(409);
-                            return gson.toJson(Map.of("error", "Phone number already exists"));
+                } catch (AlreadyExistsException aee) {
+                    res.status(409);
+                    return gson.toJson(Map.of("error", "Phone number already exists"));
 
-                        } catch (UnsupportedMediaTypeException umte) {
-                            res.status(415);
-                            return gson.toJson(Map.of("error", "Unsupported Media Type"));
+                } catch (UnsupportedMediaTypeException umte) {
+                    res.status(415);
+                    return gson.toJson(Map.of("error", "Unsupported Media Type"));
 
-                        } catch(TooManyRequestsException tmre) {
-                            res.status(429);
-                            return gson.toJson(Map.of("error", "Too Many Requests"));
+                } catch(TooManyRequestsException tmre) {
+                    res.status(429);
+                    return gson.toJson(Map.of("error", "Too Many Requests"));
 
-                        } catch (Exception e) {
-                            res.status(500);
+                } catch (Exception e) {
+                    res.status(500);
                             e.printStackTrace();
-                            return gson.toJson(Map.of("error", "Internal server error"));
+                    return gson.toJson(Map.of("error", "Internal server error"));
                         } finally {
 
-                        }
+                }
+            });
 
-                    });
+            post("/logout", (req, res) -> {
 
-                    put("/profile", (req, res) -> {
+                try {
+                    res.type("application/json");
 
-                        try {
-                            res.status(200);
-                            return gson.toJson(Map.of("message", "User registered successfully"));
+                    String authHeader = req.headers("Authorization");
+                    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                        res.status(400);
+                        return gson.toJson(Map.of("error", "No token provided"));
+                    }
 
-                        } catch (InvalidInputException iie) {
-                            res.status(400);
-                            return gson.toJson(Map.of("error", "Invalid input"));
+                    String token = authHeader.substring(7);
+                    TokenBlacklist.add(token);
 
-                        } catch (UnauthorizedUserException uue) {
-                            res.status(401);
-                            return gson.toJson(Map.of("error", "Unauthorized"));
+                    res.status(200);
+                    return gson.toJson(Map.of("message", "logout successfully"));
 
-                        } catch (ForbiddenException fe) {
-                            res.status(403);
-                            return gson.toJson(Map.of("error", "Forbidden"));
+                } catch (InvalidInputException iie) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", "Invalid input"));
 
-                        } catch (NotFoundException nfe) {
-                            res.status(404);
-                            return gson.toJson(Map.of("error", "Not found"));
+                } catch (UnauthorizedUserException uue) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", "Unauthorized"));
 
-                        } catch (AlreadyExistsException aee) {
-                            res.status(409);
-                            return gson.toJson(Map.of("error", "Phone number already exists"));
+                } catch (ForbiddenException fe) {
+                    res.status(403);
+                    return gson.toJson(Map.of("error", "Forbidden"));
 
-                        } catch (UnsupportedMediaTypeException umte) {
-                            res.status(415);
-                            return gson.toJson(Map.of("error", "Unsupported Media Type"));
+                } catch (NotFoundException nfe) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", "Not found"));
 
-                        } catch(TooManyRequestsException tmre) {
-                            res.status(429);
-                            return gson.toJson(Map.of("error", "Too Many Requests"));
+                } catch (AlreadyExistsException aee) {
+                    res.status(409);
+                    return gson.toJson(Map.of("error", "Phone number already exists"));
 
-                        } catch (Exception e) {
-                            res.status(500);
-                            e.printStackTrace();
-                            return gson.toJson(Map.of("error", "Internal server error"));
-                        } finally {
+                } catch (UnsupportedMediaTypeException umte) {
+                    res.status(415);
+                    return gson.toJson(Map.of("error", "Unsupported Media Type"));
 
-                        }
+                } catch(TooManyRequestsException tmre) {
+                    res.status(429);
+                    return gson.toJson(Map.of("error", "Too Many Requests"));
 
-                    });
+                } catch (Exception e) {
+                    res.status(500);
+                    e.printStackTrace();
+                    return gson.toJson(Map.of("error", "Internal server error"));
+                } finally {
 
-                    post("/logout", (req, res) -> {
+                }
+            });
 
-                        try {
-                            res.status(200);
-                            return gson.toJson(Map.of("message", "User registered successfully"));
-
-                        } catch (InvalidInputException iie) {
-                            res.status(400);
-                            return gson.toJson(Map.of("error", "Invalid input"));
-
-                        } catch (UnauthorizedUserException uue) {
-                            res.status(401);
-                            return gson.toJson(Map.of("error", "Unauthorized"));
-
-                        } catch (ForbiddenException fe) {
-                            res.status(403);
-                            return gson.toJson(Map.of("error", "Forbidden"));
-
-                        } catch (NotFoundException nfe) {
-                            res.status(404);
-                            return gson.toJson(Map.of("error", "Not found"));
-
-                        } catch (AlreadyExistsException aee) {
-                            res.status(409);
-                            return gson.toJson(Map.of("error", "Phone number already exists"));
-
-                        } catch (UnsupportedMediaTypeException umte) {
-                            res.status(415);
-                            return gson.toJson(Map.of("error", "Unsupported Media Type"));
-
-                        } catch(TooManyRequestsException tmre) {
-                            res.status(429);
-                            return gson.toJson(Map.of("error", "Too Many Requests"));
-
-                        } catch (Exception e) {
-                            res.status(500);
-                            e.printStackTrace();
-                            return gson.toJson(Map.of("error", "Internal server error"));
-                        } finally {
-
-                        }
-
-                    });
         });
 
         get("/customers", (req, res) -> {
@@ -294,6 +302,8 @@ public class UserController {
             return "User deleted with id: " + id;
         });
 
+
+
         get("/me", (req, res) -> {
             String authHeader = req.headers("Authorization");
 
@@ -305,7 +315,7 @@ public class UserController {
             String token = authHeader.substring(7);
 
             try {
-                Claims claims = JwtUtil.verifyToken(token);
+                Claims claims = JwtUtil.decodeJWT(token);
                 Long userId = Long.valueOf(claims.getSubject());
                 String role = claims.get("role", String.class);
 
@@ -318,7 +328,6 @@ public class UserController {
                 return gson.toJson(Map.of("error", e.getMessage()));
             }
         });
-
 
     };
 

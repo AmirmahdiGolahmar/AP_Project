@@ -3,14 +3,12 @@ package validator;
 
 import dto.LoginRequest;
 import entity.User;
-import exception.InvalidCredentialsException;
-import exception.InvalidInputException;
 import dto.UserRegistrationRequest;
+import exception.common.InvalidInputException;
+import exception.user.InvalidCredentialsException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import util.HibernateUtil;
-
-import java.util.Map;
 
 public class UserValidator {
 

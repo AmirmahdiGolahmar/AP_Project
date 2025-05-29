@@ -1,15 +1,8 @@
 package dao;
 
-import entity.Customer;
-import entity.Delivery;
 import entity.User;
-import exception.AlreadyExistsException;
-import exception.UserNotFoundException;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 import util.HibernateUtil;
 
 import java.util.List;
