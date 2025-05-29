@@ -76,17 +76,12 @@ public class Discount {
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
 
-    public int getMaxUsages() { return maxUsages; }
-    public void setMaxUsages(int maxUsages) { this.maxUsages = maxUsages; }
-
     public int getUsedCount() { return usedCount; }
     public void setUsedCount(int usedCount) { this.usedCount = usedCount; }
 
     public double getPercentage() { return percentage; }
     public void setPercentage(double percentage) { this.percentage = percentage; }
 
-    public LocalDateTime getExpiryDate() { return expiryDate; }
-    public void setExpiryDate(LocalDateTime expiryDate) { this.expiryDate = expiryDate; }
 
     public Item getItem() { return item; }
     public void setItem(Item item) { this.item = item; }

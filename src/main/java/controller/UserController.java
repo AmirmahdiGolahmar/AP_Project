@@ -132,8 +132,8 @@ public class UserController {
                     String userId = authorizeAndExtractUserId(req, res, gson);
                     UserProfileResponse user =
                             new UserProfileResponse(userService.findUserById((long) Integer.parseInt(userId)));
-                    return gson.toJson(user);
                     res.status(200);
+                    return gson.toJson(user);
                 } catch (InvalidInputException iie) {
                     res.status(400);
                     return gson.toJson(Map.of("error", "Invalid input"));
