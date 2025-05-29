@@ -6,7 +6,7 @@ import controller.RestaurantController;
 import controller.UserController;
 import entity.Customer;
 import entity.User;
-import entity.BankInfo;
+import entity.Bank_info;
 import com.google.gson.Gson;
 import java.util.List;
 

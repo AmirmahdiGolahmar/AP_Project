@@ -27,8 +27,8 @@ public class Restaurant {
     private String phone;
     private String logo;
     private String description;
-    private Integer taxFee;
-    private Integer additionalFee;
+    private Integer tax_fee;
+    private Integer additional_fee;
 
     private int totalOrders;
     private double rating;

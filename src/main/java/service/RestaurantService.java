@@ -41,8 +41,8 @@ public class RestaurantService {
         restaurant.setAddress(restaurantRegistrationRequest.getAddress());
         restaurant.setPhone(restaurantRegistrationRequest.getPhone());
         restaurant.setLogo(restaurantRegistrationRequest.getLogoBase64());
-        restaurant.setTaxFee(restaurantRegistrationRequest.getTaxFee());
-        restaurant.setAdditionalFee(restaurantRegistrationRequest.getAdditionalFee());
+        restaurant.setTax_fee(restaurantRegistrationRequest.getTax_fee());
+        restaurant.setAdditional_fee(restaurantRegistrationRequest.getAdditional_fee());
         restaurant.setSeller(seller);
 
         restaurantDao.save(restaurant);
@@ -82,16 +82,16 @@ public class RestaurantService {
             restaurant.setLogo(request.getLogoBase64());
         }
 
-        if (request.getTaxFee() != null) {
-            if (request.getTaxFee() < 0)
+        if (request.getTax_fee() != null) {
+            if (request.getTax_fee() < 0)
                 throw new IllegalArgumentException("Tax fee cannot be negative");
-            restaurant.setTaxFee(request.getTaxFee());
+            restaurant.setTax_fee(request.getTax_fee());
         }
 
-        if (request.getAdditionalFee() != null) {
-            if (request.getAdditionalFee() < 0)
+        if (request.getAdditional_fee() != null) {
+            if (request.getAdditional_fee() < 0)
                 throw new IllegalArgumentException("Additional fee cannot be negative");
-            restaurant.setAdditionalFee(request.getAdditionalFee());
+            restaurant.setAdditional_fee(request.getAdditional_fee());
         }
 
         restaurantDao.update(restaurant);

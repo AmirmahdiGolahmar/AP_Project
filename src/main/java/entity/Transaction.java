@@ -38,7 +38,7 @@ public class Transaction {
     private LocalDateTime timestamp;
 
     @Embedded
-    private BankInfo bankInfo;
+    private Bank_info bank_info;
 
 
     public Transaction() {

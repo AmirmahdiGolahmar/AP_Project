@@ -2,33 +2,33 @@ package dto;
 
 public class LoginResponse {
     private Long id;
-    private String fullName;
+    private String full_name;
     private String phone;
     private String email;
     private String role;
     private String address;
     private String profileImageBase64;
-    private BankInfoDTO bankInfo;
+    private Bank_infoDTO bank_info;
 
     public LoginResponse(entity.User user) {
         this.id = user.getId();
-        this.fullName = user.getFullName();
+        this.full_name = user.getFull_name();
         this.phone = user.getMobile();
         this.email = user.getEmail();
         this.role = user.getRole().name();
         this.address = user.getAddress();
         this.profileImageBase64 = user.getPhoto(); // Assuming this is already base64
 
-        this.bankInfo = new BankInfoDTO(user.getBankInfo());
+        this.bank_info = new Bank_infoDTO(user.getBank_info());
     }
 
-    public static class BankInfoDTO {
-        private String bankName;
-        private String accountNumber;
+    public static class Bank_infoDTO {
+        private String bank_name;
+        private String account_number;
 
-        public BankInfoDTO(entity.BankInfo bankInfo) {
-            this.bankName = bankInfo.getBankName();
-            this.accountNumber = bankInfo.getAccountNumber();
+        public Bank_infoDTO(entity.Bank_info bank_info) {
+            this.bank_name = bank_info.getBank_name();
+            this.account_number = bank_info.getAccount_number();
         }
     }
 }

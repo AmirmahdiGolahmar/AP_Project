@@ -1,5 +1,5 @@
 //import dao.UserDao;
-//import entity.BankInfo;
+//import entity.Bank_info;
 //import entity.User;
 //import org.junit.jupiter.api.*;
 //import service.UserService;
@@ -20,8 +20,8 @@
 //    @Test
 //    @Order(1)
 //    public void testAddUser() {
-//        BankInfo bankInfo = new BankInfo("TestBank", "99999999", "John Tester");
-//        User user = new User("John", "Tester", "09110000000", "john@test.com", "photo.jpg", "Test City", bankInfo);
+//        Bank_info bank_info = new Bank_info("TestBank", "99999999", "John Tester");
+//        User user = new User("John", "Tester", "09110000000", "john@test.com", "photo.jpg", "Test City", bank_info);
 //
 //        assertDoesNotThrow(() -> userService.createUser(user));
 //    }

@@ -19,10 +19,10 @@ public class Customer extends User {
     private List<Comment> comments = new ArrayList<>();
 
     public Customer() {}
-    public Customer(String fullName, String mobile,UserRole role,String email, String photo,
-                    String address, BankInfo bankInfo, String password) {
-      super(fullName,mobile,role,email, photo,
-        address, bankInfo, password);
+    public Customer(String full_name, String mobile, UserRole role, String email, String photo,
+                    String address, Bank_info bank_info, String password) {
+      super(full_name,mobile,role,email, photo,
+        address, bank_info, password);
     }
 }
 

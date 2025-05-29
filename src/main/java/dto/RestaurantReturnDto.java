@@ -8,8 +8,8 @@ public class RestaurantReturnDto {
     private String address;
     private String phone;
     private String logoBase64;
-    private Integer taxFee;
-    private Integer additionalFee;
+    private Integer tax_fee;
+    private Integer additional_fee;
 
 
     public RestaurantReturnDto(Restaurant restaurant) {
@@ -18,7 +18,7 @@ public class RestaurantReturnDto {
         this.address = restaurant.getAddress();
         this.phone = restaurant.getPhone();
         this.logoBase64 = restaurant.getLogo();
-        this.taxFee = restaurant.getTaxFee();
-        this.additionalFee = restaurant.getAdditionalFee();
+        this.tax_fee = restaurant.getTax_fee();
+        this.additional_fee = restaurant.getAdditional_fee();
     }
 }

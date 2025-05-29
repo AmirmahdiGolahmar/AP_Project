@@ -3,7 +3,7 @@ import dto.UserProfileUpdateRequest;
 import dto.UserRegistrationRequest;
 import entity.*;
 import java.util.List;
-import exception.*;
+
 import exception.auth.ForbiddenException;
 import exception.common.AlreadyExistsException;
 import exception.common.NotFoundException;
@@ -47,7 +47,7 @@ public class UserService {
 
         UserValidator.validateUser(request);
 
-        BankInfo bankInfo = new BankInfo(request.getBankName(), request.getAccountNumber());
+        Bank_info bank_info = new Bank_info(request.getBank_name(), request.getAccount_number());
         UserRole userRole;
         switch (request.getRole().toLowerCase()) {
             case "buyer":
@@ -198,12 +198,12 @@ public class UserService {
 
     private void fillUserFields(User user, UserRegistrationRequest request) {
         user.setPassword(request.getPassword());
-        user.setFullName(request.getFullName());
+        user.setFull_name(request.getFull_name());
         user.setMobile(request.getMobile());
         user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
         user.setPhoto(request.getProfileImageBase64());
-        user.setBankInfo(new BankInfo(request.getBankName(), request.getAccountNumber()));
+        user.setBank_info(new Bank_info(request.getBank_name(), request.getAccount_number()));
         switch (request.getRole().toLowerCase()) {
             case "buyer":
             case "customer":
@@ -220,8 +220,8 @@ public class UserService {
     public void updateProfile(Long userId, UserProfileUpdateRequest request) {
         User user = userDao.findById(userId);
 
-        if (request.getFullName() != null) {
-            user.setFullName(request.getFullName());
+        if (request.getFull_name() != null) {
+            user.setFull_name(request.getFull_name());
         }
         if (request.getPhone() != null) {
             user.setMobile(request.getPhone());
@@ -235,11 +235,11 @@ public class UserService {
         if (request.getProfileImageBase64() != null) {
             user.setPhoto(request.getProfileImageBase64());
         }
-        if(request.getBankName() != null) {
-            user.setBankName(request.getBankName());
+        if(request.getBank_name() != null) {
+            user.setBank_name(request.getBank_name());
         }
-        if (request.getAccountNumber() != null) {
-            user.setAccountNumber(request.getAccountNumber());
+        if (request.getAccount_number() != null) {
+            user.setAccount_number(request.getAccount_number());
         }
 
         userDao.update(user);

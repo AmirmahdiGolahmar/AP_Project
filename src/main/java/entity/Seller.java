@@ -2,9 +2,6 @@ package entity;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Table(name = "sellers")
 public class Seller extends User {
@@ -12,9 +9,9 @@ public class Seller extends User {
     private boolean isApproved;
 
     public Seller() {}
-    public Seller(String fullName,String mobile,
-                         String email, String photo, String address, BankInfo bankInfo,String password) {
-        super(fullName, mobile,UserRole.SELLER, email, photo, address, bankInfo, password);
+    public Seller(String full_name, String mobile,
+                  String email, String photo, String address, Bank_info bank_info, String password) {
+        super(full_name, mobile,UserRole.SELLER, email, photo, address, bank_info, password);
         this.isApproved = false;
     }
 

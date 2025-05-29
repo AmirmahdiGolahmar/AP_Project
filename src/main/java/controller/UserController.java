@@ -87,7 +87,7 @@ public class UserController {
                     res.status(200);
                     return gson.toJson(Map.of(
                             "token", token,
-                            "full name", user.getFullName(),
+                            "full name", user.getFull_name(),
                             "id", user.getId(),
                             "role", user.getRole().toString()
                     ));
@@ -177,7 +177,7 @@ public class UserController {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req);
                 UserProfileUpdateRequest updateRequest = gson.fromJson(req.body(), UserProfileUpdateRequest.class);
-                System.out.println("Parsed full name: " + updateRequest.getFullName());
+                System.out.println("Parsed full name: " + updateRequest.getFull_name());
                 System.out.println("req.body :\n" + req.body());
                 try{
                     res.status(200);

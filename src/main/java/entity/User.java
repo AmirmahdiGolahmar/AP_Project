@@ -14,17 +14,17 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 
-    public User(String fullName, String mobile,UserRole role,String email, String photo,
-                String address, BankInfo bankInfo, String password) {
-        this.fullName = fullName;
+    public User(String full_name, String mobile,UserRole role,String email, String photo,
+                String address, Bank_info bank_info, String password) {
+        this.full_name = full_name;
         this.mobile = mobile;
         this.email = email;
         this.password = password;
         this.role = role;
         this.address = address;
         this.photo = photo;
-        this.bankInfo = bankInfo;
-        this.username = fullName + "-" + mobile;
+        this.bank_info = bank_info;
+        this.username = full_name + "-" + mobile;
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +41,10 @@ public class User {
     private UserRole role;
 
     @Embedded @Column(nullable = false)
-    private BankInfo bankInfo;
+    private Bank_info bank_info;
 
     @Column(nullable = false)
-    private String fullName;
+    private String full_name;
 
     private String email;
 
@@ -57,11 +57,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String mobile;
 
-   public void setBankName(String bankName) {
-       this.bankInfo.setBankName(bankName);
+   public void setBank_name(String bank_name) {
+       this.bank_info.setBank_name(bank_name);
    }
-   public void setAccountNumber(String accountNumber) {
-       this.bankInfo.setAccountNumber(accountNumber);
+   public void setAccount_number(String account_number) {
+       this.bank_info.setAccount_number(account_number);
    }
 
 }

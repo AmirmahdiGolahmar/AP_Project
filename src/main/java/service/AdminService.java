@@ -13,7 +13,7 @@
 //    }
 //
 //    public void createAdmin(String username, String password, String firstName, String lastName,
-//                              String mobile, String email, String address, String photo, BankInfo bankInfo) {
+//                              String mobile, String email, String address, String photo, Bank_info bank_info) {
 //
 //        Account account = new Account();
 //        account.setUsername(username);
@@ -27,7 +27,7 @@
 //        profile.setEmail(email);
 //        profile.setAddress(address);
 //        profile.setPhoto(photo);
-//        profile.setBankInfo(bankInfo);
+//        profile.setBank_info(bank_info);
 //
 //        Admin admin = new Admin();
 //        admin.setProfile(profile);
