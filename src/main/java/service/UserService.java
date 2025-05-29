@@ -4,33 +4,39 @@ import dto.UserRegistrationRequest;
 import entity.*;
 import java.util.List;
 import exception.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
-import org.hibernate.query.Query;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
-import util.HibernateUtil;
 import validator.*;
-import dto.UserRegistrationRequest;
 import dao.*;
 import entity.User;
-import org.hibernate.Session;
-import util.HibernateUtil;
-import exception.AuthenticationException;
-
 
 
 public class UserService {
+    private final UserDao userDao;
     private final CustomerDao customerDao;
     private final SellerDao sellerDao;
     private final DeliveryDao deliveryDao;
 
     public UserService() {
+        this.userDao = new UserDao();
         this.customerDao = new CustomerDao();
         this.sellerDao = new SellerDao();
         this.deliveryDao = new DeliveryDao();
+    }
+
+    public Customer isCustomer(long id) {
+        User user = userDao.findById(id);
+        if (user == null)
+            throw new UserNotFoundException("User not found");
+
+        if (user.getRole() != UserRole.CUSTOMER)
+            throw new CustomerNotFoundException("Customer not found");
+
+        Customer customer = customerDao.findById(id);
+        if (customer == null)
+            throw new CustomerNotFoundException("Customer not found");
+
+        return customer;
     }
 
     public User createUser(UserRegistrationRequest request) {
@@ -86,6 +92,21 @@ public class UserService {
 
     public List<Customer> findAllCustomers() { return customerDao.findAll(); }
 
+    public Seller isSeller(Long id) {
+        User user = userDao.findById(id);
+        if (user == null)
+            throw new UserNotFoundException("User not found");
+
+        if (user.getRole() != UserRole.SELLER)
+            throw new SellerNotFoundException("Seller not found");
+
+        Seller seller = sellerDao.findById(id);
+        if (seller == null)
+            throw new SellerNotFoundException("Seller not found");
+
+        return seller;
+    }
+
     public void updateSeller(Seller seller) {
         sellerDao.update(seller);
     }
@@ -99,6 +120,21 @@ public class UserService {
     }
 
     public List<Seller> findAllSellers() { return sellerDao.findAll(); }
+
+    public Delivery isDelivery(long id) {
+        User user = userDao.findById(id);
+        if (user == null)
+            throw new UserNotFoundException("User not found");
+
+        if (user.getRole() != UserRole.DELIVERY)
+            throw new DeliveryNotFoundException("Delivery not found");
+
+        Delivery delivery = deliveryDao.findById(id);
+        if (delivery == null)
+            throw new CustomerNotFoundException("Delivery not found");
+
+        return delivery;
+    }
 
     public void updateDelivery(Delivery delivery) {
         deliveryDao.update(delivery);

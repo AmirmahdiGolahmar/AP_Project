@@ -2,18 +2,16 @@ package service;
 import dao.*;
 import dto.RestaurantRegistrationRequest;
 import dto.RestaurantResponse;
-import dto.RestaurantReturnDto;
 import dto.RestaurantUpdateRequest;
 import entity.Restaurant;
 import entity.Seller;
-import entity.User;
 import entity.UserRole;
 import exception.ForbiddenException;
+import exception.InvalidCredentialsException;
 import spark.Request;
 import util.AuthorizationHandler;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RestaurantService {
     private final RestaurantDao restaurantDao;
@@ -50,11 +48,13 @@ public class RestaurantService {
         return restaurant;
     }
 
-    public List<RestaurantReturnDto> findRestaurantsByISellerId(Long id) {
-        List<Restaurant> restaurants = restaurantDao.findAllRestaurantsBySellerId(id);
-        return restaurants.stream()
-                .map(RestaurantReturnDto::new)
-                .collect(Collectors.toList());
+    public List<Restaurant> findRestaurantsBySellerId(Request req) {
+        String userId = AuthorizationHandler.authorizeAndExtractUserId(req);
+        if (userId == null)
+            throw new InvalidCredentialsException("No UserId provided");
+
+        Seller seller = userService.isSeller(Long.parseLong(userId));
+        return RestaurantDao.findAllRestaurantsBySellerId(Long.parseLong(userId));
     }
 
     public Restaurant findById(Long id) {

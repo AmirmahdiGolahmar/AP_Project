@@ -4,27 +4,20 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.*;
 import service.RestaurantService;
-import service.UserService;
+import util.AuthorizationHandler;
 import util.LocalDateTimeAdapter;
 
 import java.time.LocalDateTime;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import entity.BankInfo;
-import io.jsonwebtoken.Claims;
-import service.UserService;
+
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
 import static validator.SellerValidator.validateSellerAndRestaurant;
 
 import exception.*;
 
-import dao.*;
 import entity.*;
-import util.JwtUtil;
-import util.LocalDateTimeAdapter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 public class RestaurantController {
@@ -93,10 +86,12 @@ public class RestaurantController {
                 res.type("application/json");
 
                 try {
-                    res.status(200);
-                    return gson.toJson(Map.of("message", ""));
+                    List<Restaurant> sellerRestaurants = restaurantService.findRestaurantsBySellerId(req);
 
-                } catch (InvalidInputException iie) {
+                    res.status(200);
+                    return gson.toJson(sellerRestaurants);
+
+                } catch (InvalidCredentialsException | InvalidInputException iie) {
                     res.status(400);
                     return gson.toJson(Map.of("error", "Invalid input"));
 
@@ -108,7 +103,7 @@ public class RestaurantController {
                     res.status(403);
                     return gson.toJson(Map.of("error", "Forbidden"));
 
-                } catch (NotFoundException nfe) {
+                } catch (SellerNotFoundException | NotFoundException snfe) {
                     res.status(404);
                     return gson.toJson(Map.of("error", "Not found"));
 
@@ -137,7 +132,7 @@ public class RestaurantController {
             put("/:id", (req, res) -> {
                 res.type("application/json");
 
-                String userId = authorizeAndExtractUserId(req, res, gson);
+                String userId = authorizeAndExtractUserId(req);
                 Long restaurantId = Long.parseLong(req.params(":id"));
 
                 validateSellerAndRestaurant(userId, restaurantId);
@@ -150,26 +145,7 @@ public class RestaurantController {
 
                     res.status(200);
                     return gson.toJson(updatedRestaurant);
-                } catch (SellerNotFoundException | NotFoundException e) {
-                    res.status(404);
-                    return gson.toJson(Map.of("error", e.getMessage()));
-                }
-                catch (AccessDeniedException e) {
-                    res.status(401);
-                    return gson.toJson(Map.of("error", e.getMessage()));
-                } catch (IllegalArgumentException e) {
-                    res.status(400);
-                    return gson.toJson(Map.of("error", e.getMessage()));
-                } catch (Exception e) {
-                    res.status(500);
-                    return gson.toJson(Map.of("error", "Internal server error"));
-                }
-
-                try {
-                    res.status(200);
-                    return gson.toJson(Map.of("message", "User registered successfully"));
-
-                } catch (InvalidInputException iie) {
+                } catch (InvalidInputException | IllegalArgumentException iie) {
                     res.status(400);
                     return gson.toJson(Map.of("error", "Invalid input"));
 
@@ -181,7 +157,7 @@ public class RestaurantController {
                     res.status(403);
                     return gson.toJson(Map.of("error", "Forbidden"));
 
-                } catch (NotFoundException nfe) {
+                } catch (SellerNotFoundException | NotFoundException nfe) {
                     res.status(404);
                     return gson.toJson(Map.of("error", "Not found"));
 

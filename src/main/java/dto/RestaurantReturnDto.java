@@ -18,7 +18,7 @@ public class RestaurantReturnDto {
         this.address = restaurant.getAddress();
         this.phone = restaurant.getPhone();
         this.logoBase64 = restaurant.getLogo();
-        this.tax_fee = restaurant.getTaxFee();
-        this.additional_fee = restaurant.getAdditionalFee();
+        this.tax_fee = restaurant.getTax_fee();
+        this.additional_fee = restaurant.getAdditional_fee();
     }
 }
