@@ -1,6 +1,8 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +10,11 @@ import java.util.List;
 @Embeddable
 public class BankInfo {
 
+    @Getter
+    @Setter
     private String accountNumber;
+    @Setter
+    @Getter
     private String bankName;
     private Double balance;
 
@@ -19,20 +25,6 @@ public class BankInfo {
         this.bankName = bankName;
         this.accountNumber = accountNumber;
         this.balance = 0.0;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public String getBankName() {
-        return bankName;
-    }
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
     }
 
     public double getBalance() {

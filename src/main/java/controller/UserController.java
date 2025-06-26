@@ -2,9 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dto.LoginRequest;
-import dto.UserProfileResponse;
-import dto.UserProfileUpdateRequest;
+import dto.*;
 import io.jsonwebtoken.Claims;
 import service.UserService;
 import static spark.Spark.*;
@@ -19,7 +17,6 @@ import util.LocalDateTimeAdapter;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import dto.UserRegistrationRequest;
 import util.TokenBlacklist;
 
 public class UserController {
@@ -38,8 +35,16 @@ public class UserController {
                 UserRegistrationRequest request = gson.fromJson(req.body(), UserRegistrationRequest.class);
                 try {
                     User user = userService.createUser(request);
+
+                    User loggedInUser = userService.login(request.getMobile(), request.getPassword());
+                    String token = JwtUtil.generateToken(loggedInUser.getId(), loggedInUser.getRole().toString());
+
                     res.status(201);
-                    return gson.toJson(Map.of("message", "User registered successfully"));
+                    UserRegistrationResponse response = new UserRegistrationResponse();
+                    response.setMessage("User registered successfully");
+                    response.setUser_id(loggedInUser.getId().toString());
+                    response.setToken(token);
+                    return gson.toJson(response);
 
                 } catch (InvalidInputException iie) {
                     res.status(400);
@@ -84,12 +89,8 @@ public class UserController {
                     String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
 
                     res.status(200);
-                    return gson.toJson(Map.of(
-                            "token", token,
-                            "full name", user.getFullName(),
-                            "id", user.getId(),
-                            "role", user.getRole().toString()
-                    ));
+                    loginResponse response = new loginResponse("User Login successfully", token, user);
+                    return gson.toJson(response);
 
                 } catch (InvalidInputException iie) {
                     res.status(400);
@@ -130,8 +131,7 @@ public class UserController {
                 try {
                     res.type("application/json");
                     String userId = authorizeAndExtractUserId(req, res, gson);
-                    UserProfileResponse user =
-                            new UserProfileResponse(userService.findUserById((long) Integer.parseInt(userId)));
+                    userDto user = new userDto(userService.findUserById((long) Integer.parseInt(userId)));
                     res.status(200);
                     return gson.toJson(user);
                 } catch (InvalidInputException iie) {
@@ -175,14 +175,13 @@ public class UserController {
             put("/profile", (req, res) -> {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                UserProfileUpdateRequest updateRequest = gson.fromJson(req.body(), UserProfileUpdateRequest.class);
-                System.out.println("Parsed full name: " + updateRequest.getFull_name());
-                System.out.println("req.body :\n" + req.body());
                 try{
+                    UserProfileUpdateRequest updateRequest = gson.fromJson(req.body(), UserProfileUpdateRequest.class);
+                    userService.updateProfile((long)Integer.parseInt(userId), updateRequest);
                     res.status(200);
-                            return gson.toJson(Map.of("message", "User registered successfully"));
+                    return gson.toJson(Map.of("message", "User profile updated successfully"));
 
-                        } catch (InvalidInputException iie) {
+                } catch (InvalidInputException iie) {
                             res.status(400);
                             return gson.toJson(Map.of("error", "Invalid input"));
 

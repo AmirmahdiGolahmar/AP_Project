@@ -40,7 +40,7 @@ public class RestaurantController {
 
                 try{
                     String userId = authorizeAndExtractUserId(req, res, gson);
-                    User seller = new UserDao().findById(Long.parseLong(userId)); // فرض بر اینه که متدش وجود داره
+                    User seller = new UserDao().findById(Long.parseLong(userId));
 
                     if (seller == null || seller.getRole() != UserRole.SELLER) {
                         res.status(403); // Forbidden
@@ -86,11 +86,7 @@ public class RestaurantController {
                     e.printStackTrace();
                     return gson.toJson(Map.of("error", "Internal server error"));
                 } finally {
-
                 }
-
-
-
             });
 
 

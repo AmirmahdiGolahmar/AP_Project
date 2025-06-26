@@ -185,11 +185,11 @@ public class UserService {
         if (request.getProfileImageBase64() != null) {
             user.setPhoto(request.getProfileImageBase64());
         }
-        if(request.getBank_name() != null) {
-            user.setBankName(request.getBank_name());
+        if(request.getBank_info().getBank_name() != null) {
+            user.setBankName(request.getBank_info().getBank_name());
         }
-        if (request.getAccount_number() != null) {
-            user.setAccountNumber(request.getAccount_number());
+        if (request.getBank_info().getAccount_number() != null) {
+            user.setAccountNumber(request.getBank_info().getAccount_number());
         }
 
         userDao.update(user);
