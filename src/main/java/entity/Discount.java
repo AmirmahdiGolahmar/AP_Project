@@ -34,9 +34,9 @@ public class Discount {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+//    @ManyToOne
+//    @JoinColumn(name = "category_id")
+    //private Category category;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
@@ -48,7 +48,7 @@ public class Discount {
     }
 
     public Discount(int quantity, double amount, double percentage, LocalDateTime createdAt,
-                    int duration, Customer customer, Item item, Category category, Restaurant restaurant) {
+                    int duration, Customer customer, Item item, Restaurant restaurant) {
         this.code = generateCode();
         this.quantity = quantity;
         this.usedCount = 0;
@@ -58,7 +58,7 @@ public class Discount {
         this.duration = duration; //nullable
         this.customer = customer; //nullable
         this.item = item; //nullable
-        this.category = category; //nullable
+        //this.category = category; //nullable
         this.restaurant = restaurant; //nullable
     }
 
@@ -86,6 +86,6 @@ public class Discount {
     public Item getItem() { return item; }
     public void setItem(Item item) { this.item = item; }
 
-    public Category getCategory() { return category; }
-    public void setCategory(Category category) { this.category = category; }
+//    public Category getCategory() { return category; }
+//    public void setCategory(Category category) { this.category = category; }
 }

@@ -17,6 +17,10 @@ public class Seller extends User {
         super(fullName, mobile,UserRole.SELLER, email, photo, address, bankInfo, password);
         this.isApproved = false;
     }
+    public Seller(String mobile){
+        super(mobile);
+        this.isApproved = false;
+    }
 
     public void setIsApproved(boolean isApproved) {
         this.isApproved = isApproved;

@@ -1,14 +1,22 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "items")
+@Getter
+@Setter
 public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     private String name;
@@ -21,66 +29,38 @@ public class Item {
 
     private int supply;
 
-    @ManyToMany
-    @JoinTable(
-            name = "item_categories",
-            joinColumns = @JoinColumn(name = "item_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private List<Category> categories;
-
-    private String keywords;
+    @ElementCollection
+    @CollectionTable(name = "item_keywords", joinColumns = @JoinColumn(name = "item_id"))
+    @Column(name = "keyword")
+    private List<String> keywords;
 
     private double rating;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    private Restaurant restaurant;
+
+    @ManyToMany(mappedBy = "items")
+    private List<Restaurant> restaurants;
 
     public Item() {}
 
     public Item(Long id, String name, String photo, String description, double price,
-                int supply, List<Category> categories, String keywords, double rating,
-                Restaurant restaurant, List<Comment> comments) {
+                int supply, List<String> keywords, double rating) {
         this.id = id;
         this.name = name;
         this.photo = photo;
         this.description = description;
         this.price = price;
         this.supply = supply;
-        this.categories = categories;
         this.keywords = keywords;
         this.rating = rating;
-        this.restaurant = restaurant;
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
+    public void addKeywords(List<String> newKeywords) {
+        if (newKeywords == null || newKeywords.isEmpty()) return;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+        if (this.keywords == null) {
+            this.keywords = new ArrayList<>();
+        }
 
-    public String getPhoto() { return photo; }
-    public void setPhoto(String photo) { this.photo = photo; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
-
-    public int getSupply() { return supply; }
-    public void setSupply(int supply) { this.supply = supply; }
-
-    public List<Category> getCategories() { return categories; }
-    public void setCategories(List<Category> categories) { this.categories = categories; }
-
-    public String getKeywords() { return keywords; }
-    public void setKeywords(String keywords) { this.keywords = keywords; }
-
-    public double getRating() { return rating; }
-    public void setRating(double rating) { this.rating = rating; }
-
-    public Restaurant getRestaurant() { return restaurant; }
-    public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
+        this.keywords.addAll(newKeywords);
+    }
 }

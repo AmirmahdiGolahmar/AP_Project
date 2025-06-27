@@ -23,7 +23,6 @@
         <mapping class="entity.Admin"/>
         <mapping class="entity.Cart"/>
         <mapping class="entity.CartItem"/>
-        <mapping class="entity.Category"/>
         <mapping class="entity.Comment"/>
         <mapping class="entity.Customer"/>
         <mapping class="entity.Delivery"/>

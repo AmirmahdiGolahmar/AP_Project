@@ -1,6 +1,7 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,59 +9,41 @@ import java.util.List;
 
 
 @Entity
+@Getter
+@Setter
 public class Restaurant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
+    @Setter(AccessLevel.PRIVATE)
     private Long id;
 
-    @Getter @Setter
     private String name;
 
-    @Getter @Setter
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
 
-    @Getter @Setter
     private String address;
-    @Getter @Setter
     private String phone;
-    @Getter @Setter
     private String logo;
-    @Getter @Setter
     private String description;
     private String workingHours;
-    @Getter @Setter
     private int totalOrders;
-    @Getter @Setter
     private Double averageRating;
-    @Getter @Setter
     private Double taxFee;
-    @Getter @Setter
     private Double additionalFee;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+
+    @Getter
+    @Setter(AccessLevel.NONE)
+    @ManyToMany
     @JoinTable(
-            name = "restaurant_categories",
+            name = "restaurant_item",
             joinColumns = @JoinColumn(name = "restaurant_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )    private List<Item> items;
 
-    @Getter
-    private List<Category> categories;
-
-    @Getter
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
-    private List<Item> items;
-
-    public void addCategory(Category category) {
-        categories.add(category);
-    }
-    public void removeCategory(Category category) {
-        categories.remove(category);
-    }
 
     public void addItem(Item item) {
         items.add(item);

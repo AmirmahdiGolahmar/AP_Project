@@ -1,15 +1,23 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "carts")
+@Getter
+@Setter
 public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.PRIVATE)
     private Long id;
 
     private String userNote;
@@ -29,6 +37,7 @@ public class Cart {
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter(AccessLevel.NONE)
     private List<CartItem> cartItems;
 
     public Cart() {
@@ -46,14 +55,6 @@ public class Cart {
         this.totalPrice = 0;
     }
 
-    public Long getId() { return id; }
-
-    public String getUserNote() { return userNote; }
-    public void setUserNote(String userNote) { this.userNote = userNote; }
-
-    public String getDeliveryAddress() { return deliveryAddress; }
-    public void setDeliveryAddress(String deliveryAddress) { this.deliveryAddress = deliveryAddress; }
-
     public double getTotalPrice() {
         for (CartItem cartItem : cartItems){
             this.totalPrice += cartItem.getTotalPriceCartItem();
@@ -61,14 +62,13 @@ public class Cart {
         return totalPrice;
     }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void addCartItems(List<CartItem> newItems) {
+        if (newItems == null || newItems.isEmpty()) return;
 
-    public Customer getCustomer() { return customer; }
-    public void setCustomer(Customer customer) { this.customer = customer; }
+        if (this.cartItems == null) {
+            this.cartItems = new ArrayList<>();
+        }
 
-    public Restaurant getRestaurant() { return restaurant; }
-    public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
-
-    public List<CartItem> getCartItems() { return cartItems; }
-    public void addCartItems(List<CartItem> cartItems) { this.cartItems = cartItems; }
+        this.cartItems.addAll(newItems);
+    }
 }

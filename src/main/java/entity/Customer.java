@@ -15,6 +15,9 @@ public class Customer extends User {
       super(fullName,mobile,role,email, photo,
         address, bankInfo, password);
     }
+    public Customer(String mobile){
+        super(mobile);
+    }
 
 //    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
 //    private List<Transaction> transactions = new ArrayList<>();

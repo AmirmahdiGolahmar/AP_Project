@@ -1,21 +1,21 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 @Embeddable
 public class BankInfo {
 
-    @Getter
-    @Setter
     private String accountNumber;
-    @Setter
-    @Getter
     private String bankName;
+    @Setter(AccessLevel.NONE)
     private Double balance;
 
 
@@ -27,10 +27,11 @@ public class BankInfo {
         this.balance = 0.0;
     }
 
-    public double getBalance() {
-        return balance;
+    public void deposit(double amount) {
+        this.balance += amount;
     }
-    public void setBalance(double balance) {
-        this.balance = balance;
+
+    public void withdraw(double amount) {
+        this.balance -= amount;
     }
 }

@@ -33,6 +33,7 @@ public class UserController {
 
             post("/register", (req, res) -> {
                 UserRegistrationRequest request = gson.fromJson(req.body(), UserRegistrationRequest.class);
+
                 try {
                     User user = userService.createUser(request);
 

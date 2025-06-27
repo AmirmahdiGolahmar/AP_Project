@@ -47,7 +47,6 @@ public class RestaurantController {
                         return gson.toJson(Map.of("error", "Only sellers can create restaurants"));
                     }
 
-                    // 4. ساختن رستوران
                     RestaurantRegistrationRequest request = gson.fromJson(req.body(), RestaurantRegistrationRequest.class);
                     restaurantService.createRestaurant(request, seller); // seller رو به متد پاس بده
 
@@ -88,7 +87,6 @@ public class RestaurantController {
                 } finally {
                 }
             });
-
 
             get("/mine", (req, res) -> {
                 res.type("application/json");
@@ -134,6 +132,37 @@ public class RestaurantController {
                 }
             });
 
+            put("/:id/item", (req, res) -> {
+                res.type("application/json");
+
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                Long restaurantId = Long.parseLong(req.params(":id"));
+
+                validateSellerAndRestaurant(userId, restaurantId);
+
+                RestaurantUpdateRequest updateRequest = gson.fromJson(req.body(), RestaurantUpdateRequest.class);
+
+                try {
+                    RestaurantResponse updatedRestaurant =
+                            restaurantService.updateRestaurant(restaurantId, updateRequest);
+
+                    res.status(200);
+                    return gson.toJson(updatedRestaurant);
+                } catch (SellerNotFoundException | NotFoundException e) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+                }
+                catch (AccessDeniedException e) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+                } catch (IllegalArgumentException e) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", e.getMessage()));
+                } catch (Exception e) {
+                    res.status(500);
+                    return gson.toJson(Map.of("error", "Internal server error"));
+                }
+            });
         });
     }
 }

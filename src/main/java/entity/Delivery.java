@@ -27,4 +27,12 @@ public class Delivery extends User {
         this.isApproved = false;
     }
 
+    public Delivery(String mobile){
+        super(mobile);
+        this.totalDeliveries = 0;
+        this.available = false;
+        this.averageRating = 0.0;
+        this.isApproved = false;
+    }
+
 }

@@ -27,7 +27,6 @@ public class UserService {
 
         UserValidator.validateUser(request);
 
-        BankInfo bankInfo = new BankInfo(request.getBank_name(), request.getAccount_number());
         UserRole userRole;
         switch (request.getRole().toLowerCase()) {
             case "buyer":
@@ -42,19 +41,19 @@ public class UserService {
         }
 
         if (userRole == UserRole.CUSTOMER) {
-            Customer customer = new Customer();
+            Customer customer = new Customer(request.getMobile());
             fillUserFields(customer, request);
             saveWithDuplicationCheck(customerDao, customer);
             return customer;
 
         } else if (userRole == UserRole.SELLER) {
-            Seller seller = new Seller();
+            Seller seller = new Seller(request.getMobile());
             fillUserFields(seller, request);
             saveWithDuplicationCheck(sellerDao, seller);
             return seller;
 
         } else {
-            Delivery delivery = new Delivery();
+            Delivery delivery = new Delivery(request.getMobile());
             fillUserFields(delivery, request);
             saveWithDuplicationCheck(deliveryDao, delivery);
             return delivery;
@@ -153,7 +152,7 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
         user.setPhoto(request.getProfileImageBase64());
-        user.setBankInfo(new BankInfo(request.getBank_name(), request.getAccount_number()));
+        user.setBankInfo(new BankInfo(request.getBank_info().getBank_name(), request.getBank_info().getAccount_number()));
         switch (request.getRole().toLowerCase()) {
             case "buyer":
             case "customer":

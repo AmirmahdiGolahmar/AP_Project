@@ -14,6 +14,11 @@ public class User {
 
     public User() { }
 
+    public User(String mobile) {
+        this.mobile = mobile;
+        this.username = mobile;
+    }
+
     public User(String fullName, String mobile,UserRole role,String email, String photo,
                 String address, BankInfo bankInfo, String password) {
         this.fullName = fullName;
@@ -24,7 +29,7 @@ public class User {
         this.address = address;
         this.bankInfo = bankInfo;
         this.password = password;
-        this.username = fullName + "-" + mobile;
+        this.username = mobile;
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

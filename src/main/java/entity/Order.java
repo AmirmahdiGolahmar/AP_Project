@@ -1,15 +1,23 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Entity
 @Table(name = "orders")
+@Setter
+@Getter
 public class Order {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.PRIVATE)
     private Long id;
 
     @OneToOne
@@ -34,20 +42,4 @@ public class Order {
         this.status = OrderStatus.PENDING;
     }
 
-    public Long getId() { return id; }
-
-    public Cart getCart() { return cart; }
-    public void setCart(Cart cart) { this.cart = cart; }
-
-    public OrderStatus getStatus() { return status; }
-    public void setStatus(OrderStatus status) { this.status = status; }
-
-    public Customer getCustomer() { return customer; }
-    public void setCustomer(Customer customer) { this.customer = customer; }
-
-    public Delivery getAssignedTo() { return assignedTo; }
-    public void setAssignedTo(Delivery assignedTo) { this.assignedTo = assignedTo; }
-
-    public LocalDateTime getConfirmedAt() { return confirmedAt; }
-    public void setConfirmedAt(LocalDateTime confirmedAt) { this.confirmedAt = confirmedAt; }
 }
