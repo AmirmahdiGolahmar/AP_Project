@@ -37,19 +37,25 @@ public class Restaurant {
 
     @Getter
     @Setter(AccessLevel.NONE)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "restaurant_item",
             joinColumns = @JoinColumn(name = "restaurant_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
-    )    private List<Item> items;
+    )   private List<Item> items;
 
 
     public void addItem(Item item) {
+        if (items == null) {
+            items = new java.util.ArrayList<>();
+        }
         items.add(item);
     }
+    
     public void removeItem(Item item) {
-        items.remove(item);
+        if (items != null) {
+            items.remove(item);
+        }
     }
 
 

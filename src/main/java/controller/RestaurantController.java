@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.*;
 import service.RestaurantService;
+import service.ItemService;
 import service.UserService;
 import util.LocalDateTimeAdapter;
 
@@ -30,12 +31,13 @@ import java.util.Map;
 public class RestaurantController {
 
     private static final RestaurantService restaurantService = new RestaurantService();
+    private static final ItemService itemService = new ItemService();
     private static final Gson gson =  new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
 
     public static void initRoutes(){
-        path("/restaurant", () -> {
+        path("/restaurants", () -> {
             post("", (req, res) -> {
 
                 try{
@@ -48,10 +50,18 @@ public class RestaurantController {
                     }
 
                     RestaurantRegistrationRequest request = gson.fromJson(req.body(), RestaurantRegistrationRequest.class);
-                    restaurantService.createRestaurant(request, seller); // seller رو به متد پاس بده
+                    Restaurant restaurant = restaurantService.createRestaurant(request, seller);
 
                     res.status(201);
-                    return gson.toJson(Map.of("message", "Restaurant created successfully"));
+                    restaurantDto response = new restaurantDto(
+                            restaurant.getId(),
+                            restaurant.getName(),
+                            restaurant.getAddress(),
+                            restaurant.getPhone(),
+                            restaurant.getLogo(),
+                            restaurant.getTaxFee()
+                    );
+                    return gson.toJson(response);
                 } catch (InvalidInputException iie) {
                     res.status(400);
                     return gson.toJson(Map.of("error", "Invalid input"));
@@ -91,7 +101,7 @@ public class RestaurantController {
             get("/mine", (req, res) -> {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                User seller = new UserDao().findById(Long.parseLong(userId)); // فرض بر اینه که متدش وجود داره
+                User seller = new UserDao().findById(Long.parseLong(userId));
 
                 if (seller == null || seller.getRole() != UserRole.SELLER) {
                     res.status(403); // Forbidden
@@ -111,7 +121,7 @@ public class RestaurantController {
                 RestaurantUpdateRequest updateRequest = gson.fromJson(req.body(), RestaurantUpdateRequest.class);
 
                 try {
-                    RestaurantResponse updatedRestaurant =
+                    restaurantDto updatedRestaurant =
                             restaurantService.updateRestaurant(restaurantId, updateRequest);
 
                     res.status(200);
@@ -132,7 +142,7 @@ public class RestaurantController {
                 }
             });
 
-            put("/:id/item", (req, res) -> {
+            post("/:id/item", (req, res) -> {
                 res.type("application/json");
 
                 String userId = authorizeAndExtractUserId(req, res, gson);
@@ -140,14 +150,12 @@ public class RestaurantController {
 
                 validateSellerAndRestaurant(userId, restaurantId);
 
-                RestaurantUpdateRequest updateRequest = gson.fromJson(req.body(), RestaurantUpdateRequest.class);
+                itemDto updateRequest = gson.fromJson(req.body(), itemDto.class);
 
                 try {
-                    RestaurantResponse updatedRestaurant =
-                            restaurantService.updateRestaurant(restaurantId, updateRequest);
-
+                    itemDto addedItem = itemService.addItemToRestaurant(restaurantId, updateRequest);
                     res.status(200);
-                    return gson.toJson(updatedRestaurant);
+                    return gson.toJson(addedItem);
                 } catch (SellerNotFoundException | NotFoundException e) {
                     res.status(404);
                     return gson.toJson(Map.of("error", e.getMessage()));
@@ -160,9 +168,41 @@ public class RestaurantController {
                     return gson.toJson(Map.of("error", e.getMessage()));
                 } catch (Exception e) {
                     res.status(500);
+                    e.printStackTrace();
                     return gson.toJson(Map.of("error", "Internal server error"));
                 }
             });
+
+            put("/:id/item/:item_id", (req, res) -> {
+                res.type("application/json");
+
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                Long restaurantId = Long.parseLong(req.params(":id"));
+                Long itemId = Long.parseLong(req.params(":item_id"));
+
+                try {
+                    itemDto editRequest = gson.fromJson(req.body(), itemDto.class);
+                    itemDto updatedItemDto = itemService.editItem(restaurantId, itemId, editRequest, Long.parseLong(userId));
+                    res.status(200);
+                    return gson.toJson(Map.of(
+                            "message", "Item updated successfully",
+                            "item", updatedItemDto
+                    ));
+                } catch (NotFoundException e) {
+                    res.status(404);
+                    return gson.toJson(Map.of("error", "Restaurant or item not found"));
+                } catch (ForbiddenException e) {
+                    res.status(403);
+                    return gson.toJson(Map.of("error", "You are not allowed to edit this item"));
+                } catch (InvalidInputException e) {
+                    res.status(400);
+                    return gson.toJson(Map.of("error", "Invalid input"));
+                } catch (UnauthorizedUserException e) {
+                    res.status(401);
+                    return gson.toJson(Map.of("error", "Unauthorized"));
+                }
+            });
+
         });
     }
 }

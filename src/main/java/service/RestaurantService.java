@@ -2,16 +2,11 @@ package service;
 import dao.*;
 import dto.RestaurantRegistrationRequest;
 import dto.RestaurantResponse;
-import dto.RestaurantReturnDto;
+import dto.restaurantDto;
 import dto.RestaurantUpdateRequest;
 import entity.Restaurant;
 import entity.Seller;
 import entity.User;
-import exception.AccessDeniedException;
-import exception.AlreadyExistsException;
-import exception.NotFoundException;
-import jakarta.persistence.PersistenceException;
-import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +18,7 @@ public class RestaurantService {
         this.restaurantDao = new RestaurantDao();
     }
 
-    public void createRestaurant(RestaurantRegistrationRequest request, User seller) {
+    public Restaurant createRestaurant(RestaurantRegistrationRequest request, User seller) {
         Restaurant restaurant = new Restaurant();
         restaurant.setName(request.getName());
         restaurant.setAddress(request.getAddress());
@@ -32,14 +27,14 @@ public class RestaurantService {
         restaurant.setTaxFee(request.getTax_fee());
         restaurant.setAdditionalFee(request.getAdditional_fee());
         restaurant.setSeller((Seller) seller);
-
         restaurantDao.save(restaurant);
+        return restaurant;
     }
 
-    public List<RestaurantReturnDto> findRestaurantsByISellerId(Long id) {
+    public List<restaurantDto> findRestaurantsByISellerId(Long id) {
         List<Restaurant> restaurants = restaurantDao.findAllRestaurantsBySellerId(id);
         return restaurants.stream()
-                .map(RestaurantReturnDto::new)
+                .map(restaurantDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -47,9 +42,8 @@ public class RestaurantService {
         return restaurantDao.findById(id);
     }
 
-    public RestaurantResponse updateRestaurant(Long restaurantId, RestaurantUpdateRequest request) {
+    public restaurantDto updateRestaurant(Long restaurantId, RestaurantUpdateRequest request) {
         Restaurant restaurant = restaurantDao.findById(restaurantId);
-        // اعتبارسنجی و آپدیت
         if (request.getName() != null) {
             restaurant.setName(request.getName());
         }
@@ -79,7 +73,6 @@ public class RestaurantService {
         }
 
         restaurantDao.update(restaurant);
-        return new RestaurantResponse(restaurant);
+        return new restaurantDto(restaurant);
     }
-
 }
