@@ -1,14 +1,19 @@
 package service;
 
+import dao.GenericDao;
 import dao.ItemDao;
 import dao.RestaurantDao;
 import dto.itemDto;
 import entity.Item;
 import entity.Restaurant;
+import exception.AlreadyExistsException;
 import exception.ForbiddenException;
 import exception.NotFoundException;
+import jakarta.persistence.PersistenceException;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class ItemService {
     private final ItemDao itemDao;
@@ -20,22 +25,16 @@ public class ItemService {
     }
 
     public itemDto addItemToRestaurant(Long restaurantId, itemDto itemRequest) {
-        // Validate input
-        if (itemRequest.getName() == null || itemRequest.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Item name is required");
-        }
-        if (itemRequest.getPrice() == null || itemRequest.getPrice() <= 0) {
-            throw new IllegalArgumentException("Item price must be positive");
-        }
-        if (itemRequest.getSupply() == null || itemRequest.getSupply() < 0) {
-            throw new IllegalArgumentException("Item supply cannot be negative");
-        }
 
         // Find the restaurant
         Restaurant restaurant = restaurantDao.findById(restaurantId);
-        if (restaurant == null) {
-            throw new RuntimeException("Restaurant not found with id: " + restaurantId);
-        }
+
+        Optional<Item> it = restaurant.getItems()
+                .stream()
+                .filter(i -> i.getName().equals(itemRequest.getName()))
+                .findFirst();
+
+        if(!it.isEmpty()) throw new AlreadyExistsException("Item with this name already exists");
 
         // Create new item
         Item item = new Item();
@@ -49,7 +48,6 @@ public class ItemService {
 
         // Save the item
         itemDao.save(item);
-
         // Add item to restaurant using the addItem method
         restaurant.addItem(item);
         restaurantDao.update(restaurant);
@@ -69,12 +67,7 @@ public class ItemService {
     public itemDto editItem(Long restaurantId, Long itemId, itemDto request, Long userId) {
         // Validate
         Restaurant restaurant = restaurantDao.findById(restaurantId);
-        if (restaurant == null) {
-            throw new NotFoundException("Restaurant not found");
-        }
-        if (!restaurant.getSeller().getId().equals(userId)) {
-            throw new ForbiddenException("You are not allowed to edit items of this restaurant");
-        }
+
 
         Item item = restaurant.getItems()
                 .stream()
@@ -95,7 +88,20 @@ public class ItemService {
         return  new itemDto(item);
     }
 
+    public void deleteItem(Long restaurantId, Long itemId) {
+        Restaurant restaurant = restaurantDao.findById(restaurantId);
 
+        Item item = restaurant.getItems()
+                .stream()
+                .filter(i -> i.getId().equals(itemId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Item not found in this restaurant"));
+
+        restaurant.getItems().remove(item);
+        itemDao.delete(item.getId());
+
+        restaurantDao.save(restaurant);
+    }
 
     // Future methods can be added here:
     // - updateItem()

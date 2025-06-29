@@ -5,28 +5,22 @@ import com.google.gson.GsonBuilder;
 import dto.*;
 import service.RestaurantService;
 import service.ItemService;
-import service.UserService;
 import util.LocalDateTimeAdapter;
 
 import java.time.LocalDateTime;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import entity.BankInfo;
-import io.jsonwebtoken.Claims;
-import service.UserService;
+
+import static exception.ExceptionHandler.expHandler;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
+import static validator.RestaurantValidator.itemValidator;
 import static validator.SellerValidator.validateSellerAndRestaurant;
 
 import exception.*;
 
 import dao.*;
 import entity.*;
-import util.JwtUtil;
-import util.LocalDateTimeAdapter;
-
-import java.time.LocalDateTime;
 import java.util.Map;
+import exception.ExceptionHandler.*;
 
 public class RestaurantController {
 
@@ -39,7 +33,6 @@ public class RestaurantController {
     public static void initRoutes(){
         path("/restaurants", () -> {
             post("", (req, res) -> {
-
                 try{
                     String userId = authorizeAndExtractUserId(req, res, gson);
                     User seller = new UserDao().findById(Long.parseLong(userId));
@@ -61,40 +54,10 @@ public class RestaurantController {
                             restaurant.getLogo(),
                             restaurant.getTaxFee()
                     );
-                    return gson.toJson(response);
-                } catch (InvalidInputException iie) {
-                    res.status(400);
-                    return gson.toJson(Map.of("error", "Invalid input"));
-
-                } catch (UnauthorizedUserException uue) {
-                    res.status(401);
-                    return gson.toJson(Map.of("error", "Unauthorized"));
-
-                } catch (ForbiddenException fe) {
-                    res.status(403);
-                    return gson.toJson(Map.of("error", "Forbidden"));
-
-                } catch (NotFoundException nfe) {
-                    res.status(404);
-                    return gson.toJson(Map.of("error", "Not found"));
-
-                } catch (AlreadyExistsException aee) {
-                    res.status(409);
-                    return gson.toJson(Map.of("error", "Phone number already exists"));
-
-                } catch (UnsupportedMediaTypeException umte) {
-                    res.status(415);
-                    return gson.toJson(Map.of("error", "Unsupported Media Type"));
-
-                } catch(TooManyRequestsException tmre) {
-                    res.status(429);
-                    return gson.toJson(Map.of("error", "Too Many Requests"));
-
-                } catch (Exception e) {
-                    res.status(500);
-                    e.printStackTrace();
-                    return gson.toJson(Map.of("error", "Internal server error"));
-                } finally {
+                    return gson.toJson(Map.of("message", "Restaurant created successfully",
+                                            "response", response));
+                }catch (Exception e){
+                    return expHandler(e, res, gson);
                 }
             });
 
@@ -107,7 +70,12 @@ public class RestaurantController {
                     res.status(403); // Forbidden
                     return gson.toJson(Map.of("error", "Only sellers can see restaurant"));
                 }
-                return gson.toJson(restaurantService.findRestaurantsByISellerId(seller.getId()));
+
+                try{
+                    return gson.toJson(restaurantService.findRestaurantsByISellerId(seller.getId()));
+                }catch (Exception e){
+                    return expHandler(e, res, gson);
+                }
             });
 
             put("/:id", (req, res) -> {
@@ -126,19 +94,8 @@ public class RestaurantController {
 
                     res.status(200);
                     return gson.toJson(updatedRestaurant);
-                } catch (SellerNotFoundException | NotFoundException e) {
-                    res.status(404);
-                    return gson.toJson(Map.of("error", e.getMessage()));
-                }
-                catch (AccessDeniedException e) {
-                    res.status(401);
-                    return gson.toJson(Map.of("error", e.getMessage()));
-                } catch (IllegalArgumentException e) {
-                    res.status(400);
-                    return gson.toJson(Map.of("error", e.getMessage()));
-                } catch (Exception e) {
-                    res.status(500);
-                    return gson.toJson(Map.of("error", "Internal server error"));
+                }catch (Exception e){
+                    return expHandler(e, res, gson);
                 }
             });
 
@@ -150,26 +107,15 @@ public class RestaurantController {
 
                 validateSellerAndRestaurant(userId, restaurantId);
 
-                itemDto updateRequest = gson.fromJson(req.body(), itemDto.class);
+                itemDto registrationRequest = gson.fromJson(req.body(), itemDto.class);
+                itemValidator(registrationRequest);
 
                 try {
-                    itemDto addedItem = itemService.addItemToRestaurant(restaurantId, updateRequest);
+                    itemDto addedItem = itemService.addItemToRestaurant(restaurantId, registrationRequest);
                     res.status(200);
                     return gson.toJson(addedItem);
-                } catch (SellerNotFoundException | NotFoundException e) {
-                    res.status(404);
-                    return gson.toJson(Map.of("error", e.getMessage()));
-                }
-                catch (AccessDeniedException e) {
-                    res.status(401);
-                    return gson.toJson(Map.of("error", e.getMessage()));
-                } catch (IllegalArgumentException e) {
-                    res.status(400);
-                    return gson.toJson(Map.of("error", e.getMessage()));
-                } catch (Exception e) {
-                    res.status(500);
-                    e.printStackTrace();
-                    return gson.toJson(Map.of("error", "Internal server error"));
+                }catch (Exception e){
+                    return expHandler(e, res, gson);
                 }
             });
 
@@ -179,6 +125,7 @@ public class RestaurantController {
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 Long restaurantId = Long.parseLong(req.params(":id"));
                 Long itemId = Long.parseLong(req.params(":item_id"));
+                validateSellerAndRestaurant(userId, restaurantId);
 
                 try {
                     itemDto editRequest = gson.fromJson(req.body(), itemDto.class);
@@ -188,18 +135,26 @@ public class RestaurantController {
                             "message", "Item updated successfully",
                             "item", updatedItemDto
                     ));
-                } catch (NotFoundException e) {
-                    res.status(404);
-                    return gson.toJson(Map.of("error", "Restaurant or item not found"));
-                } catch (ForbiddenException e) {
-                    res.status(403);
-                    return gson.toJson(Map.of("error", "You are not allowed to edit this item"));
-                } catch (InvalidInputException e) {
-                    res.status(400);
-                    return gson.toJson(Map.of("error", "Invalid input"));
-                } catch (UnauthorizedUserException e) {
-                    res.status(401);
-                    return gson.toJson(Map.of("error", "Unauthorized"));
+                }catch (Exception e){
+                    return expHandler(e, res, gson);
+                }
+            });
+
+            delete("/:id/item/:item_id", (req, res) -> {
+                res.type("application/json");
+
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                Long restaurantId = Long.parseLong(req.params(":id"));
+                Long itemId = Long.parseLong(req.params(":item_id"));
+
+                validateSellerAndRestaurant(userId, restaurantId);
+
+                try {
+                    itemService.deleteItem(restaurantId, itemId);
+                    res.status(200);
+                    return gson.toJson(Map.of("message", "Food item removed successfully"));
+                } catch (Exception e) {
+                    return expHandler(e, res, gson);
                 }
             });
 

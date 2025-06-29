@@ -5,7 +5,7 @@ import io.jsonwebtoken.Claims;
 import spark.HaltException;
 import spark.Request;
 import spark.Response;
-
+import com.sun.net.httpserver.HttpExchange;
 import java.util.Map;
 import com.google.gson.Gson;
 
@@ -33,5 +33,28 @@ public class AuthorizationHandler {
             throw new AuthenticationException("invalid token");
         }
     }
+    public static String authorizeAndExtractUserId(HttpExchange exchange, Gson gson) {
+        try {
+            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new AuthenticationException("login first");
+            }
+
+            String token = authHeader.substring(7);
+
+            if (TokenBlacklist.contains(token)) {
+                throw new AuthenticationException("login first");
+            }
+
+            Claims claims = JwtUtil.decodeJWT(token);
+            return claims.getSubject();
+
+        } catch (AuthenticationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AuthenticationException("invalid token");
+        }
+    }
+
 
 }
