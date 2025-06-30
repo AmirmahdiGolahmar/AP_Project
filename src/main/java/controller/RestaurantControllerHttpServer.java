@@ -153,7 +153,7 @@ public class RestaurantControllerHttpServer {
             validateSellerAndRestaurant(userId, restaurantId);
 
             try {
-                itemDto item = itemService.addItemToRestaurant(restaurantId, dto);
+                itemDto item = itemService.addItem(restaurantId, dto);
                 sendResponse(exchange, 200, gson.toJson(item));
             } catch (Exception e) {
                 handleException(exchange, e);

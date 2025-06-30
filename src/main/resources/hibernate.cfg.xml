@@ -33,6 +33,7 @@
         <mapping class="entity.Seller"/>
         <mapping class="entity.Transaction"/>
         <mapping class="entity.User"/>
+        <mapping class="entity.Menu"/>
 
 
 

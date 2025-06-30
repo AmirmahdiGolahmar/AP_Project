@@ -36,9 +36,10 @@ public class Item {
 
     private double rating;
 
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    private Restaurant restaurant;
 
-    @ManyToMany(mappedBy = "items")
-    private List<Restaurant> restaurants;
 
     public Item() {}
 
@@ -54,13 +55,4 @@ public class Item {
         this.rating = rating;
     }
 
-    public void addKeywords(List<String> newKeywords) {
-        if (newKeywords == null || newKeywords.isEmpty()) return;
-
-        if (this.keywords == null) {
-            this.keywords = new ArrayList<>();
-        }
-
-        this.keywords.addAll(newKeywords);
-    }
 }

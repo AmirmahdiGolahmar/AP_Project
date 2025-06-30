@@ -28,6 +28,10 @@ public class ExceptionHandler {
         } else if (ex instanceof TooManyRequestsException) {
             res.status(429);
             return gson.toJson(Map.of("error", "Too Many Requests"));
+        } else if(ex instanceof AuthenticationException) {
+            return gson.toJson(Map.of("error", "Unauthorized",
+            "message", ex.getMessage()));
+
         } else {
             res.status(500);
             ex.printStackTrace();

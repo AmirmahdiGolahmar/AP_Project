@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 
 
 public class AuthorizationHandler {
-    public static String authorizeAndExtractUserId(Request req, Response res, Gson gson) {
+    public static String authorizeAndExtractUserId (Request req, Response res, Gson gson) throws AuthenticationException  {
         try {
             String authHeader = req.headers("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -33,7 +33,7 @@ public class AuthorizationHandler {
             throw new AuthenticationException("invalid token");
         }
     }
-    public static String authorizeAndExtractUserId(HttpExchange exchange, Gson gson) {
+    public static String authorizeAndExtractUserId(HttpExchange exchange, Gson gson) throws AuthenticationException {
         try {
             String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {

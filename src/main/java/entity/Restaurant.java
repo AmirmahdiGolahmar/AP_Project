@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,12 +38,11 @@ public class Restaurant {
 
     @Getter
     @Setter(AccessLevel.NONE)
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "restaurant_item",
-            joinColumns = @JoinColumn(name = "restaurant_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id")
-    )   private List<Item> items;
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Item> items;
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Menu> menus ;
 
 
     public void addItem(Item item) {
@@ -51,13 +51,25 @@ public class Restaurant {
         }
         items.add(item);
     }
-    
+
     public void removeItem(Item item) {
         if (items != null) {
             items.remove(item);
         }
     }
 
+    public void addMenu(Menu menu) {
+        if (menus == null) {
+            menus = new java.util.ArrayList<>();
+        }
+        menus.add(menu);
+    }
+
+    public void removeMenu(Menu menu) {
+        if (menus != null) {
+            menus.remove(menu);
+        }
+    }
 
 }
 

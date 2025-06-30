@@ -1,16 +1,12 @@
 package service;
 
-import dao.GenericDao;
 import dao.ItemDao;
 import dao.RestaurantDao;
 import dto.itemDto;
 import entity.Item;
 import entity.Restaurant;
 import exception.AlreadyExistsException;
-import exception.ForbiddenException;
 import exception.NotFoundException;
-import jakarta.persistence.PersistenceException;
-import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -24,9 +20,7 @@ public class ItemService {
         this.restaurantDao = new RestaurantDao();
     }
 
-    public itemDto addItemToRestaurant(Long restaurantId, itemDto itemRequest) {
-
-        // Find the restaurant
+    public itemDto addItem(Long restaurantId, itemDto itemRequest) {
         Restaurant restaurant = restaurantDao.findById(restaurantId);
 
         Optional<Item> it = restaurant.getItems()
@@ -36,23 +30,19 @@ public class ItemService {
 
         if(!it.isEmpty()) throw new AlreadyExistsException("Item with this name already exists");
 
-        // Create new item
         Item item = new Item();
         item.setName(itemRequest.getName());
         item.setPhoto(itemRequest.getImageBase64());
         item.setDescription(itemRequest.getDescription());
         item.setPrice(itemRequest.getPrice());
         item.setSupply(itemRequest.getSupply());
-        item.setRating(0.0); // Default rating
+        item.setRating(0.0);
         item.setKeywords(itemRequest.getKeywords() != null ? itemRequest.getKeywords() : new ArrayList<>());
+        item.setRestaurant(restaurant);
 
-        // Save the item
-        itemDao.save(item);
-        // Add item to restaurant using the addItem method
         restaurant.addItem(item);
         restaurantDao.update(restaurant);
 
-        // Return the created item as DTO
         itemDto response = new itemDto();
         response.setName(item.getName());
         response.setImageBase64(item.getPhoto());
@@ -65,7 +55,6 @@ public class ItemService {
     }
 
     public itemDto editItem(Long restaurantId, Long itemId, itemDto request, Long userId) {
-        // Validate
         Restaurant restaurant = restaurantDao.findById(restaurantId);
 
 
@@ -95,12 +84,11 @@ public class ItemService {
                 .stream()
                 .filter(i -> i.getId().equals(itemId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Item not found in this restaurant"));
+                .orElseThrow(() -> new NotFoundException("Item doesn't exist"));
 
-        restaurant.getItems().remove(item);
-        itemDao.delete(item.getId());
+        restaurant.removeItem(item);
 
-        restaurantDao.save(restaurant);
+        restaurantDao.update(restaurant);
     }
 
     // Future methods can be added here:
