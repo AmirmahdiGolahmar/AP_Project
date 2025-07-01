@@ -22,7 +22,7 @@ public class Order {
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "item_id")
     private Cart cart;
 
     @Enumerated(EnumType.STRING)
@@ -32,8 +32,10 @@ public class Order {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "delivery_id")
-    private Delivery assignedTo;
+    private Delivery delivery;
+
+    @ManyToOne
+    private Seller seller;
 
     private LocalDateTime confirmedAt;
 

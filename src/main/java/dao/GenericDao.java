@@ -2,6 +2,7 @@ package dao;
 
 import entity.Customer;
 import entity.Delivery;
+import entity.Restaurant;
 import entity.User;
 import exception.AlreadyExistsException;
 import jakarta.persistence.NoResultException;
@@ -103,5 +104,17 @@ public abstract class GenericDao<T> {
             if (session != null) session.close();
         }
     }
+
+    public <T> List<T> getAll(Class<T> entityClass) {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            String hql = "FROM " + entityClass.getSimpleName();
+            return session.createQuery(hql, entityClass).list();
+        } finally {
+            if (session != null) session.close();
+        }
+    }
+
 
 }

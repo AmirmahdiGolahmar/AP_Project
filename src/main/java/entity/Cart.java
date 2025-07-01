@@ -32,9 +32,9 @@ public class Cart {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    private Restaurant restaurant;
+//    @ManyToOne
+//    @JoinColumn(name = "restaurant_id", nullable = false)
+//    private Restaurant restaurant;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter(AccessLevel.NONE)
@@ -45,13 +45,12 @@ public class Cart {
     }
 
     public Cart(Long id, String userNote, String deliveryAddress, double totalPrice, LocalDateTime createdAt,
-                Customer customer, Restaurant restaurant) {
+                Customer customer) {
         this.id = id;
         this.userNote = userNote;
         this.deliveryAddress = deliveryAddress;
         this.createdAt = createdAt;
         this.customer = customer;
-        this.restaurant = restaurant;
         this.totalPrice = 0;
     }
 

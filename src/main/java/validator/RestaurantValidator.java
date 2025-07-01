@@ -1,12 +1,13 @@
 package validator;
 
-import dto.itemDto;
-import entity.Item;
+import dto.ItemDto;
+import dto.RestaurantDto;
 import entity.Restaurant;
 import exception.InvalidInputException;
+import dao.RestaurantDao;
 
 public class RestaurantValidator {
-    public static void itemValidator(itemDto item) {
+    public static void itemValidator(ItemDto item) {
         if(item.getName() == null || item.getName().equals("")) throw new InvalidInputException("Invalid name");
         if(item.getPrice() < 0) throw new InvalidInputException("Invalid price");
         if(item.getDescription() == null || item.getDescription().equals("")) throw new InvalidInputException("Invalid description");

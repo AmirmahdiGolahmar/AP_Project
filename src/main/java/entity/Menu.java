@@ -29,12 +29,25 @@ public class Menu {
             joinColumns = @JoinColumn(name = "menu_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
-    private List<Item> items = new ArrayList<>();
+    private List<Item> items;
 
     public Menu() {}
 
     public Menu(String title, Restaurant restaurant) {
         this.title = title;
         this.restaurant = restaurant;
+    }
+
+    public void addItem(Item item) {
+        if (items == null) {
+            items = new java.util.ArrayList<>();
+        }
+        items.add(item);
+    }
+
+    public void removeItem(Item item) {
+        if (item != null) {
+            items.remove(item);
+        }
     }
 }

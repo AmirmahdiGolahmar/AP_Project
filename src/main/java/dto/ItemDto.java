@@ -1,5 +1,6 @@
 package dto;
 
+import com.google.gson.annotations.SerializedName;
 import entity.Item;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,15 +9,18 @@ import java.util.List;
 
 @Getter
 @Setter
-public class itemDto {
+public class ItemDto {
+    long id;
     String name;
     String imageBase64;
     String description;
     Double price;
     Integer supply;
+    @SerializedName("categories")
     List<String> keywords;
 
-    public itemDto(String name, String imageBase64, String description, Double price, Integer supply, List<String> keywords) {
+    public ItemDto(long id, String name, String imageBase64, String description, Double price, Integer supply, List<String> keywords) {
+        this.id = id;
         this.name = name;
         this.imageBase64 = imageBase64;
         this.description = description;
@@ -25,7 +29,8 @@ public class itemDto {
         this.keywords = keywords;
     }
 
-    public itemDto(Item item) {
+    public ItemDto(Item item) {
+        this.id = item.getId();
         this.name = item.getName();
         this.imageBase64 = item.getPhoto();
         this.description = item.getDescription();
@@ -34,7 +39,7 @@ public class itemDto {
         this.keywords = item.getKeywords();
     }
 
-    public itemDto() {
+    public ItemDto() {
 
     }
 

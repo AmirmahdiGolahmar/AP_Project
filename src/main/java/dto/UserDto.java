@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class userDto {
+public class UserDto {
     int id;
     String full_name;
     String phone;
@@ -16,7 +16,7 @@ public class userDto {
     String profileImageBase64;
     bankInfoDto bank_info;
 
-    public userDto(User user) {
+    public UserDto(User user) {
         this.id = user.getId().intValue();
         this.full_name = user.getFullName();
         this.email = user.getEmail();

@@ -3,13 +3,14 @@ package service;
 import dao.ItemDao;
 import dao.MenuDao;
 import dao.RestaurantDao;
-import dto.menuDto;
+import dto.ItemDto;
+import dto.MenuDto;
+import entity.Item;
 import entity.Menu;
 import entity.Restaurant;
 import exception.AlreadyExistsException;
 import exception.NotFoundException;
 
-import java.io.NotActiveException;
 import java.util.Optional;
 
 public class MenuService {
@@ -23,7 +24,7 @@ public class MenuService {
         menuDao = new MenuDao();
     }
 
-    public Menu addMenu(menuDto request, long restaurantId){
+    public Menu addMenu(MenuDto request, long restaurantId){
         Restaurant restaurant = restaurantDao.findById(restaurantId);
         String title = request.getTitle();
         Optional<Menu> mn = restaurant.getMenus().stream()
@@ -46,6 +47,38 @@ public class MenuService {
 
         restaurant.removeMenu(menu.get());
 
+        restaurantDao.update(restaurant);
+    }
+
+    public void addItem(String title, int itemId, long restaurantId){
+        Restaurant restaurant = restaurantDao.findById(restaurantId);
+
+        Menu menu = restaurant.getMenus().stream().filter(m -> m.getTitle().equals(title)).findFirst().orElse(null);
+        if(menu == null) throw new NotFoundException("This menu does not exist");
+
+        Item item = restaurant.getItems().stream().filter(i -> i.getId() == itemId).findFirst().orElse(null);
+        if(item == null){throw new NotFoundException("This item does not exist");}
+
+        if(menu.getItems().stream().anyMatch(itm -> itm.getId() == itemId))
+            throw new AlreadyExistsException("This item already exists");
+
+        menu.addItem(item);
+
+        menuDao.update(menu);
+        restaurantDao.update(restaurant);
+    }
+
+    public void deleteItem(String title, int itemId, long restaurantId){
+        Restaurant restaurant = restaurantDao.findById(restaurantId);
+
+        Menu menu = restaurant.getMenus().stream().filter(m -> m.getTitle().equals(title)).findFirst().orElse(null);
+        if(menu == null) throw new NotFoundException("This menu does not exist");
+
+        Item item = menu.getItems().stream().filter(i -> i.getId() == itemId).findFirst().orElse(null);
+        if(item == null){throw new NotFoundException("This item does not exist");}
+
+        menu.removeItem(item);
+        menuDao.update(menu);
         restaurantDao.update(restaurant);
     }
 }

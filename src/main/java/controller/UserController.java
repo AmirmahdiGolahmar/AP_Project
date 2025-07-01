@@ -132,7 +132,7 @@ public class UserController {
                 try {
                     res.type("application/json");
                     String userId = authorizeAndExtractUserId(req, res, gson);
-                    userDto user = new userDto(userService.findUserById((long) Integer.parseInt(userId)));
+                    UserDto user = new UserDto(userService.findUserById((long) Integer.parseInt(userId)));
                     res.status(200);
                     return gson.toJson(user);
                 } catch (InvalidInputException iie) {

@@ -2,7 +2,7 @@ package service;
 
 import dao.ItemDao;
 import dao.RestaurantDao;
-import dto.itemDto;
+import dto.ItemDto;
 import entity.Item;
 import entity.Restaurant;
 import exception.AlreadyExistsException;
@@ -20,7 +20,7 @@ public class ItemService {
         this.restaurantDao = new RestaurantDao();
     }
 
-    public itemDto addItem(Long restaurantId, itemDto itemRequest) {
+    public ItemDto addItem(Long restaurantId, ItemDto itemRequest) {
         Restaurant restaurant = restaurantDao.findById(restaurantId);
 
         Optional<Item> it = restaurant.getItems()
@@ -43,7 +43,7 @@ public class ItemService {
         restaurant.addItem(item);
         restaurantDao.update(restaurant);
 
-        itemDto response = new itemDto();
+        ItemDto response = new ItemDto();
         response.setName(item.getName());
         response.setImageBase64(item.getPhoto());
         response.setDescription(item.getDescription());
@@ -54,7 +54,7 @@ public class ItemService {
         return response;
     }
 
-    public itemDto editItem(Long restaurantId, Long itemId, itemDto request, Long userId) {
+    public ItemDto editItem(Long restaurantId, Long itemId, ItemDto request, Long userId) {
         Restaurant restaurant = restaurantDao.findById(restaurantId);
 
 
@@ -74,7 +74,7 @@ public class ItemService {
 
         itemDao.update(item);
 
-        return  new itemDto(item);
+        return  new ItemDto(item);
     }
 
     public void deleteItem(Long restaurantId, Long itemId) {

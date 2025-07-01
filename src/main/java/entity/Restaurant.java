@@ -14,6 +14,19 @@ import java.util.List;
 @Setter
 public class Restaurant {
 
+    public Restaurant() {}
+
+    public Restaurant(String name, Seller seller, String address, String phone, String logo,
+                        Double taxFee, Double additionalFee) {
+        this.name = name;
+        this.seller = seller;
+        this.address = address;
+        this.phone = phone;
+        this.logo = logo;
+        this.taxFee = taxFee;
+        this.additionalFee = additionalFee;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.PRIVATE)

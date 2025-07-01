@@ -110,7 +110,7 @@ public class RestaurantControllerHttpServer {
             RestaurantRegistrationRequest request = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), RestaurantRegistrationRequest.class);
             try {
                 Restaurant restaurant = restaurantService.createRestaurant(request, seller);
-                restaurantDto response = new restaurantDto(
+                RestaurantDto response = new RestaurantDto(
                         restaurant.getId(), restaurant.getName(), restaurant.getAddress(),
                         restaurant.getPhone(), restaurant.getLogo(), restaurant.getTaxFee()
                 );
@@ -129,7 +129,7 @@ public class RestaurantControllerHttpServer {
                 return;
             }
 
-            List<restaurantDto> restaurants = restaurantService.findRestaurantsByISellerId(seller.getId());
+            List<RestaurantDto> restaurants = restaurantService.findRestaurantsByISellerId(seller.getId());
             sendResponse(exchange, 200, gson.toJson(restaurants));
         }
 
@@ -139,7 +139,7 @@ public class RestaurantControllerHttpServer {
             RestaurantUpdateRequest updateRequest = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), RestaurantUpdateRequest.class);
 
             try {
-                restaurantDto updated = restaurantService.updateRestaurant(restaurantId, updateRequest);
+                RestaurantDto updated = restaurantService.updateRestaurant(restaurantId, updateRequest);
                 sendResponse(exchange, 200, gson.toJson(updated));
             } catch (Exception e) {
                 handleException(exchange, e);
@@ -148,12 +148,12 @@ public class RestaurantControllerHttpServer {
 
         private void handleAddItem(HttpExchange exchange, Long restaurantId) throws IOException {
             String userId = authorizeAndExtractUserId(exchange, gson);
-            itemDto dto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), itemDto.class);
+            ItemDto dto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), ItemDto.class);
             itemValidator(dto);
             validateSellerAndRestaurant(userId, restaurantId);
 
             try {
-                itemDto item = itemService.addItem(restaurantId, dto);
+                ItemDto item = itemService.addItem(restaurantId, dto);
                 sendResponse(exchange, 200, gson.toJson(item));
             } catch (Exception e) {
                 handleException(exchange, e);
@@ -162,11 +162,11 @@ public class RestaurantControllerHttpServer {
 
         private void handleEditItem(HttpExchange exchange, Long restaurantId, Long itemId) throws IOException {
             String userId = authorizeAndExtractUserId(exchange, gson);
-            itemDto dto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), itemDto.class);
+            ItemDto dto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), ItemDto.class);
             validateSellerAndRestaurant(userId, restaurantId);
 
             try {
-                itemDto updated = itemService.editItem(restaurantId, itemId, dto, Long.parseLong(userId));
+                ItemDto updated = itemService.editItem(restaurantId, itemId, dto, Long.parseLong(userId));
                 sendResponse(exchange, 200, gson.toJson(Map.of("message", "Item updated successfully", "item", updated)));
             } catch (Exception e) {
                 handleException(exchange, e);

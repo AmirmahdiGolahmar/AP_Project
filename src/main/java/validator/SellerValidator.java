@@ -34,4 +34,14 @@ public class SellerValidator {
             throw new AccessDeniedException("You are not authorized to update this restaurant");
         }
     }
+
+    public static void validateRestaurant(Long restaurantId) {
+
+        Restaurant restaurant = new RestaurantDao().findById(restaurantId);
+        if (restaurant == null) {
+            throw new NotFoundException("Restaurant doesn't exist");
+        }
+    }
+
+
 }

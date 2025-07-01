@@ -1,12 +1,12 @@
 package service;
 import dao.*;
 import dto.RestaurantRegistrationRequest;
-import dto.RestaurantResponse;
-import dto.restaurantDto;
+import dto.RestaurantDto;
 import dto.RestaurantUpdateRequest;
 import entity.Restaurant;
 import entity.Seller;
 import entity.User;
+import exception.AlreadyExistsException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,22 +19,27 @@ public class RestaurantService {
     }
 
     public Restaurant createRestaurant(RestaurantRegistrationRequest request, User seller) {
-        Restaurant restaurant = new Restaurant();
-        restaurant.setName(request.getName());
-        restaurant.setAddress(request.getAddress());
-        restaurant.setPhone(request.getPhone());
-        restaurant.setLogo(request.getLogoBase64());
-        restaurant.setTaxFee(request.getTax_fee());
-        restaurant.setAdditionalFee(request.getAdditional_fee());
-        restaurant.setSeller((Seller) seller);
+
+        if(restaurantDao.findAll().stream().anyMatch(restaurant ->
+                        restaurant.getName().equals(request.getName()) &&
+                        restaurant.getAddress().equals(request.getAddress())))
+            throw new AlreadyExistsException("This restaurant already exists");
+
+
+        Restaurant restaurant = new Restaurant(
+                request.getName(), (Seller) seller, request.getAddress(),
+                request.getPhone(), request.getLogoBase64(),
+                request.getTax_fee(), request.getAdditional_fee()
+        );
+
         restaurantDao.save(restaurant);
         return restaurant;
     }
 
-    public List<restaurantDto> findRestaurantsByISellerId(Long id) {
+    public List<RestaurantDto> findRestaurantsByISellerId(Long id) {
         List<Restaurant> restaurants = restaurantDao.findAllRestaurantsBySellerId(id);
         return restaurants.stream()
-                .map(restaurantDto::new)
+                .map(RestaurantDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -42,7 +47,7 @@ public class RestaurantService {
         return restaurantDao.findById(id);
     }
 
-    public restaurantDto updateRestaurant(Long restaurantId, RestaurantUpdateRequest request) {
+    public RestaurantDto updateRestaurant(Long restaurantId, RestaurantUpdateRequest request) {
         Restaurant restaurant = restaurantDao.findById(restaurantId);
         if (request.getName() != null) {
             restaurant.setName(request.getName());
@@ -73,6 +78,6 @@ public class RestaurantService {
         }
 
         restaurantDao.update(restaurant);
-        return new restaurantDto(restaurant);
+        return new RestaurantDto(restaurant);
     }
 }

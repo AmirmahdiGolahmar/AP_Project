@@ -2,7 +2,7 @@ package dto;
 
 import entity.Restaurant;
 
-public class restaurantDto {
+public class RestaurantDto {
     private Long id;
     private String name;
     private String address;
@@ -12,7 +12,7 @@ public class restaurantDto {
     private Double additional_fee;
 
 
-    public restaurantDto(Restaurant restaurant) {
+    public RestaurantDto(Restaurant restaurant) {
         this.id = restaurant.getId();
         this.name = restaurant.getName();
         this.address = restaurant.getAddress();
@@ -22,7 +22,7 @@ public class restaurantDto {
         this.additional_fee = restaurant.getAdditionalFee();
     }
 
-    public restaurantDto(long id, String name, String address, String phone, String logoBase64, Double tax_fee) {
+    public RestaurantDto(long id, String name, String address, String phone, String logoBase64, Double tax_fee) {
         this.id = id;
         this.name = name;
         this.address = address;

@@ -29,7 +29,7 @@ public class Item {
 
     private int supply;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "item_keywords", joinColumns = @JoinColumn(name = "item_id"))
     @Column(name = "keyword")
     private List<String> keywords;

@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import dto.*;
 import service.MenuService;
 import service.RestaurantService;
@@ -45,7 +46,7 @@ public class RestaurantController {
                     Restaurant restaurant = restaurantService.createRestaurant(request, seller);
 
                     res.status(201);
-                    restaurantDto response = new restaurantDto(
+                    RestaurantDto response = new RestaurantDto(
                             restaurant.getId(),
                             restaurant.getName(),
                             restaurant.getAddress(),
@@ -88,7 +89,7 @@ public class RestaurantController {
 
                     RestaurantUpdateRequest updateRequest = gson.fromJson(req.body(), RestaurantUpdateRequest.class);
 
-                    restaurantDto updatedRestaurant =
+                    RestaurantDto updatedRestaurant =
                             restaurantService.updateRestaurant(restaurantId, updateRequest);
 
                     res.status(200);
@@ -108,10 +109,10 @@ public class RestaurantController {
 
                     validateSellerAndRestaurant(userId, restaurantId);
 
-                    itemDto registrationRequest = gson.fromJson(req.body(), itemDto.class);
+                    ItemDto registrationRequest = gson.fromJson(req.body(), ItemDto.class);
                     itemValidator(registrationRequest);
 
-                    itemDto addedItem = itemService.addItem(restaurantId, registrationRequest);
+                    ItemDto addedItem = itemService.addItem(restaurantId, registrationRequest);
                     res.status(200);
                     return gson.toJson(addedItem);
 
@@ -130,8 +131,8 @@ public class RestaurantController {
                     Long itemId = Long.parseLong(req.params(":item_id"));
                     validateSellerAndRestaurant(userId, restaurantId);
 
-                    itemDto editRequest = gson.fromJson(req.body(), itemDto.class);
-                    itemDto updatedItemDto = itemService.editItem(restaurantId, itemId, editRequest, Long.parseLong(userId));
+                    ItemDto editRequest = gson.fromJson(req.body(), ItemDto.class);
+                    ItemDto updatedItemDto = itemService.editItem(restaurantId, itemId, editRequest, Long.parseLong(userId));
                     res.status(200);
                     return gson.toJson(Map.of(
                             "message", "Item updated successfully",
@@ -170,7 +171,7 @@ public class RestaurantController {
 
                     validateSellerAndRestaurant(userId, restaurantId);
 
-                    menuDto request = gson.fromJson(req.body(), menuDto.class);
+                    MenuDto request = gson.fromJson(req.body(), MenuDto.class);
 
                     Menu menu = menuService.addMenu(request, restaurantId);
 
@@ -207,6 +208,53 @@ public class RestaurantController {
                 }
             });
 
+            put("/:id/menu/:title", (req, res) -> {
+                try {
+                    res.type("application/json");
+
+                    String userId = authorizeAndExtractUserId(req, res, gson);
+                    long restaurantId = Long.parseLong(req.params(":id"));
+                    String menuTitle = req.params(":title");
+                    validateSellerAndRestaurant(userId, restaurantId);
+
+                    Map<String, Integer> bodyMap = gson.fromJson(req.body(), new TypeToken<Map<String, Integer>>(){}.getType());
+                    int itemId = bodyMap.get("item_id");
+
+                    menuService.addItem(menuTitle, itemId, Long.parseLong(req.params(":id")));
+                    res.status(200);
+
+                    return gson.toJson(Map.of(
+                            "message", "Food item added to restaurant menu successfully")
+                    );
+
+                } catch (Exception e) {
+                    return expHandler(e, res, gson);
+                }
+            });
+
+            delete("/:id/menu/:title/:item_id", (req, res) -> {
+                try {
+                    res.type("application/json");
+
+                    String userId = authorizeAndExtractUserId(req, res, gson);
+                    long restaurantId = Long.parseLong(req.params(":id"));
+                    String menuTitle = req.params(":title");
+                    int itemId = Integer.parseInt(req.params(":item_id"));
+
+                    validateSellerAndRestaurant(userId, restaurantId);
+
+                    menuService.deleteItem(menuTitle, itemId, restaurantId);
+                    res.status(200);
+
+                    return gson.toJson(
+                            Map.of("message",
+                                    "Item removed from restaurant menu successfully")
+                    );
+
+                } catch (Exception e) {
+                    return expHandler(e, res, gson);
+                }
+            });
         });
     }
 }

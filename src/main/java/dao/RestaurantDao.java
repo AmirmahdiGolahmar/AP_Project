@@ -13,6 +13,16 @@ public class RestaurantDao extends GenericDao<Restaurant> {
         super(Restaurant.class);
     }
 
+    public List<Restaurant> getAllRestaurants() {
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            return session.createQuery("FROM Restaurant", Restaurant.class).list();
+        } finally {
+            if (session != null) session.close();
+        }
+    }
+
     public List<Restaurant> findAllRestaurantsBySellerId(Long sellerId) {
         Session session = null;
         try {
