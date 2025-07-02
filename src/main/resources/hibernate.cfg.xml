@@ -21,12 +21,11 @@
 
         <!-- Mapping entity classes -->
         <mapping class="entity.Admin"/>
-        <mapping class="entity.Cart"/>
         <mapping class="entity.CartItem"/>
         <mapping class="entity.Comment"/>
         <mapping class="entity.Customer"/>
         <mapping class="entity.Delivery"/>
-        <mapping class="entity.Discount"/>
+        <mapping class="entity.Coupon"/>
         <mapping class="entity.Item"/>
         <mapping class="entity.Order"/>
         <mapping class="entity.Restaurant"/>

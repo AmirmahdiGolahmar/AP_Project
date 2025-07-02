@@ -1,6 +1,10 @@
 package util;
 
+import dao.UserDao;
+import entity.User;
+import entity.UserRole;
 import exception.AuthenticationException;
+import exception.NotFoundException;
 import io.jsonwebtoken.Claims;
 import spark.HaltException;
 import spark.Request;
@@ -56,5 +60,13 @@ public class AuthorizationHandler {
         }
     }
 
-
+    public static void authorizeUserAsCustomer (long userId) {
+        User user = new UserDao().findById(userId);
+        if(user == null) {
+            throw new NotFoundException("User don't exist");
+        }
+        if(user.getRole() != UserRole.CUSTOMER) {
+            throw new AuthenticationException("Only Customers can register order");
+        }
+    }
 }

@@ -14,11 +14,11 @@ import java.util.List;
 import static exception.ExceptionHandler.expHandler;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
+import static util.AuthorizationHandler.authorizeUserAsCustomer;
 import static validator.SellerValidator.validateRestaurant;
+import static validator.RestaurantValidator.validateCoupon;
 
 public class CustomerController {
-    private static final RestaurantService restaurantService = new RestaurantService();
-    private static final ItemService itemService = new ItemService();
     private static final CustomerService customerService = new CustomerService();
     private static final Gson gson =  new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
@@ -36,7 +36,7 @@ public class CustomerController {
             }
         });
 
-        get("/vendors/:id/items", (req, res) ->{
+        get("/vendors/:id", (req, res) ->{
             try{
                 res.type("application/json");
                 long restaurantId = Long.parseLong(req.params(":id"));
@@ -58,5 +58,42 @@ public class CustomerController {
                 return expHandler(e, res, gson);
             }
         });
+
+        get("/items/:id", (req, res) ->{
+            try{
+                res.type("application/json");
+                long itemId = Long.parseLong(req.params(":id"));
+                ItemDto response = customerService.displayItem(itemId);
+                return gson.toJson(response);
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
+        get("/coupons", (req, res) ->{
+            try{
+                res.type("application/json");
+                return gson.toJson("");
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
+
+        post("/orders", (req, res) ->{
+            try{
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                OrderRegistrationRequest request = gson.fromJson(req.body(), OrderRegistrationRequest.class);
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                validateRestaurant(request.getVendor_id());
+                validateCoupon(request.getCoupon_id());
+                OrderRegistrationResponseDto response = customerService.addOrder(request, Integer.parseInt(userId));
+                return gson.toJson(response);
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
     }
 }

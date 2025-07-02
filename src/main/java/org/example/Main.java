@@ -2,6 +2,7 @@ package org.example;
 import java.util.logging.LogManager;
 import static spark.Spark.*;
 
+import controller.AdminController;
 import controller.CustomerController;
 import controller.RestaurantController;
 import controller.UserController;
@@ -29,12 +30,13 @@ import java.util.logging.LogManager;
 
 public class Main {
     public static void main(String[] args) {
-        LogManager.getLogManager().reset();
+        //LogManager.getLogManager().reset();
 
         port(4567);
         UserController.initRoutes();
         RestaurantController.initRoutes();
         CustomerController.initRoutes();
+        AdminController.initRoutes();
     }
 }
 

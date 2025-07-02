@@ -15,4 +15,8 @@ public class RestaurantValidator {
         if(item.getImageBase64() == null || item.getImageBase64().equals("")) throw new InvalidInputException("Invalid image");
         if(item.getKeywords().isEmpty()) throw new InvalidInputException("Invalid keywords");
     }
+
+    public static void validateCoupon(long CouponId) {
+
+    }
 }

@@ -16,7 +16,6 @@ public class ItemDto {
     String description;
     Double price;
     Integer supply;
-    @SerializedName("categories")
     List<String> keywords;
 
     public ItemDto(long id, String name, String imageBase64, String description, Double price, Integer supply, List<String> keywords) {

@@ -17,11 +17,14 @@ public class CartItem {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private Cart cart;
-
     private int quantity;
 
-    public double getTotalPriceCartItem() { return this.item.getPrice()*quantity; }
+    public Long getCartItemPrice() { return (long) this.item.getPrice()*quantity; }
+
+    public CartItem() {}
+
+    public CartItem(Item item, int quantity) {
+        this.item = item;
+        this.quantity = quantity;
+    }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class RestaurantDisplayResponse {
+    RestaurantDto vendor;
     List<String> menu_titles;
     List<MenuDto> menus;
 
