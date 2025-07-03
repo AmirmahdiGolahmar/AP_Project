@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 public class OrderRegistrationRequest {
     String delivery_address;
-    long vendor_id;
-    long coupon_id;
+    Long vendor_id;
+    Long coupon_id;
     List<CartItemDto> items;
 }

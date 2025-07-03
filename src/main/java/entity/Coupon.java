@@ -25,19 +25,23 @@ public class Coupon {
     private CouponType type;
     private Long value;
     private Long minPrice;
-    private Long usedCount;
+    private Long userCount;
 
     private LocalDateTime startDate;
     private LocalDateTime endDate;
      public Coupon() {}
 
-    public Coupon(String code, CouponType type, long value, Long minPrice, Long usedCount, LocalDateTime startDate, LocalDateTime endDate) {
+    public Coupon(String code, CouponType type, long value, Long minPrice, Long userCount, LocalDateTime startDate, LocalDateTime endDate) {
          this.code = code;
          this.type = type;
          this.value = value;
          this.minPrice = minPrice;
-         this.usedCount = usedCount;
+         this.userCount = userCount;
          this.startDate = startDate;
          this.endDate = endDate;
+    }
+
+    public void subtractUserCount(){
+         this.userCount--;
     }
 }

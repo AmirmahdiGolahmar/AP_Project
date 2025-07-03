@@ -2,21 +2,18 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dto.CouponRegistrationRequest;
-import dto.RestaurantDisplayResponse;
-import dto.RestaurantDto;
-import dto.RestaurantSearchRequestDto;
+import dto.CouponDto;
+import dto.CouponRequest;
 import entity.Coupon;
 import service.*;
 import util.LocalDateTimeAdapter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static exception.ExceptionHandler.expHandler;
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static validator.SellerValidator.validateRestaurant;
+import static spark.Spark.*;
 
 public class AdminController {
     private static final AdminService adminService = new AdminService();
@@ -30,8 +27,8 @@ public class AdminController {
         get("/admin/coupons", (req, res) ->{
             try{
                 res.type("application/json");
-                List<Coupon> coupons = adminService.getAllCoupons();
-                return gson.toJson(coupons);
+                List<CouponDto> coupons = adminService.getAllCoupons();
+                return gson.toJson(Map.of("List of all coupons",  coupons));
             }catch (Exception e){
                 return expHandler(e, res, gson);
             }
@@ -40,12 +37,50 @@ public class AdminController {
         post("/admin/coupons", (req, res) ->{
             try{
                 res.type("application/json");
-                CouponRegistrationRequest request = gson.fromJson(req.body(), CouponRegistrationRequest.class);
-                Coupon response= adminService.addCoupon(request);
-                return gson.toJson(response);
+                CouponRequest request = gson.fromJson(req.body(), CouponRequest.class);
+                CouponDto response= adminService.addCoupon(request);
+                return gson.toJson(Map.of("message", "coupon added successfully",
+                        "coupon", response));
             }catch (Exception e){
                 return expHandler(e, res, gson);
             }
         });
+
+        get("/admin/coupons/:id", (req, res) ->{
+            try{
+                res.type("application/json");
+                Long id = Long.parseLong(req.params(":id"));
+                CouponDto coupon = adminService.getCoupon(id);
+                return gson.toJson(Map.of("coupon details", coupon));
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
+        put("/admin/coupons/:id", (req, res) ->{
+            try{
+                res.type("application/json");
+                Long id = Long.parseLong(req.params(":id"));
+                CouponRequest request = gson.fromJson(req.body(), CouponRequest.class);
+                CouponDto coupon = adminService.updateCoupon(request, id);
+                return gson.toJson(Map.of("message", "Coupon updated successfully",
+                        "coupon", coupon));
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
+        delete("/admin/coupons/:id", (req, res) ->{
+            try{
+                res.type("application/json");
+                Long id = Long.parseLong(req.params(":id"));
+                adminService.deleteCoupon(id);
+                return gson.toJson(Map.of("message", "Coupon deleted"));
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
+
     }
 }

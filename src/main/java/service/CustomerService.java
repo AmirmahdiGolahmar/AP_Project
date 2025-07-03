@@ -7,22 +7,25 @@ import exception.InvalidInputException;
 import exception.NotFoundException;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static util.LocalDateTimeAdapter.TimeToString;
 
 public class CustomerService {
     private final ItemDao itemDao;
     private final RestaurantDao restaurantDao;
     private final UserDao userDao;
     private final OrderDao orderDao;
+    private final CouponDao couponDao;
 
     public CustomerService() {
         itemDao = new ItemDao();
         restaurantDao = new RestaurantDao();
         userDao = new UserDao();
         orderDao = new OrderDao();
+        couponDao = new CouponDao();
     }
 
     public List<RestaurantDto> searchRestaurant(RestaurantSearchRequestDto request) {
@@ -100,8 +103,14 @@ public class CustomerService {
         return new ItemDto(item);
     }
 
-    //needs coupon validation + change in calculate price + status
-    public OrderRegistrationResponseDto addOrder(OrderRegistrationRequest request, long customerId) {
+    public CouponDto getCoupon(String code) {
+        Coupon coupon = couponDao.findAll().stream().filter(cp -> cp.getCode().equals(code)).findFirst().orElse(null);
+        if(coupon == null) throw new NotFoundException("Coupon doesn't exist");
+        return new CouponDto(coupon);
+    }
+
+    //delivery id
+    public OrderDto addOrder(OrderRegistrationRequest request, long customerId) {
         Customer customer = (Customer) userDao.findById(customerId);
         Restaurant restaurant = restaurantDao.findById(request.getVendor_id());
         List<CartItem> cartItems = new ArrayList<>();
@@ -112,28 +121,30 @@ public class CustomerService {
             cartItems.add(new CartItem(item, ci.getQuantity()));
         }
 
-        Order order = new Order(cartItems, request.getDelivery_address(),
-            customer, restaurant, LocalDateTime.now(), LocalDateTime.now());
+        Order order;
+        Coupon coupon = null;
+        if(request.getCoupon_id() == null){
+            order = new Order(cartItems, request.getDelivery_address(),
+                    customer, restaurant, LocalDateTime.now(), LocalDateTime.now(), OrderStatus.submitted);
+        }else{
+            coupon = couponDao.findById(request.getCoupon_id());
+            order = new Order(cartItems, request.getDelivery_address(),
+                    customer, restaurant, LocalDateTime.now(), LocalDateTime.now(), coupon, OrderStatus.submitted);
+        }
 
         orderDao.save(order);
 
-        OrderRegistrationResponseDto response = new OrderRegistrationResponseDto();
-        response.setId(order.getId());
-        response.setDelivery_address(order.getDeliveryAddress());
-        response.setCustomer_id(customerId);
-        response.setVendor_id(restaurant.getId());
-        response.setCoupon_id(request.getCoupon_id());
-        response.setItem_ids(request.getItems().stream().map(CartItemDto::getItem_id).collect(Collectors.toList()));
-        response.setRaw_price((long) order.getTotalPrice());
-        response.setTax_fee(0.09);
-        response.setCourier_fee(0.01);
-        response.setPay_price((long)(1.1*order.getTotalPrice()));
-        response.setCourier_id(-1);
-        response.setStatus("Submitted");
-        String formatted = order.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        response.setCreated_at(formatted);
-        formatted = order.getUpdatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        response.setUpdated_at(formatted);
-        return response;
+        if(coupon != null){
+            coupon.subtractUserCount();
+            couponDao.update(coupon);
+        }
+
+        return new OrderDto(order);
+    }
+
+    public OrderDto getOrder(long orderId) {
+        Order order = orderDao.findById(orderId);
+        if(order == null) throw new NotFoundException("Order doesn't exist");
+        return new OrderDto(order);
     }
 }

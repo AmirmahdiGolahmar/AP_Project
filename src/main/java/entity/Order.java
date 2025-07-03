@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.sql.exec.spi.StandardEntityInstanceResolver;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,12 +38,12 @@ public class Order {
     @ManyToOne
     private Restaurant restaurant;
 
+    @ManyToOne
+    private Coupon coupon;
+
     private String comment;
     private String photo;
     private double rating;
-
-    @Setter(AccessLevel.PRIVATE)
-    private Long totalPrice;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -52,7 +51,7 @@ public class Order {
 
     public Order(List<CartItem> cartItems, String deliveryAddress,
                  Customer customer, Restaurant restaurant,
-                 LocalDateTime createdAt, LocalDateTime updatedAt) {
+                 LocalDateTime createdAt, LocalDateTime updatedAt, OrderStatus status) {
         this.cartItems = cartItems;
         this.deliveryAddress = deliveryAddress;
         this.customer = customer;
@@ -60,14 +59,45 @@ public class Order {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.rating = 0.0;
-        this.setTotalPrice();
+        this.coupon = null;
+        this.delivery = null;
+        this.status = status;
+    }
+
+    public Order(List<CartItem> cartItems, String deliveryAddress,
+                 Customer customer, Restaurant restaurant,
+                 LocalDateTime createdAt, LocalDateTime updatedAt, Coupon coupon, OrderStatus status) {
+        this.cartItems = cartItems;
+        this.deliveryAddress = deliveryAddress;
+        this.customer = customer;
+        this.restaurant = restaurant;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.rating = 0.0;
+        this.coupon = coupon;
+        this.delivery = null;
+        this.status = status;
     }
 
     public Order() {}
 
-    public void setTotalPrice() {
-        this.totalPrice = (long) cartItems.stream()
+    public Long getRawPrice() {
+        return (long) cartItems.stream()
                 .mapToDouble(CartItem::getCartItemPrice)
                 .sum();
+    }
+    public Long getPayPrice() {
+       long price = (long) (getRawPrice() * (restaurant.getTaxFee() + restaurant.getAdditionalFee()));
+       if(coupon == null){
+           return price;
+       }else{
+           double value = (double) coupon.getValue();
+           if (coupon.getType().equals(CouponType.fixed)){
+               return (long)(price - value);
+           }else{
+               value = value <= 1 ? value : value / 100;
+               return (long)(price * (1 - value));
+           }
+       }
     }
 }

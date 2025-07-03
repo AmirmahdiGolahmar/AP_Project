@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CouponRegistrationRequest {
+public class CouponRequest {
     String coupon_code;
     String type;
     Long value;

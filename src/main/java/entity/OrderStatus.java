@@ -1,11 +1,11 @@
 package entity;
 
 public enum OrderStatus {
-    SUBMITTED,
-    UNPAID_AND_CANCELLED,
-    WAITING_VENDOR,
-    CANCELLED,
-    FINDING_COURIER,
-    ON_THE_WAY,
-    COMPLETED
+    submitted,
+    unpaid_and_cancelled,
+    waiting_vendor,
+    cancelled,
+    finding_courier,
+    on_the_way,
+    completed
 }
