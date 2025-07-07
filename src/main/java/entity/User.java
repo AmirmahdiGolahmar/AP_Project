@@ -1,9 +1,14 @@
 package entity;
 
+import exception.AlreadyExistsException;
+import exception.NotFoundException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -69,4 +74,27 @@ public class User {
        this.bankInfo.setAccountNumber(accountNumber);
    }
 
+    @ManyToMany
+    @JoinTable(
+            name = "favorite_restaurants",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "restaurant_id")
+    )
+    private List<Restaurant> favoriteRestaurants = new ArrayList<>();
+
+    public void addToFavorite(Restaurant restaurant) {
+        if (favoriteRestaurants.stream().noneMatch(r -> r.getId().equals(restaurant.getId()))) {
+            this.favoriteRestaurants.add(restaurant);
+        }else{
+            throw new AlreadyExistsException("Restaurant is already favorite");
+        }
+    }
+
+    public void removeFromFavorite(Restaurant restaurant) {
+        if (favoriteRestaurants.stream().anyMatch(r -> r.getId().equals(restaurant.getId()))) {
+            this.favoriteRestaurants.removeIf(r -> r.getId().equals(restaurant.getId()));
+        }else{
+            throw new NotFoundException("This restaurant is not favorite");
+        }
+    }
 }

@@ -44,6 +44,7 @@ public class ItemService {
         restaurantDao.update(restaurant);
 
         ItemDto response = new ItemDto();
+        response.setId(item.getId());
         response.setName(item.getName());
         response.setImageBase64(item.getPhoto());
         response.setDescription(item.getDescription());

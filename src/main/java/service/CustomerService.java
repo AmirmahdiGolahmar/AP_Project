@@ -9,6 +9,7 @@ import exception.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static util.LocalDateTimeAdapter.TimeToString;
@@ -109,14 +110,15 @@ public class CustomerService {
         return new CouponDto(coupon);
     }
 
-    //delivery id
     public OrderDto addOrder(OrderRegistrationRequest request, long customerId) {
         Customer customer = (Customer) userDao.findById(customerId);
         Restaurant restaurant = restaurantDao.findById(request.getVendor_id());
+        if(request.getItems().isEmpty()) throw new InvalidInputException("Cart can't be empty");
         List<CartItem> cartItems = new ArrayList<>();
         for(CartItemDto ci : request.getItems()){
-            Item item = restaurant.getItems().stream().filter(itm -> itm.getId() == ci.getItem_id()).findFirst().get();
-            if(item == null) throw new NotFoundException("Item doesn't exist");
+          Optional<Item> it = restaurant.getItems().stream().filter(itm -> itm.getId() == ci.getItem_id()).findFirst();
+            if(it.isEmpty()) throw new NotFoundException("Item doesn't exist");
+            Item item = it.get();
             if(item.getSupply() < ci.getQuantity()) throw new InvalidInputException("Supply isn't enough");
             cartItems.add(new CartItem(item, ci.getQuantity()));
         }
@@ -146,5 +148,44 @@ public class CustomerService {
         Order order = orderDao.findById(orderId);
         if(order == null) throw new NotFoundException("Order doesn't exist");
         return new OrderDto(order);
+    }
+
+    public List<OrderDto> getOrderHistory(String search, String restaurant){
+        if ((search == null || search.isEmpty()) && (restaurant == null || restaurant.isEmpty())) {
+            return orderDao.findAll().stream()
+                    .map(OrderDto::new)
+                    .collect(Collectors.toList());
+        } else {
+            String searchKey = (search == null) ? "" : search.toLowerCase();
+            String restaurantKey = (restaurant == null) ? "" : restaurant.toLowerCase();
+
+            return orderDao.findAll().stream()
+                    .filter(o -> (o.getRestaurant().getName().toLowerCase().contains(restaurantKey)) ||
+                            (o.getRestaurant().getName().toLowerCase().contains(searchKey)) ||
+                            (o.getDeliveryAddress().toLowerCase().contains(searchKey)) ||
+                            o.getCartItems().stream().anyMatch(ci ->
+                                    ci.getItem().getName().toLowerCase().contains(searchKey)))
+                    .map(OrderDto::new)
+                    .toList();
+        }
+    }
+
+    public void addToFavorites(long userId, long restaurantId) {
+        Restaurant restaurant = restaurantDao.findById(restaurantId);
+        User user = userDao.findByIdLoadFavorites(userId);
+        user.addToFavorite(restaurant);
+        userDao.update(user);
+    }
+
+    public void removeFromFavorites(long userId, long restaurantId) {
+        Restaurant restaurant = restaurantDao.findById(restaurantId);
+        User user = userDao.findByIdLoadFavorites(userId);
+        user.removeFromFavorite(restaurant);
+        userDao.update(user);
+    }
+
+    public List<RestaurantDto> getFavorites(long userId) {
+        User user = userDao.findByIdLoadFavorites(userId);
+        return user.getFavoriteRestaurants().stream().map(RestaurantDto::new).collect(Collectors.toList());
     }
 }

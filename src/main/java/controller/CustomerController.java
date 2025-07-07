@@ -99,6 +99,19 @@ public class CustomerController {
             }
         });
 
+        get("/orders/history", (req, res) ->{
+            try{
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                OrderHistoryRequestDto request = gson.fromJson(req.body(), OrderHistoryRequestDto.class);
+                List<OrderDto> response = customerService.getOrderHistory(request.getSearch(), request.getVendor());
+                return gson.toJson(Map.of("List of past orders", response));
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
         get("/orders/:id", (req, res) ->{
             try{
                 res.type("application/json");
@@ -107,6 +120,46 @@ public class CustomerController {
                 long orderId = Long.parseLong(req.params(":id"));
                 OrderDto response = customerService.getOrder(orderId);
                 return gson.toJson(response);
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
+        put("/favorites/:id", (req, res) -> {
+            try{
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                long restaurantId = Long.parseLong(req.params(":id"));
+                validateRestaurant(restaurantId);
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                customerService.addToFavorites(Integer.parseInt(userId) ,restaurantId);
+                return gson.toJson("Added to favorites");
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
+        delete("/favorites/:id", (req, res) -> {
+            try{
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                long restaurantId = Long.parseLong(req.params(":id"));
+                validateRestaurant(restaurantId);
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                customerService.removeFromFavorites(Integer.parseInt(userId) ,restaurantId);
+                return gson.toJson("Removed to favorites");
+            }catch (Exception e){
+                return expHandler(e, res, gson);
+            }
+        });
+
+        get("/favorites", (req, res) -> {
+            try{
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                List<RestaurantDto> response =  customerService.getFavorites(Integer.parseInt(userId));
+                return gson.toJson(Map.of("List of favorite restaurants", response));
             }catch (Exception e){
                 return expHandler(e, res, gson);
             }
