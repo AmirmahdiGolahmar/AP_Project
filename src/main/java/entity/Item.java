@@ -55,4 +55,8 @@ public class Item {
         this.rating = rating;
     }
 
+    public void subtractSupplyCount(int count){
+        this.supply = this.supply - count;
+    }
+
 }

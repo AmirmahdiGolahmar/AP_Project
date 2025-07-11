@@ -3,9 +3,11 @@ package service;
 import dao.*;
 import dto.*;
 import entity.*;
+import exception.AlreadyExistsException;
 import exception.InvalidInputException;
 import exception.NotFoundException;
 
+import java.nio.channels.AlreadyBoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +122,9 @@ public class CustomerService {
             if(it.isEmpty()) throw new NotFoundException("Item doesn't exist");
             Item item = it.get();
             if(item.getSupply() < ci.getQuantity()) throw new InvalidInputException("Supply isn't enough");
+            item.subtractSupplyCount(ci.getQuantity());
             cartItems.add(new CartItem(item, ci.getQuantity()));
+            itemDao.update(item);
         }
 
         Order order;
@@ -187,5 +191,28 @@ public class CustomerService {
     public List<RestaurantDto> getFavorites(long userId) {
         User user = userDao.findByIdLoadFavorites(userId);
         return user.getFavoriteRestaurants().stream().map(RestaurantDto::new).collect(Collectors.toList());
+    }
+
+    public void submitRating(OrderRatingDto request) {
+        if (request == null || request.getOrder_id() == null || request.getRating() < 0 || request.getRating() > 5) {
+            throw new InvalidInputException("Invalid rating request");
+        }
+        Order order = orderDao.findById(request.getOrder_id());
+        if (order == null) {
+            throw new NotFoundException("Order not found");
+        }
+        if (order.getRating() != null) {
+            throw new AlreadyExistsException("Order already rated");
+        }
+
+        OrderRating rating = new OrderRating();
+        rating.setComment(request.getComment());
+        rating.setImageBase64(request.getImageBase64());
+        rating.setRating(request.getRating());
+        rating.setOrder(orderDao.findById(request.getOrder_id()));
+
+        order.setRating(rating);
+
+        orderDao.update(order);
     }
 }

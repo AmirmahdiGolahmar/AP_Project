@@ -20,72 +20,73 @@ import static validator.RestaurantValidator.validateCouponId;
 
 public class CustomerController {
     private static final CustomerService customerService = new CustomerService();
-    private static final Gson gson =  new GsonBuilder()
+    private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .serializeNulls()
             .create();
 
-    public static void initRoutes(){
+    public static void initRoutes() {
 
-        post("/vendors", (req, res) ->{
-            try{
+        post("/vendors", (req, res) -> {
+            try {
                 res.type("application/json");
                 RestaurantSearchRequestDto request = gson.fromJson(req.body(), RestaurantSearchRequestDto.class);
-                List<RestaurantDto> response= customerService.searchRestaurant(request);
+                List<RestaurantDto> response = customerService.searchRestaurant(request);
                 return gson.toJson(response);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
-        get("/vendors/:id", (req, res) ->{
-            try{
+        get("/vendors/:id", (req, res) -> {
+            try {
                 res.type("application/json");
                 long restaurantId = Long.parseLong(req.params(":id"));
                 validateRestaurant(restaurantId);
                 RestaurantDisplayResponse response = customerService.displayRestaurant(restaurantId);
                 return gson.toJson(response);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
-        post("/items", (req, res) ->{
-            try{
+        post("/items", (req, res) -> {
+            try {
                 res.type("application/json");
                 ItemSearchRequestDto request = gson.fromJson(req.body(), ItemSearchRequestDto.class);
-                List<ItemDto> response= customerService.searchItem(request);
+                List<ItemDto> response = customerService.searchItem(request);
                 return gson.toJson(response);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
-        get("/items/:id", (req, res) ->{
-            try{
+        get("/items/:id", (req, res) -> {
+            try {
                 res.type("application/json");
                 long itemId = Long.parseLong(req.params(":id"));
                 ItemDto response = customerService.displayItem(itemId);
                 return gson.toJson(response);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
-        get("/coupons", (req, res) ->{
-            try{
+        get("/coupons", (req, res) -> {
+            try {
                 res.type("application/json");
-                Map<String, String> bodyMap = gson.fromJson(req.body(), new TypeToken<Map<String, String>>(){}.getType());
+                Map<String, String> bodyMap = gson.fromJson(req.body(), new TypeToken<Map<String, String>>() {
+                }.getType());
                 String couponCode = bodyMap.get("coupon_code");
                 CouponDto response = customerService.getCoupon(couponCode);
                 return gson.toJson(Map.of("Coupon details", response));
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
-        post("/orders", (req, res) ->{
-            try{
+        post("/orders", (req, res) -> {
+            try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 OrderRegistrationRequest request = gson.fromJson(req.body(), OrderRegistrationRequest.class);
@@ -94,77 +95,89 @@ public class CustomerController {
                 validateCouponId(request.getCoupon_id());
                 OrderDto response = customerService.addOrder(request, Integer.parseInt(userId));
                 return gson.toJson(response);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
-        get("/orders/history", (req, res) ->{
-            try{
+        get("/orders/history", (req, res) -> {
+            try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 authorizeUserAsCustomer(Integer.parseInt(userId));
                 OrderHistoryRequestDto request = gson.fromJson(req.body(), OrderHistoryRequestDto.class);
                 List<OrderDto> response = customerService.getOrderHistory(request.getSearch(), request.getVendor());
                 return gson.toJson(Map.of("List of past orders", response));
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
-        get("/orders/:id", (req, res) ->{
-            try{
+        get("/orders/:id", (req, res) -> {
+            try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 authorizeUserAsCustomer(Integer.parseInt(userId));
                 long orderId = Long.parseLong(req.params(":id"));
                 OrderDto response = customerService.getOrder(orderId);
                 return gson.toJson(response);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
         put("/favorites/:id", (req, res) -> {
-            try{
+            try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 long restaurantId = Long.parseLong(req.params(":id"));
                 validateRestaurant(restaurantId);
                 authorizeUserAsCustomer(Integer.parseInt(userId));
-                customerService.addToFavorites(Integer.parseInt(userId) ,restaurantId);
+                customerService.addToFavorites(Integer.parseInt(userId), restaurantId);
                 return gson.toJson("Added to favorites");
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
         delete("/favorites/:id", (req, res) -> {
-            try{
+            try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 long restaurantId = Long.parseLong(req.params(":id"));
                 validateRestaurant(restaurantId);
                 authorizeUserAsCustomer(Integer.parseInt(userId));
-                customerService.removeFromFavorites(Integer.parseInt(userId) ,restaurantId);
+                customerService.removeFromFavorites(Integer.parseInt(userId), restaurantId);
                 return gson.toJson("Removed to favorites");
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
         get("/favorites", (req, res) -> {
-            try{
+            try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 authorizeUserAsCustomer(Integer.parseInt(userId));
-                List<RestaurantDto> response =  customerService.getFavorites(Integer.parseInt(userId));
+                List<RestaurantDto> response = customerService.getFavorites(Integer.parseInt(userId));
                 return gson.toJson(Map.of("List of favorite restaurants", response));
-            }catch (Exception e){
+            } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
+        post("/ratings", (req, res) -> {
+            try {
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                OrderRatingDto request =  gson.fromJson(req.body(), OrderRatingDto.class);
+                customerService.submitRating(request);
+                return gson.toJson("Rating submitted");
+            } catch (Exception e) {
+                return expHandler(e, res, gson);
+            }
+        });
 
     }
 }

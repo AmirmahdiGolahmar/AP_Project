@@ -41,9 +41,8 @@ public class Order {
     @ManyToOne
     private Coupon coupon;
 
-    private String comment;
-    private String photo;
-    private double rating;
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private OrderRating rating;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -58,10 +57,10 @@ public class Order {
         this.restaurant = restaurant;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.rating = 0.0;
         this.coupon = null;
         this.delivery = null;
         this.status = status;
+        rating = null;
     }
 
     public Order(List<CartItem> cartItems, String deliveryAddress,
@@ -73,10 +72,10 @@ public class Order {
         this.restaurant = restaurant;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.rating = 0.0;
         this.coupon = coupon;
         this.delivery = null;
         this.status = status;
+        rating = null;
     }
 
     public Order() {}
