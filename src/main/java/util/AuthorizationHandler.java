@@ -60,13 +60,14 @@ public class AuthorizationHandler {
         }
     }
 
-    public static void authorizeUserAsCustomer (long userId) {
+    public static void authorizeUserForRole (long userId, UserRole role) {
         User user = new UserDao().findById(userId);
         if(user == null) {
-            throw new NotFoundException("User don't exist");
+            throw new NotFoundException("User dons't exist");
         }
-        if(user.getRole() != UserRole.CUSTOMER) {
-            throw new AuthenticationException("Only Customers can register order");
+        if(user.getRole() != role) {
+            throw new AuthenticationException("You are not Authorized for this role");
         }
     }
+
 }

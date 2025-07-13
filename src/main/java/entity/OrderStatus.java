@@ -2,6 +2,7 @@ package entity;
 
 public enum OrderStatus {
     submitted,
+    accepted,
     unpaid_and_cancelled,
     waiting_vendor,
     cancelled,

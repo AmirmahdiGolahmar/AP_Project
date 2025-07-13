@@ -8,6 +8,7 @@ import entity.UserRole;
 import exception.AccessDeniedException;
 import exception.NotFoundException;
 import exception.SellerNotFoundException;
+import exception.UnauthorizedUserException;
 
 import java.util.Map;
 
@@ -43,5 +44,12 @@ public class SellerValidator {
         }
     }
 
+    // public static void validateSeller(Long userId) {
+
+    //     User user = new UserDao().findById(userId);
+    //     if (user.getRole() != UserRole.SELLER) {
+    //         throw new UnauthorizedUserException("You are not authrize as seller");
+    //     }
+    // }
 
 }

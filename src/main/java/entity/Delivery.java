@@ -1,6 +1,11 @@
 package entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "deliveries")
@@ -33,6 +38,17 @@ public class Delivery extends User {
         this.available = false;
         this.averageRating = 0.0;
         this.isApproved = false;
+    }
+
+    @Setter(AccessLevel.NONE)
+    @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Order> orders;
+    
+    public void addOrder(Order order) {
+        if (orders == null) {
+            orders = new java.util.ArrayList<>();
+        }
+        orders.add(order);
     }
 
 }

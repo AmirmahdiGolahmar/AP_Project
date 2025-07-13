@@ -4,6 +4,7 @@ import static spark.Spark.*;
 
 import controller.AdminController;
 import controller.CustomerController;
+import controller.DeliveryController;
 import controller.RestaurantController;
 import controller.UserController;
 import entity.Customer;
@@ -39,6 +40,7 @@ public class Main {
         RestaurantController.initRoutes();
         CustomerController.initRoutes();
         AdminController.initRoutes();
+        DeliveryController.initRoutes();
     }
 }
 

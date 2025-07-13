@@ -19,6 +19,8 @@ import static validator.SellerValidator.validateSellerAndRestaurant;
 
 import dao.*;
 import entity.*;
+
+import java.util.List;
 import java.util.Map;
 
 public class RestaurantController {
@@ -256,20 +258,33 @@ public class RestaurantController {
                 }
             });
         
-            get("/:id/orders", (req, res) -> {
-                try{
-                    res.type("application/json");
+            // get("/:id/orders", (req, res) -> {
+            //     try{
+            //         res.type("application/json");
 
-                    String userId = authorizeAndExtractUserId(req, res, gson);
-                    long restaurantId = Long.parseLong(req.params(":id"));
-                    validateSellerAndRestaurant(userId, restaurantId);
-                    
-                    res.status(200);
-                    return gson.toJson("");
-                }catch(Exception e){
-                    return expHandler(e, res, gson);
-                }
-            });
+            //         String userId = authorizeAndExtractUserId(req, res, gson);
+            //         long restaurantId = Long.parseLong(req.params(":id"));
+            //         validateSellerAndRestaurant(userId, restaurantId);
+            //         List<OrderDto> response = restaurantService.getRestaurantOrders(restaurantId);
+            //         res.status(200);
+            //         return gson.toJson("List of orders");
+            //     }catch(Exception e){
+            //         return expHandler(e, res, gson);
+            //     }
+            // });
+        
+            // patch("/orders/:id", (req, res) -> {
+            //     try{
+            //         res.type("application/json");
+            //         String userId = authorizeAndExtractUserId(req, res, gson);
+            //         List<OrderDto> response = restaurantService.getRestaurantOrders(restaurantId);
+            //         res.status(200);
+            //         return gson.toJson("List of orders");
+            //     }catch(Exception e){
+            //         return expHandler(e, res, gson);
+            //     }
+            // });
+        
         });
     }
 }

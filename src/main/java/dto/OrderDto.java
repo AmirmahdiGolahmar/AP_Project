@@ -21,6 +21,7 @@ public class OrderDto {
     List<Long> item_ids;
     Long raw_price;
     Double tax_fee;
+    Double addtional_fee;
     Double courier_fee;
     Long pay_price;
     Long courier_id;
@@ -41,6 +42,7 @@ public class OrderDto {
         this.setItem_ids(order.getCartItems().stream().map(i -> i.getItem().getId()).collect(Collectors.toList()));
         this.setRaw_price(order.getRawPrice());
         this.setTax_fee(order.getRestaurant().getTaxFee());
+        this.setAddtional_fee(order.getRestaurant().getAdditionalFee());
         this.setCourier_fee(order.getRestaurant().getAdditionalFee());
         this.setPay_price(order.getPayPrice());
         if(order.getDelivery() != null) {
