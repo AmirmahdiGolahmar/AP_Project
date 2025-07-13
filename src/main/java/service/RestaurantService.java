@@ -1,6 +1,7 @@
 package service;
 import dao.*;
 import dto.RestaurantRegistrationRequest;
+import dto.OrderDto;
 import dto.RestaurantDto;
 import dto.RestaurantUpdateRequest;
 import entity.Restaurant;
@@ -13,9 +14,11 @@ import java.util.stream.Collectors;
 
 public class RestaurantService {
     private final RestaurantDao restaurantDao;
+    private final OrderDao orderDao;
 
     public RestaurantService() {
         this.restaurantDao = new RestaurantDao();
+        this.orderDao = new OrderDao();
     }
 
     public Restaurant createRestaurant(RestaurantRegistrationRequest request, User seller) {
@@ -79,5 +82,12 @@ public class RestaurantService {
 
         restaurantDao.update(restaurant);
         return new RestaurantDto(restaurant);
+    }
+
+    public List<OrderDto> getRestaurantOrders(Long restaurantId) {
+        return orderDao.findAll().stream()
+            .filter(o -> o.getRestaurant().getId().equals(restaurantId))
+            .map(OrderDto::new)
+            .collect(Collectors.toList());
     }
 }

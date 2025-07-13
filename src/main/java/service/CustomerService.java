@@ -6,12 +6,14 @@ import entity.*;
 import exception.AlreadyExistsException;
 import exception.InvalidInputException;
 import exception.NotFoundException;
+import exception.UnauthorizedUserException;
 
 import java.nio.channels.AlreadyBoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static util.LocalDateTimeAdapter.TimeToString;
@@ -22,6 +24,7 @@ public class CustomerService {
     private final UserDao userDao;
     private final OrderDao orderDao;
     private final CouponDao couponDao;
+    private final ItemRatingDao itemRatingDao;
 
     public CustomerService() {
         itemDao = new ItemDao();
@@ -29,6 +32,7 @@ public class CustomerService {
         userDao = new UserDao();
         orderDao = new OrderDao();
         couponDao = new CouponDao();
+        itemRatingDao = new ItemRatingDao();
     }
 
     public List<RestaurantDto> searchRestaurant(RestaurantSearchRequestDto request) {
@@ -193,7 +197,7 @@ public class CustomerService {
         return user.getFavoriteRestaurants().stream().map(RestaurantDto::new).collect(Collectors.toList());
     }
 
-    public void submitRating(OrderRatingDto request) {
+    public void submitOrderRating(OrderRatingDto request, long userId) {
         if (request == null || request.getOrder_id() == null || request.getRating() < 0 || request.getRating() > 5) {
             throw new InvalidInputException("Invalid rating request");
         }
@@ -205,14 +209,82 @@ public class CustomerService {
             throw new AlreadyExistsException("Order already rated");
         }
 
+        User user = userDao.findById(userId);
+
+        //Submit order rating
         OrderRating rating = new OrderRating();
         rating.setComment(request.getComment());
         rating.setImageBase64(request.getImageBase64());
         rating.setRating(request.getRating());
         rating.setOrder(orderDao.findById(request.getOrder_id()));
+        rating.setCreatedAt(LocalDateTime.now());
 
         order.setRating(rating);
 
+        //Submit item rating 
+        for(CartItem cartItem : order.getCartItems()){
+            Item item = cartItem.getItem();
+            ItemRating itemRating = new ItemRating();
+            itemRating.setRating(request.getRating());
+            itemRating.setComment(request.getComment());
+            itemRating.setImageBase64(request.getImageBase64());
+            itemRating.setCreatedAt(LocalDateTime.now());
+            itemRating.setItem(item);
+            itemRating.setUser(user);
+
+            itemRatingDao.save(itemRating);
+        }
+
         orderDao.update(order);
     }
+
+    public ItemRatingAvgResponseDto getItemAvgRating(Long itemId){
+        Item item = itemDao.findById(itemId);
+        if(item == null) throw new NotFoundException("This item doesn't exist");
+
+        List<ItemRatingResponseDto> itemsRating = itemRatingDao.findAll().stream()
+            .filter(i -> i.getItem().getId().equals(itemId))
+            .map(ItemRatingResponseDto::new).collect(Collectors.toList());
+
+        ItemRatingAvgResponseDto response = new ItemRatingAvgResponseDto();
+        response.setAvg_rating( itemsRating.stream()
+            .mapToInt(ItemRatingResponseDto::getRating)
+            .average()
+            .orElse(0));
+        response.setComments(itemsRating);
+
+        return response;
+    }
+
+    public ItemRatingResponseDto getItemRating(Long itemId){
+        ItemRating itemRating = itemRatingDao.findById(itemId);
+        if(itemRating == null) throw new NotFoundException("This rating doesn't exist");
+        return new ItemRatingResponseDto(itemRating);
+    }
+
+    public void deleteRating(Long itemId) {
+        ItemRating itemRatings = itemRatingDao.findById(itemId);
+        if(itemRatings == null) throw new NotFoundException("This item doesn't exist");
+        itemRatingDao.delete(itemId);
+    }
+
+    public void updateItemRating(ItemRatingRequestDto request, long userId, long ratingId) {
+        if(request.getRating() == null || request.getComment() == null){
+            throw new InvalidInputException("rating and comment can not be empty");
+        }
+
+        ItemRating itemRating = itemRatingDao.findById(ratingId);
+        if(itemRating == null) throw new NotFoundException("This rating doesn't exist");
+
+        if(itemRating.getUser().getId() != userId) 
+            throw new UnauthorizedUserException("You can't edit this rating");
+        
+        itemRating.setRating(request.getRating());
+        itemRating.setComment(request.getComment());
+        itemRating.setImageBase64(request.getImageBase64());
+
+        itemRatingDao.update(itemRating);
+    }
+
+
 }

@@ -32,6 +32,7 @@ public class CustomerController {
                 res.type("application/json");
                 RestaurantSearchRequestDto request = gson.fromJson(req.body(), RestaurantSearchRequestDto.class);
                 List<RestaurantDto> response = customerService.searchRestaurant(request);
+                res.status(200);
                 return gson.toJson(response);
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -44,6 +45,7 @@ public class CustomerController {
                 long restaurantId = Long.parseLong(req.params(":id"));
                 validateRestaurant(restaurantId);
                 RestaurantDisplayResponse response = customerService.displayRestaurant(restaurantId);
+                res.status(200);
                 return gson.toJson(response);
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -55,6 +57,7 @@ public class CustomerController {
                 res.type("application/json");
                 ItemSearchRequestDto request = gson.fromJson(req.body(), ItemSearchRequestDto.class);
                 List<ItemDto> response = customerService.searchItem(request);
+                res.status(200);
                 return gson.toJson(response);
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -66,6 +69,7 @@ public class CustomerController {
                 res.type("application/json");
                 long itemId = Long.parseLong(req.params(":id"));
                 ItemDto response = customerService.displayItem(itemId);
+                res.status(200);
                 return gson.toJson(response);
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -79,6 +83,7 @@ public class CustomerController {
                 }.getType());
                 String couponCode = bodyMap.get("coupon_code");
                 CouponDto response = customerService.getCoupon(couponCode);
+                res.status(200);
                 return gson.toJson(Map.of("Coupon details", response));
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -94,6 +99,7 @@ public class CustomerController {
                 validateRestaurant(request.getVendor_id());
                 validateCouponId(request.getCoupon_id());
                 OrderDto response = customerService.addOrder(request, Integer.parseInt(userId));
+                res.status(200);
                 return gson.toJson(response);
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -107,6 +113,7 @@ public class CustomerController {
                 authorizeUserAsCustomer(Integer.parseInt(userId));
                 OrderHistoryRequestDto request = gson.fromJson(req.body(), OrderHistoryRequestDto.class);
                 List<OrderDto> response = customerService.getOrderHistory(request.getSearch(), request.getVendor());
+                res.status(200);
                 return gson.toJson(Map.of("List of past orders", response));
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -120,6 +127,7 @@ public class CustomerController {
                 authorizeUserAsCustomer(Integer.parseInt(userId));
                 long orderId = Long.parseLong(req.params(":id"));
                 OrderDto response = customerService.getOrder(orderId);
+                res.status(200);
                 return gson.toJson(response);
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -134,6 +142,7 @@ public class CustomerController {
                 validateRestaurant(restaurantId);
                 authorizeUserAsCustomer(Integer.parseInt(userId));
                 customerService.addToFavorites(Integer.parseInt(userId), restaurantId);
+                res.status(200);
                 return gson.toJson("Added to favorites");
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -148,6 +157,7 @@ public class CustomerController {
                 validateRestaurant(restaurantId);
                 authorizeUserAsCustomer(Integer.parseInt(userId));
                 customerService.removeFromFavorites(Integer.parseInt(userId), restaurantId);
+                res.status(200);
                 return gson.toJson("Removed to favorites");
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -160,6 +170,7 @@ public class CustomerController {
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 authorizeUserAsCustomer(Integer.parseInt(userId));
                 List<RestaurantDto> response = customerService.getFavorites(Integer.parseInt(userId));
+                res.status(200);
                 return gson.toJson(Map.of("List of favorite restaurants", response));
             } catch (Exception e) {
                 return expHandler(e, res, gson);
@@ -172,12 +183,70 @@ public class CustomerController {
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 authorizeUserAsCustomer(Integer.parseInt(userId));
                 OrderRatingDto request =  gson.fromJson(req.body(), OrderRatingDto.class);
-                customerService.submitRating(request);
+                customerService.submitOrderRating(request, (long)Integer.parseInt(userId));
+                res.status(200);
                 return gson.toJson("Rating submitted");
             } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
         });
 
+        get("/ratings/items/:id", (req, res) -> {
+            try {
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                Long itemId = (long) Integer.parseInt(req.params(":id"));
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                ItemRatingAvgResponseDto response = customerService.getItemAvgRating(itemId);
+                res.status(200);
+                return gson.toJson(Map.of("List of ratings and reviews", response));
+            } catch (Exception e) {
+                return expHandler(e, res, gson);
+            }
+        });
+    
+        get("/ratings/:id", (req, res) -> {
+            try {
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                Long itemId = (long) Integer.parseInt(req.params(":id"));
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                ItemRatingResponseDto response = customerService.getItemRating(itemId);
+                res.status(200);
+                return gson.toJson(Map.of("Rating details", response));
+            } catch (Exception e) {
+                return expHandler(e, res, gson);
+            }
+        });
+    
+        delete("/ratings/:id", (req, res) -> {
+            try {
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                Long itemId = (long) Integer.parseInt(req.params(":id"));
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                customerService.deleteRating(itemId);
+                res.status(200);
+                return gson.toJson("Rating deleted");
+            } catch (Exception e) {
+                return expHandler(e, res, gson);
+            }
+        });
+
+        put("/ratings/:id", (req, res) -> {
+            try {
+                res.type("application/json");
+                String userId = authorizeAndExtractUserId(req, res, gson);
+                authorizeUserAsCustomer(Integer.parseInt(userId));
+                Long ratingId = (long) Integer.parseInt(req.params(":id"));
+                ItemRatingRequestDto request =  gson.fromJson(req.body(), ItemRatingRequestDto.class);
+                customerService.updateItemRating(request, (long)Integer.parseInt(userId), ratingId);
+                res.status(200);
+                return gson.toJson("Rating updated");
+            } catch (Exception e) {
+                return expHandler(e, res, gson);
+            }
+        });
     }
+
 }

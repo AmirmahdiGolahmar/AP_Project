@@ -255,6 +255,21 @@ public class RestaurantController {
                     return expHandler(e, res, gson);
                 }
             });
+        
+            get("/:id/orders", (req, res) -> {
+                try{
+                    res.type("application/json");
+
+                    String userId = authorizeAndExtractUserId(req, res, gson);
+                    long restaurantId = Long.parseLong(req.params(":id"));
+                    validateSellerAndRestaurant(userId, restaurantId);
+                    
+                    res.status(200);
+                    return gson.toJson("");
+                }catch(Exception e){
+                    return expHandler(e, res, gson);
+                }
+            });
         });
     }
 }

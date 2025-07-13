@@ -35,7 +35,7 @@
         <mapping class="entity.User"/>
         <mapping class="entity.Menu"/>
         <mapping class="entity.OrderRating"/>
-
+        <mapping class="entity.ItemRating"/>
 
 
 
