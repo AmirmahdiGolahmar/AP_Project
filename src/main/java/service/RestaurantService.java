@@ -4,11 +4,18 @@ import dto.RestaurantRegistrationRequest;
 import dto.OrderDto;
 import dto.RestaurantDto;
 import dto.RestaurantUpdateRequest;
+import dto.SearchRestaurantOrdesrDto;
+import entity.Order;
+import entity.OrderStatus;
 import entity.Restaurant;
 import entity.Seller;
 import entity.User;
 import exception.AlreadyExistsException;
+import exception.NotFoundException;
+import exception.UnauthorizedUserException;
+import validator.SellerValidator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,12 +91,38 @@ public class RestaurantService {
         return new RestaurantDto(restaurant);
     }
 
-    public List<OrderDto> getRestaurantOrders(Long restaurantId) {
+    public List<OrderDto> searchRestaurantOrders(SearchRestaurantOrdesrDto request, Long restaurantId) {
+        final String statusFilter = (request.getStatus() == null || request.getStatus().isBlank()) ? null : request.getStatus().toLowerCase();
+        final String searchFilter = (request.getSearch() == null || request.getSearch().isBlank()) ? null : request.getSearch().toLowerCase();
+        final String userFilter = (request.getUser() == null || request.getUser().isBlank()) ? null : request.getUser().toLowerCase();
+        final String courierFilter = (request.getCourier() == null || request.getCourier().isBlank()) ? null : request.getCourier().toLowerCase();
+
         return orderDao.findAll().stream()
             .filter(o -> o.getRestaurant().getId().equals(restaurantId))
+            .filter(o -> statusFilter == null || o.getStatus().toString().toLowerCase().contains(statusFilter))
+            .filter(o -> searchFilter == null ||
+                (o.getDeliveryAddress() != null && o.getDeliveryAddress().toLowerCase().contains(searchFilter)) ||
+                (o.getConfirmedAt() != null && o.getConfirmedAt().toString().toLowerCase().contains(searchFilter)) ||
+                (o.getCreatedAt() != null && o.getCreatedAt().toString().toLowerCase().contains(searchFilter)) ||
+                (o.getRating() != null && o.getRating().toString().toLowerCase().contains(searchFilter))
+            )
+            .filter(o -> userFilter == null || (o.getCustomer() != null && o.getCustomer().getFullName().toLowerCase().contains(userFilter)))
+            .filter(o -> courierFilter == null || (o.getDelivery() != null && o.getDelivery().getFullName().toLowerCase().contains(courierFilter)))
             .map(OrderDto::new)
             .collect(Collectors.toList());
-    }
+        }
 
+    public void changeOrderStatus(String userId, Long orderId, String newStatus) {
+        Order order = orderDao.findById(orderId);
+        if(order == null) throw new NotFoundException("This order doesn't exist");
+
+        SellerValidator.validateSellerAndRestaurant(userId, order.getRestaurant().getId());
+
+        OrderStatus status = OrderStatus.strToStatus(newStatus);
+
+        order.setStatus(status);
+        order.setUpdatedAt(LocalDateTime.now());
+        orderDao.update(order);
+    }
 
 }

@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import static exception.ExceptionHandler.expHandler;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
+import static util.AuthorizationHandler.authorizeUserForRole;
 import static validator.RestaurantValidator.itemValidator;
 import static validator.SellerValidator.validateSellerAndRestaurant;
 
@@ -258,32 +259,35 @@ public class RestaurantController {
                 }
             });
         
-            // get("/:id/orders", (req, res) -> {
-            //     try{
-            //         res.type("application/json");
-
-            //         String userId = authorizeAndExtractUserId(req, res, gson);
-            //         long restaurantId = Long.parseLong(req.params(":id"));
-            //         validateSellerAndRestaurant(userId, restaurantId);
-            //         List<OrderDto> response = restaurantService.getRestaurantOrders(restaurantId);
-            //         res.status(200);
-            //         return gson.toJson("List of orders");
-            //     }catch(Exception e){
-            //         return expHandler(e, res, gson);
-            //     }
-            // });
+            get("/:id/orders", (req, res) -> {
+                try{
+                    res.type("application/json");
+                    String userId = authorizeAndExtractUserId(req, res, gson);
+                    long restaurantId = Long.parseLong(req.params(":id"));
+                    validateSellerAndRestaurant(userId, restaurantId);
+                    SearchRestaurantOrdesrDto request = gson.fromJson(req.body(), SearchRestaurantOrdesrDto.class);
+                    List<OrderDto> response = restaurantService.searchRestaurantOrders(request, restaurantId);
+                    res.status(200);
+                    return gson.toJson(Map.of("List of orders", response));
+                }catch(Exception e){
+                    return expHandler(e, res, gson);
+                }
+            });
         
-            // patch("/orders/:id", (req, res) -> {
-            //     try{
-            //         res.type("application/json");
-            //         String userId = authorizeAndExtractUserId(req, res, gson);
-            //         List<OrderDto> response = restaurantService.getRestaurantOrders(restaurantId);
-            //         res.status(200);
-            //         return gson.toJson("List of orders");
-            //     }catch(Exception e){
-            //         return expHandler(e, res, gson);
-            //     }
-            // });
+            patch("/orders/:id", (req, res) -> {
+                try{
+                    res.type("application/json");
+                    String userId = authorizeAndExtractUserId(req, res, gson);
+                    Long orderId = (long) Integer.parseInt(req.params(":id"));
+                    Map<String, String> bodyMap = gson.fromJson(req.body(), new TypeToken<Map<String, String>>(){}.getType());
+                    String status = bodyMap.get("status");
+                    restaurantService.changeOrderStatus(userId, orderId, status);
+                    res.status(200);
+                    return gson.toJson("Order status changed successfully");
+                }catch(Exception e){
+                    return expHandler(e, res, gson);
+                }
+            });
         
         });
     }

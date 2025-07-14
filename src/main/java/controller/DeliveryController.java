@@ -11,6 +11,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import dto.DeliverySearchRequestDto;
 import dto.OrderDto;
@@ -49,7 +50,11 @@ public class DeliveryController {
                     String userId = authorizeAndExtractUserId(req, res, gson);
                     authorizeUserForRole(Integer.parseInt(userId), UserRole.DELIVERY);
                     Long order_id = (long)Integer.parseInt(req.params(":id"));
-                    OrderDto response = deliveryService.acceptOrder(userId, order_id);
+
+                    Map<String, String> bodyMap = gson.fromJson(req.body(), new TypeToken<Map<String, String>>(){}.getType());
+                    String status = bodyMap.get("status");
+
+                    OrderDto response = deliveryService.changeOrderStatus(userId, order_id, status);
                     res.status(200);
                     return gson.toJson(Map.of("Changed status successfully", response));
                 } catch (Exception e) {

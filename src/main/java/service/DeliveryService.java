@@ -14,6 +14,7 @@ import entity.Order;
 import entity.OrderStatus;
 import exception.ForbiddenException;
 import exception.NotFoundException;
+import exception.UnauthorizedUserException;
 
 public class DeliveryService {
 
@@ -32,16 +33,22 @@ public class DeliveryService {
             o.getDelivery() == null).map(OrderDto::new).toList();
     }
 
-    public OrderDto acceptOrder(String userId, Long order_id) {
+    public OrderDto changeOrderStatus(String userId, Long order_id, String newStaus) {
+
         Order order = orderDao.findById(order_id);
         if(order == null) throw new NotFoundException("This order doesn't exis.");
 
-        if(order.getDelivery() != null) throw new ForbiddenException("This Order has already accepted.");
-        
         Delivery delivery = (Delivery) userDao.findById((long)Integer.parseInt(userId));
+
+        if(order.getDelivery() != null && (order.getDelivery().getId() != (long)Integer.parseInt(userId)))
+            throw new ForbiddenException("This Order has already accepted.");
+
+        OrderStatus status = OrderStatus.strToStatus(newStaus);
+        if(!status.equals(OrderStatus.completed) && !status.equals(OrderStatus.on_the_way))
+            throw new UnauthorizedUserException("You are not authroized for this action");
         
         order.setDelivery(delivery);
-        order.setStatus(OrderStatus.accepted);
+        order.setStatus(status);
         order.setUpdatedAt(LocalDateTime.now());
         delivery.addOrder(order);
 
