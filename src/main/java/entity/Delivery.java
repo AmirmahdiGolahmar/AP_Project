@@ -40,6 +40,7 @@ public class Delivery extends User {
         this.isApproved = false;
     }
 
+    @Getter
     @Setter(AccessLevel.NONE)
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Order> orders;

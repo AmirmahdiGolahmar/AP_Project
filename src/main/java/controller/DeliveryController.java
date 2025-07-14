@@ -12,6 +12,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import dto.DeliverySearchRequestDto;
 import dto.OrderDto;
 import dto.RestaurantDto;
 import dto.RestaurantSearchRequestDto;
@@ -51,6 +52,20 @@ public class DeliveryController {
                     OrderDto response = deliveryService.acceptOrder(userId, order_id);
                     res.status(200);
                     return gson.toJson(Map.of("Changed status successfully", response));
+                } catch (Exception e) {
+                    return expHandler(e, res, gson);
+                }
+            });
+
+            get("/history", (req, res) -> {
+                try {
+                    res.type("application/json");
+                    String userId = authorizeAndExtractUserId(req, res, gson);
+                    authorizeUserForRole(Integer.parseInt(userId), UserRole.DELIVERY);
+                    DeliverySearchRequestDto request = gson.fromJson(req.body(), DeliverySearchRequestDto.class);
+                    List<OrderDto> response = deliveryService.deliveryHistory(request, userId);
+                    res.status(200);
+                    return gson.toJson(Map.of("List of completed and active deliveries", response));
                 } catch (Exception e) {
                     return expHandler(e, res, gson);
                 }

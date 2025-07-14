@@ -7,6 +7,7 @@ import java.util.stream.Collector;
 import dao.DeliveryDao;
 import dao.OrderDao;
 import dao.UserDao;
+import dto.DeliverySearchRequestDto;
 import dto.OrderDto;
 import entity.Delivery;
 import entity.Order;
@@ -49,6 +50,23 @@ public class DeliveryService {
         deliveryDao.update(delivery);
 
         return new OrderDto(order);
+    }
+
+    public List<OrderDto> deliveryHistory(DeliverySearchRequestDto request, String userId) {
+        Delivery delivery = deliveryDao.findById((long)Integer.parseInt(userId));
+
+        String userFilter = request.getUser() == null ? null : request.getUser().toLowerCase();
+        String vendorFilter = request.getVendor() == null ? null : request.getVendor().toLowerCase();
+        String searchFilter = request.getSearch() == null ? null : request.getSearch().toLowerCase();
+
+        return delivery.getOrders().stream()
+            .filter(o -> (userFilter == null || o.getCustomer().getFullName().toLowerCase().contains(userFilter)) &&
+                        (vendorFilter == null || o.getRestaurant().getName().toLowerCase().contains(vendorFilter)) &&
+                        (searchFilter == null || o.getStatus().toString().toLowerCase().contains(searchFilter) ||
+                         o.getCustomer().getFullName().toLowerCase().contains(searchFilter) ||
+                         o.getRestaurant().getName().toLowerCase().contains(searchFilter) ||
+                         o.getDeliveryAddress().toLowerCase().contains(searchFilter)))
+            .map(OrderDto::new).toList();
     }
 
 }
