@@ -46,7 +46,8 @@ public class Order {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private LocalDateTime confirmedAt;
+
+    private boolean paid;
 
     public Order(List<CartItem> cartItems, String deliveryAddress,
                  Customer customer, Restaurant restaurant,
@@ -60,6 +61,7 @@ public class Order {
         this.coupon = null;
         this.delivery = null;
         this.status = status;
+        this.paid = false;
         rating = null;
     }
 
@@ -75,6 +77,7 @@ public class Order {
         this.coupon = coupon;
         this.delivery = null;
         this.status = status;
+        this.paid = false;
         rating = null;
     }
 

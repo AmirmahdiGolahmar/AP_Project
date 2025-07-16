@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PaymentDto {
+public class PaymentRequestDto {
     Long order_id;
     String method;
 }

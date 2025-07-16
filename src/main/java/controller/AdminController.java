@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import dto.CouponDto;
-import dto.CouponRequest;
-import dto.OrderDto;
-import dto.UserDto;
+import dto.*;
 import entity.Coupon;
 import service.*;
 import util.LocalDateTimeAdapter;
@@ -72,6 +69,23 @@ public class AdminController {
             } catch (Exception e) {
                 return expHandler(e, res, gson);
             }
+            });
+
+            get("/transactions", (req, res) -> {
+                try {
+                    res.type("application/json");
+
+                    String search = req.queryParams("search");
+                    String user = req.queryParams("user");
+                    String method = req.queryParams("method");
+                    String status = req.queryParams("status");
+
+                    List<PaymentReceiptDto> response = adminService.searchTransaction(search, user, method, status);
+
+                    return gson.toJson(Map.of("List of financial transactions", response));
+                } catch (Exception e) {
+                    return expHandler(e, res, gson);
+                }
             });
 
             get("/coupons", (req, res) ->{

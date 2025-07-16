@@ -1,15 +1,8 @@
 package service;
 
 import dao.*;
-import dto.CouponDto;
-import dto.CouponRequest;
-import dto.OrderDto;
-import dto.UserDto;
-import entity.Coupon;
-import entity.CouponType;
-import entity.Order;
-import entity.OrderStatus;
-import entity.User;
+import dto.*;
+import entity.*;
 import exception.AlreadyExistsException;
 import exception.NotFoundException;
 import util.SearchUtil;
@@ -30,11 +23,13 @@ public class AdminService {
     private final CouponDao couponDao;
     private final UserDao userDao;
     private final OrderDao orderDao;
+    private final TransactionDao transactionDao;
 
     public AdminService() {
         couponDao = new CouponDao();
         userDao = new UserDao();
         orderDao = new OrderDao();
+        transactionDao = new TransactionDao();
     }
 
     public CouponDto addCoupon(CouponRequest request) {
@@ -127,4 +122,26 @@ public class AdminService {
         return result.stream().map(OrderDto::new).toList();
     }
 
+    public List<PaymentReceiptDto> searchTransaction(String search, String user, String method, String status) {
+
+        String searchFilter = (search == null || search.isBlank()) ? "" : search.toLowerCase();
+        String userFilter = (user == null || user.isBlank()) ? "" : user.toLowerCase();
+        String methodFilter = (method == null || method.isBlank()) ? "" : method.toLowerCase();
+        String statusFilter = (status == null || status.isBlank()) ? "" : status.toLowerCase();
+
+        List<Transaction> allTransactions = transactionDao.findAll();
+
+        List<String> searchFields = List.of("paymentMethod", "timestamp", "sender.fullName", "paymentStatus");
+
+        Map<String, String> filters = new HashMap<>();
+        if (!methodFilter.isBlank()) filters.put("paymentMethod", methodFilter);
+        if (!userFilter.isBlank()) filters.put("sender.fullName", userFilter);
+        if (!statusFilter.isBlank()) filters.put("paymentStatus", statusFilter);
+
+
+        List<Transaction> result =
+                SearchUtil.search(allTransactions, Transaction.class, searchFilter, searchFields, filters);
+
+        return result.stream().map(PaymentReceiptDto::new).toList();
+    }
 }

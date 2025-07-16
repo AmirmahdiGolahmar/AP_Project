@@ -101,10 +101,10 @@ public class User {
         }
     }
 
-    public void deposit(Integer amount) {
+    public void deposit(Long amount) {
         this.bankInfo.deposit(amount);
     }
-    public void withdraw(Integer amount) {
+    public void withdraw(Long amount) {
         if(this.bankInfo.getBalance() - amount <= 0) throw new ForbiddenException("Insufficient balance");
         this.bankInfo.withdraw(amount);
     }

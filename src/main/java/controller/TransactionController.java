@@ -3,11 +3,11 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import dto.PaymentReceiptDto;
 import dto.TransactionDto;
-import entity.UserRole;
 import service.TransactionService;
 import util.LocalDateTimeAdapter;
-import dto.PaymentDto;
+import dto.PaymentRequestDto;
 
 
 import java.time.LocalDateTime;
@@ -17,12 +17,6 @@ import java.util.Map;
 import static exception.ExceptionHandler.expHandler;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
-import static util.AuthorizationHandler.authorizeUserForRole;
-import static validator.SellerValidator.validateRestaurant;
-import static validator.RestaurantValidator.validateCouponId;
-
-
-import java.time.LocalDateTime;
 
 public class TransactionController {
     private static final Gson gson = new GsonBuilder()
@@ -49,7 +43,7 @@ public class TransactionController {
                 res.type("application/json");
                 Long userId = (long) Integer.parseInt(authorizeAndExtractUserId(req, res, gson));
                 Map<String, Integer> bodyMap = gson.fromJson(req.body(), new TypeToken<Map<String, Integer>>(){}.getType());
-                Integer amount = bodyMap.get("amount");
+                Long amount = (long) bodyMap.get("amount");
                 transactionService.topUp(userId, amount);
                 res.status(200);
                 return gson.toJson("Wallet topped up successfully");
@@ -62,15 +56,14 @@ public class TransactionController {
             try{
                 res.type("application/json");
                 Long userId = (long) Integer.parseInt(authorizeAndExtractUserId(req, res, gson));
-                PaymentDto request = gson.fromJson(req.body(), PaymentDto.class);
-
+                PaymentRequestDto request = gson.fromJson(req.body(), PaymentRequestDto.class);
+                PaymentReceiptDto response = transactionService.pay(request, userId);
                 res.status(200);
-                return gson.toJson("");
+                return gson.toJson(Map.of("Payment successful",  response));
             }catch (Exception e){
                 return expHandler(e, res , gson);
             }
         });
-
 
     }
 }

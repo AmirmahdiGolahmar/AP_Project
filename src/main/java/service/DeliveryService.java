@@ -38,7 +38,7 @@ public class DeliveryService {
     public OrderDto changeOrderStatus(String userId, Long order_id, String newStaus) {
 
         Order order = orderDao.findById(order_id);
-        if(order == null) throw new NotFoundException("This order doesn't exis.");
+        if(order == null) throw new NotFoundException("This order doesn't exist.");
 
         Delivery delivery = (Delivery) userDao.findById((long)Integer.parseInt(userId));
 
@@ -47,7 +47,7 @@ public class DeliveryService {
 
         OrderStatus status = OrderStatus.strToStatus(newStaus);
         if(!status.equals(OrderStatus.completed) && !status.equals(OrderStatus.on_the_way))
-            throw new UnauthorizedUserException("You are not authroized for this action");
+            throw new UnauthorizedUserException("You are not authorized for this action");
         
         order.setDelivery(delivery);
         order.setStatus(status);

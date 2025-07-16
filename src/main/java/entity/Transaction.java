@@ -18,8 +18,6 @@ public class Transaction {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    private Double amount;
-
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
