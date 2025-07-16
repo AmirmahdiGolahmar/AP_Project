@@ -1,13 +1,14 @@
 package service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collector;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import dao.DeliveryDao;
 import dao.OrderDao;
 import dao.UserDao;
-import dto.DeliverySearchRequestDto;
 import dto.OrderDto;
 import entity.Delivery;
 import entity.Order;
@@ -15,6 +16,7 @@ import entity.OrderStatus;
 import exception.ForbiddenException;
 import exception.NotFoundException;
 import exception.UnauthorizedUserException;
+import util.SearchUtil;
 
 public class DeliveryService {
 
@@ -29,7 +31,7 @@ public class DeliveryService {
     }
 
     public List<OrderDto> getAvailableOrders() {
-        return orderDao.findAll().stream().filter(o -> o.getStatus().equals(OrderStatus.submitted) &&
+        return orderDao.findAll().stream().filter(o -> o.getStatus().equals(OrderStatus.submitted) ||
             o.getDelivery() == null).map(OrderDto::new).toList();
     }
 
@@ -59,21 +61,27 @@ public class DeliveryService {
         return new OrderDto(order);
     }
 
-    public List<OrderDto> deliveryHistory(DeliverySearchRequestDto request, String userId) {
-        Delivery delivery = deliveryDao.findById((long)Integer.parseInt(userId));
+    public List<OrderDto> searchDeliveryHistory(String search, String vendor, String user, Long userId) {
+        Delivery delivery = deliveryDao.findById(userId);
 
-        String userFilter = request.getUser() == null ? null : request.getUser().toLowerCase();
-        String vendorFilter = request.getVendor() == null ? null : request.getVendor().toLowerCase();
-        String searchFilter = request.getSearch() == null ? null : request.getSearch().toLowerCase();
+        String searchFilter = (search == null || search.isBlank()) ? "" : search.toLowerCase();
+        String vendorFilter = (vendor == null || vendor.isBlank()) ? "" : vendor.toLowerCase();
+        String userFilter = (user == null || user.isBlank()) ? "" : user.toLowerCase();
 
-        return delivery.getOrders().stream()
-            .filter(o -> (userFilter == null || o.getCustomer().getFullName().toLowerCase().contains(userFilter)) &&
-                        (vendorFilter == null || o.getRestaurant().getName().toLowerCase().contains(vendorFilter)) &&
-                        (searchFilter == null || o.getStatus().toString().toLowerCase().contains(searchFilter) ||
-                         o.getCustomer().getFullName().toLowerCase().contains(searchFilter) ||
-                         o.getRestaurant().getName().toLowerCase().contains(searchFilter) ||
-                         o.getDeliveryAddress().toLowerCase().contains(searchFilter)))
-            .map(OrderDto::new).toList();
+        List<Order> allOrders = orderDao.findAll().stream().filter(o -> o.getDelivery() != null && o.getDelivery().getId().equals(userId)).collect(Collectors.toList());
+
+        List<String> searchFields = List.of("deliveryAddress", "coupon.code", "status",
+                "restaurant.name", "customer.fullName", "createdAt", "updatedAt");
+
+        Map<String, String> filters = new HashMap<>();
+        if (!vendorFilter.isBlank()) filters.put("restaurant.name", vendorFilter);
+        if (!userFilter.isBlank()) filters.put("customer.fullName", userFilter);
+
+
+        List<Order> result =
+                SearchUtil.search(allOrders, Order.class, searchFilter, searchFields, filters);
+
+        return result.stream().map(OrderDto::new).toList();
     }
 
 }

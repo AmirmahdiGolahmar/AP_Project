@@ -7,16 +7,11 @@ import exception.AlreadyExistsException;
 import exception.InvalidInputException;
 import exception.NotFoundException;
 import exception.UnauthorizedUserException;
+import util.SearchUtil;
 
-import java.nio.channels.AlreadyBoundException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collector;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static util.LocalDateTimeAdapter.TimeToString;
 
 public class CustomerService {
     private final ItemDao itemDao;
@@ -158,24 +153,23 @@ public class CustomerService {
         return new OrderDto(order);
     }
 
-    public List<OrderDto> getOrderHistory(String search, String restaurant){
-        if ((search == null || search.isEmpty()) && (restaurant == null || restaurant.isEmpty())) {
-            return orderDao.findAll().stream()
-                    .map(OrderDto::new)
-                    .collect(Collectors.toList());
-        } else {
-            String searchKey = (search == null) ? "" : search.toLowerCase();
-            String restaurantKey = (restaurant == null) ? "" : restaurant.toLowerCase();
+    public List<OrderDto> searchOrderHistory(String search, String vendor, Long userId){
+        String searchFilter = (search == null || search.isBlank()) ? "" : search.toLowerCase();
+        String vendorFilter = (vendor == null || vendor.isBlank()) ? "" : vendor.toLowerCase();
 
-            return orderDao.findAll().stream()
-                    .filter(o -> (o.getRestaurant().getName().toLowerCase().contains(restaurantKey)) ||
-                            (o.getRestaurant().getName().toLowerCase().contains(searchKey)) ||
-                            (o.getDeliveryAddress().toLowerCase().contains(searchKey)) ||
-                            o.getCartItems().stream().anyMatch(ci ->
-                                    ci.getItem().getName().toLowerCase().contains(searchKey)))
-                    .map(OrderDto::new)
-                    .toList();
-        }
+        List<Order> allOrders = orderDao.findAll().stream()
+                .filter(o -> o.getCustomer().getId().equals(userId)).collect(Collectors.toList());
+
+        List<String> searchFields = List.of("deliveryAddress", "coupon.code", "status",
+                "delivery.fullName", "restaurant.name", "createdAt", "updatedAt");
+
+        Map<String, String> filters = new HashMap<>();
+        if (!vendorFilter.isBlank()) filters.put("restaurant.name", vendorFilter);
+
+        List<Order> result =
+                SearchUtil.search(allOrders, Order.class, searchFilter, searchFields, filters);
+
+        return result.stream().map(OrderDto::new).toList();
     }
 
     public void addToFavorites(long userId, long restaurantId) {

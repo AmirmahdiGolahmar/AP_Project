@@ -13,10 +13,13 @@ import entity.User;
 import exception.AlreadyExistsException;
 import exception.NotFoundException;
 import exception.UnauthorizedUserException;
+import util.SearchUtil;
 import validator.SellerValidator;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RestaurantService {
@@ -91,26 +94,30 @@ public class RestaurantService {
         return new RestaurantDto(restaurant);
     }
 
-    public List<OrderDto> searchRestaurantOrders(SearchRestaurantOrdesrDto request, Long restaurantId) {
-        final String statusFilter = (request.getStatus() == null || request.getStatus().isBlank()) ? null : request.getStatus().toLowerCase();
-        final String searchFilter = (request.getSearch() == null || request.getSearch().isBlank()) ? null : request.getSearch().toLowerCase();
-        final String userFilter = (request.getUser() == null || request.getUser().isBlank()) ? null : request.getUser().toLowerCase();
-        final String courierFilter = (request.getCourier() == null || request.getCourier().isBlank()) ? null : request.getCourier().toLowerCase();
+    public List<OrderDto> searchRestaurantOrders(
+            String search,String courier,String user,String status, Long restaurantId) {
 
-        return orderDao.findAll().stream()
-            .filter(o -> o.getRestaurant().getId().equals(restaurantId))
-            .filter(o -> statusFilter == null || o.getStatus().toString().toLowerCase().contains(statusFilter))
-            .filter(o -> searchFilter == null ||
-                (o.getDeliveryAddress() != null && o.getDeliveryAddress().toLowerCase().contains(searchFilter)) ||
-                (o.getConfirmedAt() != null && o.getConfirmedAt().toString().toLowerCase().contains(searchFilter)) ||
-                (o.getCreatedAt() != null && o.getCreatedAt().toString().toLowerCase().contains(searchFilter)) ||
-                (o.getRating() != null && o.getRating().toString().toLowerCase().contains(searchFilter))
-            )
-            .filter(o -> userFilter == null || (o.getCustomer() != null && o.getCustomer().getFullName().toLowerCase().contains(userFilter)))
-            .filter(o -> courierFilter == null || (o.getDelivery() != null && o.getDelivery().getFullName().toLowerCase().contains(courierFilter)))
-            .map(OrderDto::new)
-            .collect(Collectors.toList());
-        }
+        String searchFilter = (search == null || search.isBlank()) ? "" : search.toLowerCase();
+        String courierFilter = (courier == null || courier.isBlank()) ? "" : courier.toLowerCase();
+        String userFilter = (user == null || user.isBlank()) ? "" : user.toLowerCase();
+        String statusFilter = (status == null || status.isBlank()) ? "" : status.toLowerCase();
+
+        List<Order> allOrders = orderDao.findAll();
+
+        List<String> searchFields = List.of("deliveryAddress", "coupon.code", "status",
+                "delivery.fullName", "restaurant.name", "customer.fullName", "createdAt", "updatedAt");
+
+        Map<String, String> filters = new HashMap<>();
+        if (!courierFilter.isBlank()) filters.put("delivery.fullName", courierFilter);
+        if (!userFilter.isBlank()) filters.put("customer.fullName", userFilter);
+        if (!statusFilter.isBlank()) filters.put("status", statusFilter);
+
+
+        List<Order> result =
+                SearchUtil.search(allOrders, Order.class, searchFilter, searchFields, filters);
+
+        return result.stream().map(OrderDto::new).toList();
+    }
 
     public void changeOrderStatus(String userId, Long orderId, String newStatus) {
         Order order = orderDao.findById(orderId);

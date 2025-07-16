@@ -13,12 +13,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import dto.DeliverySearchRequestDto;
 import dto.OrderDto;
-import dto.RestaurantDto;
-import dto.RestaurantSearchRequestDto;
 import entity.UserRole;
-import service.CustomerService;
 import service.DeliveryService;
 import util.LocalDateTimeAdapter;
 
@@ -65,10 +61,14 @@ public class DeliveryController {
             get("/history", (req, res) -> {
                 try {
                     res.type("application/json");
-                    String userId = authorizeAndExtractUserId(req, res, gson);
-                    authorizeUserForRole(Integer.parseInt(userId), UserRole.DELIVERY);
-                    DeliverySearchRequestDto request = gson.fromJson(req.body(), DeliverySearchRequestDto.class);
-                    List<OrderDto> response = deliveryService.deliveryHistory(request, userId);
+                    Long userId = (long) Integer.parseInt(authorizeAndExtractUserId(req, res, gson));
+                    authorizeUserForRole(userId, UserRole.DELIVERY);
+
+                    String search = req.queryParams("search");
+                    String vendor = req.queryParams("vendor");
+                    String user = req.queryParams("user");
+
+                    List<OrderDto> response = deliveryService.searchDeliveryHistory(search, vendor, user, userId);
                     res.status(200);
                     return gson.toJson(Map.of("List of completed and active deliveries", response));
                 } catch (Exception e) {

@@ -12,58 +12,71 @@ public class SearchUtil {
                                      String searchTerm,
                                      List<String> searchFields,
                                      Map<String, String> filters) {
-        String searchFilter = (searchTerm == null || searchTerm.isBlank()) ? null : searchTerm.toLowerCase();
+        String searchFilter = (searchTerm != null && !searchTerm.isBlank()) ? searchTerm.toLowerCase() : null;
 
-        return data.stream().filter(obj -> {
-            boolean match = true;
+        return data.stream()
+                .filter(obj -> {
 
-            // ------ SearchTerm logic ------
-            if (searchFilter != null && searchFields != null) {
-                boolean found = false;
-                for (String fieldPath : searchFields) {
-                    try {
-                        Object value = getNestedFieldValue(obj, fieldPath);
-                        if (value != null && value.toString().toLowerCase().contains(searchFilter)) {
-                            found = true;
-                            break;
-                        }
-                    } catch (Exception ignored) {}
-                }
-                match &= found;
-            }
+                    if (searchFilter != null && searchFields != null && !searchFields.isEmpty()) {
+                        boolean anyFieldMatches = searchFields.stream().anyMatch(fieldPath -> {
+                            try {
+                                Object value = getNestedFieldValue(obj, fieldPath);
+                                return value != null && value.toString().toLowerCase().contains(searchFilter);
+                            } catch (Exception e) {
+                                return false;
+                            }
+                        });
 
-            // ------ Filters logic ------
-            if (filters != null) {
-                for (Map.Entry<String, String> entry : filters.entrySet()) {
-                    try {
-                        Object fieldValue = getNestedFieldValue(obj, entry.getKey());
-                        if (fieldValue == null || !fieldValue.toString().contains(entry.getValue())) {
-                            match = false;
-                            break;
-                        }
-                    } catch (Exception ignored) {
-                        match = false;
-                        break;
+                        if (!anyFieldMatches) return false;
                     }
-                }
-            }
 
-            return match;
-        }).collect(Collectors.toList());
+                    if (filters != null && !filters.isEmpty()) {
+                        for (Map.Entry<String, String> entry : filters.entrySet()) {
+                            try {
+                                Object value = getNestedFieldValue(obj, entry.getKey());
+                                if (value == null || !value.toString().contains(entry.getValue())) {
+                                    return false;
+                                }
+                            } catch (Exception e) {
+                                return false;
+                            }
+                        }
+                    }
+
+                    return true;
+                })
+                .collect(Collectors.toList());
     }
 
-    // Access nested field by reflection (supports "a.b.c")
+
     public static Object getNestedFieldValue(Object obj, String fieldPath) throws Exception {
         String[] parts = fieldPath.split("\\.");
         Object current = obj;
 
         for (String part : parts) {
             if (current == null) return null;
-            Field field = current.getClass().getDeclaredField(part);
+
+            Field field = getFieldIncludingSuper(current.getClass(), part);
+            if (field == null) return null;
+
             field.setAccessible(true);
             current = field.get(current);
         }
 
         return current;
     }
+
+    private static Field getFieldIncludingSuper(Class<?> clazz, String fieldName) {
+        while (clazz != null) {
+            try {
+                return clazz.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException ignored) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+        return null;
+    }
+
+
+
 }

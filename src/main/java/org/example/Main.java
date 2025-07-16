@@ -33,7 +33,7 @@ public class Main {
     public static void main(String[] args) {
         LogManager.getLogManager().reset();
 
-        System.out.println("Server Runnig");
+        System.out.println("Server Running");
 
         port(4567);
         UserController.initRoutes();

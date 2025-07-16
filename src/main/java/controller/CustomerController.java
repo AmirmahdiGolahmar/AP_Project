@@ -2,7 +2,6 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import dto.*;
 import entity.UserRole;
 import service.CustomerService;
@@ -80,9 +79,7 @@ public class CustomerController {
         get("/coupons", (req, res) -> {
             try {
                 res.type("application/json");
-                Map<String, String> bodyMap = gson.fromJson(req.body(), new TypeToken<Map<String, String>>() {
-                }.getType());
-                String couponCode = bodyMap.get("coupon_code");
+                String couponCode = req.queryParams("coupon_code");
                 CouponDto response = customerService.getCoupon(couponCode);
                 res.status(200);
                 return gson.toJson(Map.of("Coupon details", response));
@@ -110,10 +107,11 @@ public class CustomerController {
         get("/orders/history", (req, res) -> {
             try {
                 res.type("application/json");
-                String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
-                OrderHistoryRequestDto request = gson.fromJson(req.body(), OrderHistoryRequestDto.class);
-                List<OrderDto> response = customerService.getOrderHistory(request.getSearch(), request.getVendor());
+                Long userId = (long) Integer.parseInt(authorizeAndExtractUserId(req, res, gson));
+                authorizeUserForRole(userId, UserRole.CUSTOMER);
+                String search = req.queryParams("search");
+                String vendor = req.queryParams("vendor");
+                List<OrderDto> response = customerService.searchOrderHistory(search, vendor, userId);
                 res.status(200);
                 return gson.toJson(Map.of("List of past orders", response));
             } catch (Exception e) {

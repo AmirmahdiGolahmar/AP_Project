@@ -265,8 +265,14 @@ public class RestaurantController {
                     String userId = authorizeAndExtractUserId(req, res, gson);
                     long restaurantId = Long.parseLong(req.params(":id"));
                     validateSellerAndRestaurant(userId, restaurantId);
-                    SearchRestaurantOrdesrDto request = gson.fromJson(req.body(), SearchRestaurantOrdesrDto.class);
-                    List<OrderDto> response = restaurantService.searchRestaurantOrders(request, restaurantId);
+
+                    String search = req.queryParams("search");
+                    String courier = req.queryParams("courier");
+                    String user = req.queryParams("user");
+                    String status = req.queryParams("status");
+
+                    List<OrderDto> response = restaurantService.searchRestaurantOrders(
+                            search, courier, user, status, restaurantId);
                     res.status(200);
                     return gson.toJson(Map.of("List of orders", response));
                 }catch(Exception e){

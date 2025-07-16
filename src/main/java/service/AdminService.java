@@ -59,8 +59,6 @@ public class AdminService {
         return new CouponDto(coupon);
     }
 
-
-
     public List<CouponDto> getAllCoupons() {
 
         return couponDao.findAll().stream().map(CouponDto::new).collect(Collectors.toList());
@@ -102,43 +100,6 @@ public class AdminService {
         userDao.update(user);
     }
 
-    // public List<OrderDto> searchOrders(String search, String vendor, String courier,
-    //                                 String customer, String status) {
-    //     String searchFilter = (search == null || search.isBlank()) ? null : search.toLowerCase();
-    //     Long vendorFilter = (vendor == null || vendor.isBlank()) ? null : Long.parseLong(vendor);
-    //     Long courierFilter = (courier == null || courier.isBlank()) ? null : Long.parseLong(courier);
-    //     Long customerFilter = (customer == null || customer.isBlank()) ? null : Long.parseLong(customer);
-    //     String statusFilter = (status == null || status.isBlank()) ? null : status.toLowerCase();
-
-    //     return orderDao.findAll().stream().filter(o -> {
-    //         boolean match = true;
-
-    //         if (searchFilter != null) {
-    //             String deliveryAddr = o.getDeliveryAddress() != null ? o.getDeliveryAddress().toLowerCase() : "";
-    //             String couponCode = o.getCoupon() != null ? o.getCoupon().getCode().toLowerCase() : "";
-    //             match &= deliveryAddr.contains(searchFilter) || couponCode.contains(searchFilter);
-    //         }
-
-    //         if (vendorFilter != null) {
-    //             match &= o.getRestaurant().getId().equals(vendorFilter);
-    //         }
-
-    //         if (courierFilter != null) {
-    //             match &= o.getDelivery() != null && o.getDelivery().getId().equals(courierFilter);
-    //         }
-
-    //         if (customerFilter != null) {
-    //             match &= o.getCustomer().getId().equals(customerFilter);
-    //         }
-
-    //         if (statusFilter != null) {
-    //             match &= o.getStatus() != null && o.getStatus().toString().toLowerCase().equals(statusFilter);
-    //         }
-
-    //         return match;
-    //     }).map(OrderDto::new).toList();
-    // }
-
     public List<OrderDto> searchOrders(String search, String vendor, String courier,
                              String customer, String status) {
 
@@ -164,7 +125,6 @@ public class AdminService {
             SearchUtil.search(allOrders, Order.class, searchFilter, searchFields, filters);
 
         return result.stream().map(OrderDto::new).toList();
-
     }
 
 }
