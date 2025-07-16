@@ -67,6 +67,8 @@ public class User {
     @Column(nullable = false, unique = true)
     private String mobile;
 
+    private String status;
+
    public void setBankName(String bankName) {
        this.bankInfo.setBankName(bankName);
    }

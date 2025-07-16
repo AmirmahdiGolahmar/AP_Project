@@ -12,7 +12,7 @@ import lombok.Setter;
 public class Delivery extends User {
 
     private boolean available;
-    private boolean isApproved;
+    //private boolean isApproved;
 
     private double latitude;
     private double longitude;
@@ -29,7 +29,7 @@ public class Delivery extends User {
         this.totalDeliveries = 0;
         this.available = false;
         this.averageRating = 0.0;
-        this.isApproved = false;
+        //this.isApproved = false;
     }
 
     public Delivery(String mobile){
@@ -37,7 +37,7 @@ public class Delivery extends User {
         this.totalDeliveries = 0;
         this.available = false;
         this.averageRating = 0.0;
-        this.isApproved = false;
+        //this.isApproved = false;
     }
 
     @Getter

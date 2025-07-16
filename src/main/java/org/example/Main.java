@@ -39,8 +39,8 @@ public class Main {
         UserController.initRoutes();
         RestaurantController.initRoutes();
         CustomerController.initRoutes();
-        AdminController.initRoutes();
         DeliveryController.initRoutes();
+        AdminController.initRoutes();
     }
 }
 

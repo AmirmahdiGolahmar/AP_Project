@@ -7,12 +7,31 @@ import entity.User;
 import exception.AlreadyExistsException;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
+
+
 import util.HibernateUtil;
 
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Expression;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 public abstract class GenericDao<T> {
     private final Class<T> clazz;
@@ -115,6 +134,5 @@ public abstract class GenericDao<T> {
             if (session != null) session.close();
         }
     }
-
 
 }
