@@ -1,57 +1,42 @@
 package entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
-enum TransactionType {
-    PAYMENT,
-    WITHDRAWAL,
-    WALLET_TOPUP
-}
 
-enum PaymentMethod {
-    ONLINE,
-    WALLET
-}
-
-
+@Getter
+@Setter
 @Entity
 @Table(name = "transactions")
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private TransactionType type;
-
-    private double amount;
+    private Double amount;
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
     private LocalDateTime timestamp;
 
-    @Embedded
-    private BankInfo bankInfo;
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private User sender;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     public Transaction() {
-        this.timestamp = LocalDateTime.now();
     }
-
-    public Long getId() { return id; }
-
-    public TransactionType getType() { return type; }
-    public void setType(TransactionType type) { this.type = type; }
-
-    public double getAmount() { return amount; }
-    public void setAmount(double amount) { this.amount = amount; }
-
-    public PaymentMethod getPaymentMethod() { return paymentMethod; }
-    public void setPaymentMethod(PaymentMethod paymentMethod) { this.paymentMethod = paymentMethod; }
-
-    public LocalDateTime getTimestamp() { return timestamp; }
 }
 

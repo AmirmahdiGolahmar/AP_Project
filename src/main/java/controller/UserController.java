@@ -119,59 +119,6 @@ public class UserController {
             });
 
         });
-
-        get("/customers", (req, res) -> {
-           res.type("application/json");
-           return gson.toJson(userService.findAllCustomers());
-        });
-
-        get("/sellers", (req, res) -> {
-            res.type("application/json");
-            return gson.toJson(userService.findAllSellers());
-        });
-
-        get("/deliveries", (req, res) -> {
-            res.type("application/json");
-            return gson.toJson(userService.findAllDeliveries());
-        });
-
-        get("/all", (req, res) -> {
-            res.type("application/json");
-            return gson.toJson(userService.findAllUsers());
-        });
-
-        delete("/:id", (req, res) -> {
-            Long id = Long.parseLong(req.params(":id"));
-            userService.deleteUser(id);
-            return "User deleted with id: " + id;
-        });
-
-
-
-        get("/me", (req, res) -> {
-            String authHeader = req.headers("Authorization");
-
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                res.status(401);
-                return gson.toJson(Map.of("error", "Missing or invalid Authorization header"));
-            }
-
-            String token = authHeader.substring(7);
-
-            try {
-                Claims claims = JwtUtil.decodeJWT(token);
-                Long userId = Long.valueOf(claims.getSubject());
-                String role = claims.get("role", String.class);
-
-                return gson.toJson(Map.of(
-                        "userId", userId,
-                        "role", role
-                ));
-            } catch(Exception e){
-                return expHandler(e, res, gson);
-            }
-        });
-
     };
 
 }

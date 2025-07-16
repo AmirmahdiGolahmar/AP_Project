@@ -1,5 +1,7 @@
 package entity;
 
+import exception.ForbiddenException;
+import exception.InvalidInputException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -32,6 +34,7 @@ public class BankInfo {
     }
 
     public void withdraw(double amount) {
+        if(this.balance - amount <= 0) throw new ForbiddenException("Insufficient balance.");
         this.balance -= amount;
     }
 }

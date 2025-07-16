@@ -11,14 +11,14 @@ import lombok.Setter;
 @Table(name = "deliveries")
 public class Delivery extends User {
 
-    private boolean available;
+    private Boolean available;
     //private boolean isApproved;
 
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
 
-    private double averageRating;
-    private int totalDeliveries;
+    private Double averageRating;
+    private Integer totalDeliveries;
 
     public Delivery() {
     }

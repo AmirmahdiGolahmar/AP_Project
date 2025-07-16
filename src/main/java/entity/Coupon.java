@@ -1,5 +1,6 @@
 package entity;
 
+import exception.ForbiddenException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,6 +43,7 @@ public class Coupon {
     }
 
     public void subtractUserCount(){
+         if(this.userCount <= 0) throw new ForbiddenException("Coupon can't be used any more");
          this.userCount--;
     }
 }

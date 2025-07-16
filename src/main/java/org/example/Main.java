@@ -2,11 +2,7 @@ package org.example;
 import java.util.logging.LogManager;
 import static spark.Spark.*;
 
-import controller.AdminController;
-import controller.CustomerController;
-import controller.DeliveryController;
-import controller.RestaurantController;
-import controller.UserController;
+import controller.*;
 import entity.Customer;
 import entity.User;
 import entity.BankInfo;
@@ -41,6 +37,7 @@ public class Main {
         CustomerController.initRoutes();
         DeliveryController.initRoutes();
         AdminController.initRoutes();
+        TransactionController.initRoutes();
     }
 }
 

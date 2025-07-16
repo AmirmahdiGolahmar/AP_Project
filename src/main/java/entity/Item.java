@@ -27,14 +27,14 @@ public class Item {
 
     private double price;
 
-    private int supply;
+    private Integer supply;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "item_keywords", joinColumns = @JoinColumn(name = "item_id"))
     @Column(name = "keyword")
     private List<String> keywords;
 
-    private double rating;
+    private Double rating;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
@@ -43,8 +43,8 @@ public class Item {
 
     public Item() {}
 
-    public Item(Long id, String name, String photo, String description, double price,
-                int supply, List<String> keywords, double rating) {
+    public Item(Long id, String name, String photo, String description, Double price,
+                Integer supply, List<String> keywords, Double rating) {
         this.id = id;
         this.name = name;
         this.photo = photo;

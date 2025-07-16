@@ -3,10 +3,7 @@ package service;
 import dao.*;
 import dto.*;
 import entity.*;
-import exception.AlreadyExistsException;
-import exception.InvalidInputException;
-import exception.NotFoundException;
-import exception.UnauthorizedUserException;
+import exception.*;
 import util.SearchUtil;
 
 import java.time.LocalDateTime;
@@ -133,16 +130,14 @@ public class CustomerService {
                     customer, restaurant, LocalDateTime.now(), LocalDateTime.now(), OrderStatus.submitted);
         }else{
             coupon = couponDao.findById(request.getCoupon_id());
+            if(coupon == null) throw new NotFoundException("Coupon doesn't exist");
+            coupon.subtractUserCount();
+            couponDao.update(coupon);
             order = new Order(cartItems, request.getDelivery_address(),
                     customer, restaurant, LocalDateTime.now(), LocalDateTime.now(), coupon, OrderStatus.submitted);
         }
 
         orderDao.save(order);
-
-        if(coupon != null){
-            coupon.subtractUserCount();
-            couponDao.update(coupon);
-        }
 
         return new OrderDto(order);
     }

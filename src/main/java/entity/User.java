@@ -1,6 +1,7 @@
 package entity;
 
 import exception.AlreadyExistsException;
+import exception.ForbiddenException;
 import exception.NotFoundException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -98,5 +99,13 @@ public class User {
         }else{
             throw new NotFoundException("This restaurant is not favorite");
         }
+    }
+
+    public void deposit(Integer amount) {
+        this.bankInfo.deposit(amount);
+    }
+    public void withdraw(Integer amount) {
+        if(this.bankInfo.getBalance() - amount <= 0) throw new ForbiddenException("Insufficient balance");
+        this.bankInfo.withdraw(amount);
     }
 }
