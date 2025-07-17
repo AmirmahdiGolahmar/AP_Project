@@ -29,8 +29,10 @@ public class UserService {
 
         UserRole userRole;
         switch (request.getRole().toLowerCase()) {
-            case "buyer":
-            case "customer":
+            case "buyer" :
+                userRole = UserRole.CUSTOMER;
+                break;
+            case "customer" :
                 userRole = UserRole.CUSTOMER;
                 break;
             case "seller":
@@ -45,7 +47,6 @@ public class UserService {
             fillUserFields(customer, request);
             saveWithDuplicationCheck(customerDao, customer);
             return customer;
-
         } else if (userRole == UserRole.SELLER) {
             Seller seller = new Seller(request.getMobile());
             fillUserFields(seller, request);

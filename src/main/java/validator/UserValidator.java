@@ -25,10 +25,11 @@ public class UserValidator {
 
         if (request.getRole() == null ||
                 !(request.getRole().equalsIgnoreCase("customer") ||
+                        request.getRole().equalsIgnoreCase("courier") ||
                         request.getRole().equalsIgnoreCase("buyer") ||
                         request.getRole().equalsIgnoreCase("seller") ||
                         request.getRole().equalsIgnoreCase("delivery"))) {
-            throw new InvalidInputException("Invalid field role");
+            throw new InvalidInputException("Invalid field role" + request.getRole());
         }
     }
 }
