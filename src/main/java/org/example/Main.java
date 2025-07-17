@@ -29,7 +29,7 @@ public class Main {
     public static void main(String[] args) {
         LogManager.getLogManager().reset();
 
-        System.out.println("Server Running");
+        System.out.println("Server is Running");
 
         port(4567);
         UserController.initRoutes();
