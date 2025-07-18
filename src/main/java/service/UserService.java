@@ -104,6 +104,13 @@ public class UserService {
     }
 
     private void fillUserFields(User user, UserRegistrationRequest request) {
+        UserRole userRole = switch (request.getRole().toLowerCase()) {
+            case "buyer" -> UserRole.CUSTOMER;
+            case "customer" -> UserRole.CUSTOMER;
+            case "seller" -> UserRole.SELLER;
+            default -> UserRole.DELIVERY;
+        };
+        user.setRole(userRole);
         user.setPassword(request.getPassword());
         user.setFullName(request.getFull_name());
         user.setMobile(request.getMobile());
@@ -138,11 +145,13 @@ public class UserService {
         if (request.getProfileImageBase64() != null) {
             user.setPhoto(request.getProfileImageBase64());
         }
-        if(request.getBank_info().getBank_name() != null) {
-            user.setBankName(request.getBank_info().getBank_name());
-        }
-        if (request.getBank_info().getAccount_number() != null) {
-            user.setAccountNumber(request.getBank_info().getAccount_number());
+        if(request.getBank_info() != null){
+            if(request.getBank_info().getBank_name() != null) {
+                user.setBankName(request.getBank_info().getBank_name());
+            }
+            if (request.getBank_info().getAccount_number() != null) {
+                user.setAccountNumber(request.getBank_info().getAccount_number());
+            }
         }
 
         userDao.update(user);

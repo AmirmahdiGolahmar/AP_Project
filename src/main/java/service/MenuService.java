@@ -5,6 +5,7 @@ import dao.MenuDao;
 import dao.RestaurantDao;
 import dto.ItemDto;
 import dto.MenuDto;
+import dto.MenuRegistrationDto;
 import entity.Item;
 import entity.Menu;
 import entity.Restaurant;
@@ -24,12 +25,11 @@ public class MenuService {
         menuDao = new MenuDao();
     }
 
-    public Menu addMenu(MenuDto request, long restaurantId){
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
+    public Menu addMenu(MenuRegistrationDto request, Restaurant restaurant){
         String title = request.getTitle();
         Optional<Menu> mn = restaurant.getMenus().stream()
                 .filter(m -> m.getTitle().equals(title)).findFirst();
-        if(!mn.isEmpty()){throw new AlreadyExistsException("This menu already exists");}
+        if(mn.isPresent()){throw new AlreadyExistsException("This menu already exists");}
 
         Menu menu = new Menu(title, restaurant);
         restaurant.addMenu(menu);
@@ -37,8 +37,7 @@ public class MenuService {
         return menu;
     }
 
-    public void deleteMenu(String menuTitle, long restaurantId){
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
+    public void deleteMenu(String menuTitle, Restaurant restaurant){
 
         Optional<Menu> menu = restaurant.getMenus().stream()
                 .filter(m -> m.getTitle().equals(menuTitle)).findFirst();
@@ -50,34 +49,32 @@ public class MenuService {
         restaurantDao.update(restaurant);
     }
 
-    public void addItem(String title, int itemId, long restaurantId){
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
+    public void addItem(String title, Item item, Restaurant restaurant){
 
-        Menu menu = restaurant.getMenus().stream().filter(m -> m.getTitle().equals(title)).findFirst().orElse(null);
-        if(menu == null) throw new NotFoundException("This menu does not exist");
+        Menu menu = restaurant.getMenus().stream().filter(m -> m.getTitle().equalsIgnoreCase(title))
+                .findFirst().orElseThrow(() -> new NotFoundException("This menu does not exist"));
 
-        Item item = restaurant.getItems().stream().filter(i -> i.getId() == itemId).findFirst().orElse(null);
-        if(item == null){throw new NotFoundException("This item does not exist");}
+        Item it = restaurant.getItems().stream().filter(i -> i.getId() == item.getId())
+                .findFirst().orElseThrow(() -> new NotFoundException("This item does not exist"));
 
-        if(menu.getItems().stream().anyMatch(itm -> itm.getId() == itemId))
-            throw new AlreadyExistsException("This item already exists");
+        if(menu.getItems().stream().anyMatch(itm -> itm.getId() == item.getId()))
+            throw new AlreadyExistsException("This item already exists in this menu");
 
-        menu.addItem(item);
+        menu.addItem(it);
 
         menuDao.update(menu);
         restaurantDao.update(restaurant);
     }
 
-    public void deleteItem(String title, int itemId, long restaurantId){
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
+    public void deleteItem(String menuTile, Item item, Restaurant restaurant){
 
-        Menu menu = restaurant.getMenus().stream().filter(m -> m.getTitle().equals(title)).findFirst().orElse(null);
-        if(menu == null) throw new NotFoundException("This menu does not exist");
+        Menu menu = restaurant.getMenus().stream().filter(m -> m.getTitle().equals(menuTile))
+                .findFirst().orElseThrow(() -> new NotFoundException("This menu does not exist"));
 
-        Item item = menu.getItems().stream().filter(i -> i.getId() == itemId).findFirst().orElse(null);
-        if(item == null){throw new NotFoundException("This item does not exist");}
+        Item it = menu.getItems().stream().filter(i -> i.getId() == item.getId()).
+                findFirst().orElseThrow(() -> new NotFoundException("This item does not exist in this menu"));
 
-        menu.removeItem(item);
+        menu.removeItem(it);
         menuDao.update(menu);
         restaurantDao.update(restaurant);
     }

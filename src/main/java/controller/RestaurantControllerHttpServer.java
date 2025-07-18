@@ -2,216 +2,220 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import dao.UserDao;
+import dao.OrderDao;
 import dto.*;
 import entity.*;
-import exception.*;
+import exception.InvalidInputException;
+import exception.NotFoundException;
+import io.jsonwebtoken.Claims;
 import service.ItemService;
+import service.MenuService;
 import service.RestaurantService;
+import util.JwtUtil;
 import util.LocalDateTimeAdapter;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static util.AuthorizationHandler.authorizeAndExtractUserId;
-import static util.validator.RestaurantValidator.itemValidator;
-import static util.validator.SellerValidator.validateSellerAndRestaurant;
+import static exception.ExceptionHandler.expHandler;
+import static exception.ExceptionHandler.handleNullPointerException;
+import static util.AuthorizationHandler.authorizeUser;
+import static util.HttpUtil.*;
+import static util.validator.RestaurantValidator.*;
+import static util.validator.SellerValidator.matchSellerRestaurant;
 
-public class RestaurantControllerHttpServer {
+public class RestaurantControllerHttpServer implements HttpHandler {
 
+    private static final RestaurantService restaurantService = new RestaurantService();
+    private static final ItemService itemService = new ItemService();
+    private static final MenuService menuService = new MenuService();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .create();
 
-    private static final RestaurantService restaurantService = new RestaurantService();
-    private static final ItemService itemService = new ItemService();
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        URI uri = exchange.getRequestURI();
+        String path = uri.getPath();
+        String method = exchange.getRequestMethod();
 
-    public static void start() throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(4567), 0);
-        server.createContext("/restaurants", new Handler());
-        server.createContext("/restaurants/mine", new Handler());
-        server.createContext("/restaurants/item", new Handler());
-        server.start();
-        System.out.println("Server started on port 8080");
-    }
+        try {
+            Matcher matcher;
 
-    static class Handler implements HttpHandler {
-        private final Pattern restaurantIdPattern = Pattern.compile("^/restaurants/([0-9]+)$");
-        private final Pattern itemPattern = Pattern.compile("^/restaurants/([0-9]+)/item$", Pattern.CASE_INSENSITIVE);
-        private final Pattern itemIdPattern = Pattern.compile("^/restaurants/([0-9]+)/item/([0-9]+)$", Pattern.CASE_INSENSITIVE);
+            /*User*/
+            String token = extractToken(exchange);
+            Claims claims = JwtUtil.validateToken(token);
+            Long userId = Long.parseLong(claims.getSubject());
+            Seller seller = (Seller) authorizeUser(userId, UserRole.SELLER);
 
-        @Override
-        public void handle(HttpExchange exchange) throws IOException {
-            String method = exchange.getRequestMethod();
-            String path = exchange.getRequestURI().getPath();
-
-            try {
-                if (method.equals("POST") && path.equals("/restaurants")) {
-                    handleCreateRestaurant(exchange);
-                } else if (method.equals("GET") && path.equals("/restaurants/mine")) {
-                    handleGetMine(exchange);
-                } else if (method.equals("PUT")) {
-                    Matcher matcher = restaurantIdPattern.matcher(path);
-                    if (matcher.matches()) {
-                        Long restaurantId = Long.parseLong(matcher.group(1));
-                        handleUpdateRestaurant(exchange, restaurantId);
-                        return;
-                    }
-                    matcher = itemIdPattern.matcher(path);
-                    if (matcher.matches()) {
-                        Long restaurantId = Long.parseLong(matcher.group(1));
-                        Long itemId = Long.parseLong(matcher.group(2));
-                        handleEditItem(exchange, restaurantId, itemId);
-                        return;
-                    }
-                } else if (method.equals("POST")) {
-                    Matcher matcher = itemPattern.matcher(path);
-                    if (matcher.matches()) {
-                        Long restaurantId = Long.parseLong(matcher.group(1));
-                        handleAddItem(exchange, restaurantId);
-                        return;
-                    }
-                } else if (method.equals("DELETE")) {
-                    Matcher matcher = itemIdPattern.matcher(path);
-                    if (matcher.matches()) {
-                        Long restaurantId = Long.parseLong(matcher.group(1));
-                        Long itemId = Long.parseLong(matcher.group(2));
-                        handleDeleteItem(exchange, restaurantId, itemId);
-                        return;
-                    }
-                }
-
-                sendResponse(exchange, 404, gson.toJson(Map.of("error", "Not Found")));
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                sendResponse(exchange, 500, gson.toJson(Map.of("error", "Internal server error")));
-            }
-        }
-
-        private void handleCreateRestaurant(HttpExchange exchange) throws IOException {
-            String userId = authorizeAndExtractUserId(exchange, gson);
-            User seller = new UserDao().findById(Long.parseLong(userId));
-
-            if (seller == null || seller.getRole() != UserRole.SELLER) {
+            /*Role*/
+            if (!"seller".equalsIgnoreCase(claims.get("role").toString())) {
                 sendResponse(exchange, 403, gson.toJson(Map.of("error", "Only sellers can create restaurants")));
                 return;
             }
 
-            RestaurantRegistrationRequest request = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), RestaurantRegistrationRequest.class);
-            try {
-                Restaurant restaurant = restaurantService.createRestaurant(request, seller);
-                RestaurantDto response = new RestaurantDto(
-                        restaurant.getId(), restaurant.getName(), restaurant.getAddress(),
-                        restaurant.getPhone(), restaurant.getLogo(), restaurant.getTaxFee()
-                );
-                sendResponse(exchange, 201, gson.toJson(response));
-            } catch (Exception e) {
-                handleException(exchange, e);
+            /*Restaurant*/
+            Long restaurantId = null;
+            matcher = Pattern.compile("/restaurants/(\\d+)").matcher(path);
+            if (matcher.find()) {
+                restaurantId = Long.parseLong(matcher.group(1));
             }
-        }
+            Restaurant restaurant = validateRestaurant(restaurantId);
 
-        private void handleGetMine(HttpExchange exchange) throws IOException {
-            String userId = authorizeAndExtractUserId(exchange, gson);
-            User seller = new UserDao().findById(Long.parseLong(userId));
+            /*Match Seller and Restaurant*/
+            matchSellerRestaurant(seller, restaurant);
 
-            if (seller == null || seller.getRole() != UserRole.SELLER) {
-                sendResponse(exchange, 403, gson.toJson(Map.of("error", "Only sellers can see restaurant")));
-                return;
+            /*item*/
+            Long itemId = null;
+            matcher = Pattern.compile("/item/(\\d+)").matcher(path);
+            if (matcher.find()) {
+                itemId = Long.parseLong(matcher.group(1));
+            }
+            Item item = validateItem(itemId, restaurant);
+
+            /*Menu*/
+            String menuTitle = null;
+            matcher = Pattern.compile("/menu/(.+)").matcher(path);;
+            if (matcher.find()) {
+                menuTitle = matcher.group(1);
             }
 
-            List<RestaurantDto> restaurants = restaurantService.findRestaurantsByISellerId(seller.getId());
-            sendResponse(exchange, 200, gson.toJson(restaurants));
-        }
-
-        private void handleUpdateRestaurant(HttpExchange exchange, Long restaurantId) throws IOException {
-            String userId = authorizeAndExtractUserId(exchange, gson);
-            validateSellerAndRestaurant(userId, restaurantId);
-            RestaurantUpdateRequest updateRequest = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), RestaurantUpdateRequest.class);
-
-            try {
-                RestaurantDto updated = restaurantService.updateRestaurant(restaurantId, updateRequest);
-                sendResponse(exchange, 200, gson.toJson(updated));
-            } catch (Exception e) {
-                handleException(exchange, e);
+            /*Order*/
+            Long orderId = null;
+            matcher = Pattern.compile("/orders/(\\d+)").matcher(path);
+            if (matcher.find()) {
+                orderId = Long.parseLong(matcher.group(1));
             }
-        }
+            Order order = new OrderDao().findById(orderId);
+            if (order == null || order.getRestaurant().getId() != restaurantId)
+                throw new NotFoundException("This order does not exist");
 
-        private void handleAddItem(HttpExchange exchange, Long restaurantId) throws IOException {
-            String userId = authorizeAndExtractUserId(exchange, gson);
-            ItemDto dto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), ItemDto.class);
-            itemValidator(dto);
-            validateSellerAndRestaurant(userId, restaurantId);
-
-            try {
-                ItemDto item = itemService.addItem(restaurantId, dto);
-                sendResponse(exchange, 200, gson.toJson(item));
-            } catch (Exception e) {
-                handleException(exchange, e);
-            }
-        }
-
-        private void handleEditItem(HttpExchange exchange, Long restaurantId, Long itemId) throws IOException {
-            String userId = authorizeAndExtractUserId(exchange, gson);
-            ItemDto dto = gson.fromJson(new String(exchange.getRequestBody().readAllBytes()), ItemDto.class);
-            validateSellerAndRestaurant(userId, restaurantId);
-
-            try {
-                ItemDto updated = itemService.editItem(restaurantId, itemId, dto, Long.parseLong(userId));
-                sendResponse(exchange, 200, gson.toJson(Map.of("message", "Item updated successfully", "item", updated)));
-            } catch (Exception e) {
-                handleException(exchange, e);
-            }
-        }
-
-        private void handleDeleteItem(HttpExchange exchange, Long restaurantId, Long itemId) throws IOException {
-            String userId = authorizeAndExtractUserId(exchange, gson);
-            validateSellerAndRestaurant(userId, restaurantId);
-
-            try {
-                itemService.deleteItem(restaurantId, itemId);
-                sendResponse(exchange, 200, gson.toJson(Map.of("message", "Food item removed successfully")));
-            } catch (Exception e) {
-                handleException(exchange, e);
-            }
-        }
-
-        private void handleException(HttpExchange exchange, Exception e) throws IOException {
-            if (e instanceof InvalidInputException) {
-                sendResponse(exchange, 400, gson.toJson(Map.of("error", "Invalid input")));
-            } else if (e instanceof AlreadyExistsException) {
-                sendResponse(exchange, 409, gson.toJson(Map.of("error", "Already exists")));
-            } else if (e instanceof UnsupportedMediaTypeException) {
-                sendResponse(exchange, 415, gson.toJson(Map.of("error", "Unsupported Media Type")));
-            } else if (e instanceof TooManyRequestsException) {
-                sendResponse(exchange, 429, gson.toJson(Map.of("error", "Too Many Requests")));
-            } else if (e instanceof UnauthorizedUserException) {
-                sendResponse(exchange, 401, gson.toJson(Map.of("error", "Unauthorized")));
-            } else if (e instanceof ForbiddenException) {
-                sendResponse(exchange, 403, gson.toJson(Map.of("error", "Forbidden")));
-            } else if (e instanceof NotFoundException) {
-                sendResponse(exchange, 404, gson.toJson(Map.of("error", "Not Found")));
+            if (path.equals("/restaurants") && method.equals("POST")) {
+                handleCreateRestaurant(exchange, seller);
+            } else if (path.equals("/restaurants/mine") && method.equals("GET")) {
+                handleGetMyRestaurants(exchange, seller);
+            } else if (path.matches("/restaurants/\\d+") && method.equals("PUT")) {
+                handleUpdateRestaurant(exchange, restaurant);
+            } else if (path.matches("/restaurants/\\d+/item") && method.equals("POST")) {
+                handleAddItem(exchange, restaurant);
+            } else if (path.matches("/restaurants/\\d+/item/\\d+") && method.equals("PUT")) {
+                handleEditItem(exchange, restaurant, item);
+            } else if (path.matches("/restaurants/\\d+/item/\\d+") && method.equals("DELETE")) {
+                handleDeleteItem(exchange, restaurant, item);
+            } else if (path.matches("/restaurants/\\d+/menu") && method.equals("POST")) {
+                handleAddMenu(exchange, restaurant);
+            } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("DELETE")) {
+                handleDeleteMenu(exchange, restaurant, menuTitle);
+            } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("PUT")) {
+                handleAddItemToMenu(exchange, restaurant, menuTitle, item);
+            } else if (path.matches("/restaurants/\\d+/menu/.+/\\d+") && method.equals("DELETE")) {
+                handleDeleteItemFromMenu(exchange, restaurant, menuTitle, item);
+            } else if (path.matches("/restaurants/\\d+/orders") && method.equals("GET")) {
+                handleGetRestaurantOrders(exchange, restaurant);
+            } else if (path.matches("/restaurants/orders/\\d+") && method.equals("PATCH")) {
+                handleChangeOrderStatus(exchange, order);
             } else {
-                e.printStackTrace();
-                sendResponse(exchange, 500, gson.toJson(Map.of("error", "Internal server error")));
+                sendResponse(exchange, 404, gson.toJson(Map.of("error", "Not found")));
             }
-        }
-
-        private void sendResponse(HttpExchange exchange, int statusCode, String responseBody) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
-            exchange.sendResponseHeaders(statusCode, responseBody.getBytes().length);
-            try (OutputStream os = exchange.getResponseBody()) {
-                os.write(responseBody.getBytes());
-            }
+        } catch (NullPointerException e) {
+            handleNullPointerException(e);
+        } catch (Exception e) {
+            expHandler(e, exchange, gson);
         }
     }
+
+    private void handleCreateRestaurant(HttpExchange exchange, Seller seller) throws IOException {
+        RestaurantRegistrationRequest request = readRequestBody(exchange, RestaurantRegistrationRequest.class, gson);
+        validateRestaurantRegistrationRequest(request);
+        Restaurant restaurant = restaurantService.createRestaurant(request, seller);
+        RestaurantDto response = new RestaurantDto(restaurant);
+        sendResponse(exchange, 201, gson.toJson(Map.of("message", "Restaurant created successfully", "response", response)));
+    }
+
+    private void handleGetMyRestaurants(HttpExchange exchange, Seller seller) throws IOException {
+        List<RestaurantDto> restaurants = restaurantService.getSellerRestaurants(seller);
+        sendResponse(exchange, 200, gson.toJson(Map.of("List of restaurants", restaurants)));
+    }
+
+    private void handleUpdateRestaurant(HttpExchange exchange, Restaurant restaurant) throws IOException {
+        RestaurantUpdateRequest request = readRequestBody(exchange, RestaurantUpdateRequest.class, gson);
+        RestaurantDto response = restaurantService.updateRestaurant(restaurant, request);
+        sendResponse(exchange, 200, gson.toJson(response));
+    }
+
+    private void handleAddItem(HttpExchange exchange, Restaurant restaurant) throws IOException {
+        ItemDto request = readRequestBody(exchange, ItemDto.class, gson);
+        validateItemRegistrationRequest(request);
+        ItemDto response = itemService.addItem(restaurant, request);
+        sendResponse(exchange, 200, gson.toJson(
+                Map.of("Food item created and added to restaurant successfully", response))
+        );
+    }
+
+    private void handleEditItem(HttpExchange exchange, Restaurant restaurant, Item item) throws IOException {
+        ItemDto request = readRequestBody(exchange, ItemDto.class, gson);
+        ItemDto updatedItem = itemService.editItem(restaurant, item, request);
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "Item updated successfully", "item", updatedItem)));
+    }
+
+    private void handleDeleteItem(HttpExchange exchange, Restaurant restaurant, Item item) throws IOException {
+        itemService.deleteItem(restaurant, item);
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "Food item removed successfully")));
+    }
+
+    private void handleAddMenu(HttpExchange exchange, Restaurant restaurant) throws IOException {
+        MenuRegistrationDto request = readRequestBody(exchange, MenuRegistrationDto.class, gson);
+        validateMenuRegistrationRequest(request);
+        Menu menu = menuService.addMenu(request, restaurant);
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "Food menu created and added to restaurant successfully", "title", menu.getTitle())));
+    }
+
+    private void handleDeleteMenu(HttpExchange exchange,Restaurant restaurant ,String menuTitle) throws IOException {
+        menuService.deleteMenu(menuTitle, restaurant);
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "Food menu removed from restaurant successfully")));
+    }
+
+    private void handleAddItemToMenu(HttpExchange exchange, Restaurant restaurant, String menuTitle, Item item) throws IOException {
+        ItemAddToMenuRequestDto request = readRequestBody(exchange, ItemAddToMenuRequestDto.class, gson);
+        validateItemAddToMenuRequest(request);
+        menuService.addItem(menuTitle, item, restaurant);
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "Food item added to restaurant menu successfully")));
+    }
+
+    private void handleDeleteItemFromMenu(HttpExchange exchange, Restaurant restaurant, String menuTitle, Item item) throws IOException {
+        menuService.deleteItem(menuTitle, item, restaurant);
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "Item removed from restaurant menu successfully")));
+    }
+
+    private void handleGetRestaurantOrders(HttpExchange exchange, Restaurant restaurant) throws IOException {
+        Map<String, String> params = Map.of(
+                "search", getQueryParam(exchange, "search"),
+                "courier", getQueryParam(exchange, "courier"),
+                "user", getQueryParam(exchange, "user"),
+                "status", getQueryParam(exchange, "status")
+        );
+        List<OrderDto> orders = restaurantService.searchRestaurantOrders(
+                params.get("search"), params.get("courier"), params.get("user"), params.get("status"), restaurant);
+        sendResponse(exchange, 200, gson.toJson(Map.of("List of orders", orders)));
+    }
+
+    private void handleChangeOrderStatus(HttpExchange exchange, Order order) throws IOException {
+        StatusDto request = readRequestBody(exchange, StatusDto.class, gson);
+        if(request == null || request.getStatus() == null) throw new InvalidInputException("Invalid request");
+        restaurantService.changeOrderStatus(order, request);
+        sendResponse(exchange, 200, gson.toJson("Order status changed successfully"));
+    }
+
+
+
+
+
 }

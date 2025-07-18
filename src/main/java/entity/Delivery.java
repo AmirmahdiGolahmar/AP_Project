@@ -10,17 +10,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "deliveries")
 public class Delivery extends User {
-    @Column(nullable = true)
     private Boolean available;
-    //private boolean isApproved;
-
-    @Column(nullable = true)
     private Double latitude;
-    @Column(nullable = true)
     private Double longitude;
-    @Column(nullable = true)
     private Double averageRating;
-    @Column(nullable = true)
     private Integer totalDeliveries;
 
     public Delivery() {

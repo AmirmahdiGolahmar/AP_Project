@@ -18,10 +18,4 @@ public class Customer extends User {
     public Customer(String mobile){
         super(mobile);
     }
-
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-//    private List<Transaction> transactions = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-//    private List<Cart> carts = new ArrayList<>();
 }

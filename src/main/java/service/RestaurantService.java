@@ -1,14 +1,7 @@
 package service;
 import dao.*;
-import dto.RestaurantRegistrationRequest;
-import dto.OrderDto;
-import dto.RestaurantDto;
-import dto.RestaurantUpdateRequest;
-import entity.Order;
-import entity.OrderStatus;
-import entity.Restaurant;
-import entity.Seller;
-import entity.User;
+import dto.*;
+import entity.*;
 import exception.AlreadyExistsException;
 import exception.NotFoundException;
 import util.SearchUtil;
@@ -20,17 +13,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static util.validator.validator.additionalFeeValidator;
+import static util.validator.validator.taxFeeValidator;
+
 public class RestaurantService {
     private final RestaurantDao restaurantDao;
     private final OrderDao orderDao;
+    private final UserDao userDao;
 
     public RestaurantService() {
         this.restaurantDao = new RestaurantDao();
         this.orderDao = new OrderDao();
+        this.userDao = new UserDao();
     }
 
-    public Restaurant createRestaurant(RestaurantRegistrationRequest request, User seller) {
-
+    public Restaurant createRestaurant(RestaurantRegistrationRequest request, Seller seller) {
+        
         if(restaurantDao.findAll().stream().anyMatch(restaurant ->
                         restaurant.getName().equals(request.getName()) &&
                         restaurant.getAddress().equals(request.getAddress())))
@@ -38,7 +36,7 @@ public class RestaurantService {
 
 
         Restaurant restaurant = new Restaurant(
-                request.getName(), (Seller) seller, request.getAddress(),
+                request.getName(), seller, request.getAddress(),
                 request.getPhone(), request.getLogoBase64(),
                 request.getTax_fee(), request.getAdditional_fee()
         );
@@ -47,8 +45,8 @@ public class RestaurantService {
         return restaurant;
     }
 
-    public List<RestaurantDto> findRestaurantsByISellerId(Long id) {
-        List<Restaurant> restaurants = restaurantDao.findAllRestaurantsBySellerId(id);
+    public List<RestaurantDto> getSellerRestaurants(Seller seller) {
+        List<Restaurant> restaurants = restaurantDao.findAllRestaurantsBySellerId(seller.getId());
         return restaurants.stream()
                 .map(RestaurantDto::new)
                 .collect(Collectors.toList());
@@ -58,8 +56,7 @@ public class RestaurantService {
         return restaurantDao.findById(id);
     }
 
-    public RestaurantDto updateRestaurant(Long restaurantId, RestaurantUpdateRequest request) {
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
+    public RestaurantDto updateRestaurant(Restaurant restaurant, RestaurantUpdateRequest request) {
         if (request.getName() != null) {
             restaurant.setName(request.getName());
         }
@@ -77,14 +74,12 @@ public class RestaurantService {
         }
 
         if (request.getTax_fee() != null) {
-            if (request.getTax_fee() < 0)
-                throw new IllegalArgumentException("Tax fee cannot be negative");
+            taxFeeValidator(request.getTax_fee());
             restaurant.setTaxFee(request.getTax_fee());
         }
 
         if (request.getAdditional_fee() != null) {
-            if (request.getAdditional_fee() < 0)
-                throw new IllegalArgumentException("Additional fee cannot be negative");
+            additionalFeeValidator(request.getAdditional_fee());
             restaurant.setAdditionalFee(request.getAdditional_fee());
         }
 
@@ -93,14 +88,15 @@ public class RestaurantService {
     }
 
     public List<OrderDto> searchRestaurantOrders(
-            String search,String courier,String user,String status, Long restaurantId) {
+            String search,String courier,String user,String status, Restaurant restaurant) {
 
         String searchFilter = (search == null || search.isBlank()) ? "" : search.toLowerCase();
         String courierFilter = (courier == null || courier.isBlank()) ? "" : courier.toLowerCase();
         String userFilter = (user == null || user.isBlank()) ? "" : user.toLowerCase();
         String statusFilter = (status == null || status.isBlank()) ? "" : status.toLowerCase();
 
-        List<Order> allOrders = orderDao.findAll();
+        List<Order> allOrders = orderDao.findAll().stream().
+                filter(order -> order.getRestaurant().getId().equals(restaurant.getId())).toList();
 
         List<String> searchFields = List.of("deliveryAddress", "coupon.code", "status",
                 "delivery.fullName", "restaurant.name", "customer.fullName", "createdAt", "updatedAt");
@@ -117,13 +113,8 @@ public class RestaurantService {
         return result.stream().map(OrderDto::new).toList();
     }
 
-    public void changeOrderStatus(String userId, Long orderId, String newStatus) {
-        Order order = orderDao.findById(orderId);
-        if(order == null) throw new NotFoundException("This order doesn't exist");
-
-        SellerValidator.validateSellerAndRestaurant(userId, order.getRestaurant().getId());
-
-        OrderStatus status = OrderStatus.strToStatus(newStatus);
+    public void changeOrderStatus(Order order, StatusDto request) {
+        OrderStatus status = OrderStatus.strToStatus(request.getStatus());
 
         order.setStatus(status);
         order.setUpdatedAt(LocalDateTime.now());

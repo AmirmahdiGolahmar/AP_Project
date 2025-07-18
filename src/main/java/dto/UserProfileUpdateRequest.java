@@ -27,7 +27,7 @@ public class UserProfileUpdateRequest {
     private String profileImageBase64;
 
     @SerializedName("bank_info")
-    private bankInfoDto bank_info;
+    private bankInfoDto bank_info = new bankInfoDto();
 
 //    @Override
 //    public String toString() {

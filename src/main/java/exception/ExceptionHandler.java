@@ -44,7 +44,6 @@ public class ExceptionHandler {
     public static void expHandler(Exception ex, HttpExchange exchange, Gson gson) throws IOException {
         int status;
         Map<String, Object> body;
-
         if (ex instanceof InvalidInputException) {
             status = 400;
             body = Map.of("error", "Invalid input","message", ex.getMessage());
@@ -74,6 +73,9 @@ public class ExceptionHandler {
             body = Map.of("error", "Internal server error","message", ex.getMessage());
         }
 
+        System.out.println("StackTrace : ");
+        System.out.println(Arrays.toString(ex.getStackTrace()));
+
         String json = gson.toJson(body);
         byte[] responseBytes = json.getBytes(StandardCharsets.UTF_8);
 
@@ -83,5 +85,18 @@ public class ExceptionHandler {
             os.write(responseBytes);
         }
     }
+
+    public static void handleNullPointerException(NullPointerException ex) {
+        StackTraceElement element = ex.getStackTrace()[0];
+        String className = element.getClassName().toLowerCase();
+        String methodName = element.getMethodName().toLowerCase();
+
+        if(className.contains("bank") && className.contains("name")) throw new NullPointerException("Please fill your bank name");
+        if(className.contains("account") && className.contains("number")) throw new NullPointerException("Please fill your account number");
+
+        if(methodName.contains("bank") && methodName.contains("name")) throw new NullPointerException("Please fill your bank name");
+        if(methodName.contains("account") && methodName.contains("number")) throw new NullPointerException("Please fill your account number");
+    }
+
 
 }

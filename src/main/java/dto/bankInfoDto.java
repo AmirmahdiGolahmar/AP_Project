@@ -18,4 +18,7 @@ public class bankInfoDto {
         this.bank_name = bank_name;
         this.account_number = account_number;
     }
+    public bankInfoDto() {
+
+    }
 }

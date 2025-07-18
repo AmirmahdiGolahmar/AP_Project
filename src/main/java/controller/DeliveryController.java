@@ -3,7 +3,7 @@ package controller;
 import static exception.ExceptionHandler.expHandler;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
-import static util.AuthorizationHandler.authorizeUserForRole;
+import static util.AuthorizationHandler.authorizeUser;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +31,7 @@ public class DeliveryController {
                 try {
                     res.type("application/json");
                     String userId = authorizeAndExtractUserId(req, res, gson);
-                    authorizeUserForRole(Integer.parseInt(userId), UserRole.DELIVERY);
+                    authorizeUser(Integer.parseInt(userId), UserRole.DELIVERY);
                     List<OrderDto> response = deliveryService.getAvailableOrders();
                     res.status(200);
                     return gson.toJson(Map.of("List of available deliveries", response));
@@ -44,7 +44,7 @@ public class DeliveryController {
                 try {
                     res.type("application/json");
                     String userId = authorizeAndExtractUserId(req, res, gson);
-                    authorizeUserForRole(Integer.parseInt(userId), UserRole.DELIVERY);
+                    authorizeUser(Integer.parseInt(userId), UserRole.DELIVERY);
                     Long order_id = (long)Integer.parseInt(req.params(":id"));
 
                     Map<String, String> bodyMap = gson.fromJson(req.body(), new TypeToken<Map<String, String>>(){}.getType());
@@ -62,7 +62,7 @@ public class DeliveryController {
                 try {
                     res.type("application/json");
                     Long userId = (long) Integer.parseInt(authorizeAndExtractUserId(req, res, gson));
-                    authorizeUserForRole(userId, UserRole.DELIVERY);
+                    authorizeUser(userId, UserRole.DELIVERY);
 
                     String search = req.queryParams("search");
                     String vendor = req.queryParams("vendor");

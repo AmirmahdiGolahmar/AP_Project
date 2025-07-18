@@ -18,15 +18,10 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
     private Long id;
-
     private String name;
-
     private String photo;
-
     private String description;
-
     private double price;
-
     private Integer supply;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -37,26 +32,25 @@ public class Item {
     private Double rating;
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
+
+    public void subtractSupplyCount(int count){
+        this.supply = this.supply - count;
+    }
 
 
     public Item() {}
 
-    public Item(Long id, String name, String photo, String description, Double price,
-                Integer supply, List<String> keywords, Double rating) {
-        this.id = id;
-        this.name = name;
-        this.photo = photo;
-        this.description = description;
-        this.price = price;
-        this.supply = supply;
-        this.keywords = keywords;
-        this.rating = rating;
-    }
-
-    public void subtractSupplyCount(int count){
-        this.supply = this.supply - count;
+    public Item(String name, String photo, String description, Double price, Integer supply, List<String> keywords, Restaurant restaurant, Double rating) {
+        if(name != null) this.name = name;
+        if(photo != null) this.photo = photo;
+        if(description != null) this.description = description;
+        if(price != null) this.price = price;
+        if(supply != null) this.supply = supply;
+        if(keywords != null) this.keywords = keywords;
+        if(restaurant != null) this.restaurant = restaurant;
+        if(rating != null) this.rating = rating;
     }
 
 }

@@ -9,6 +9,7 @@ import static util.validator.validator.*;
 public class UserValidator {
 
     public static void validateUserRegistrationRequest(UserRegistrationRequest request) {
+        if(request == null) throw new InvalidInputException("Invalid request");
         passwordValidator(request.getPassword());
         fullNameValidator(request.getFull_name());
         mobileValidator(request.getMobile());

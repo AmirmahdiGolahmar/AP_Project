@@ -13,13 +13,13 @@ public class RestaurantDto {
 
 
     public RestaurantDto(Restaurant restaurant) {
-        this.id = restaurant.getId();
-        this.name = restaurant.getName();
-        this.address = restaurant.getAddress();
-        this.phone = restaurant.getPhone();
-        this.logoBase64 = restaurant.getLogo();
-        this.tax_fee = restaurant.getTaxFee();
-        this.additional_fee = restaurant.getAdditionalFee();
+        if(restaurant.getId() != null) this.id = restaurant.getId();
+        if(restaurant.getName() != null) this.name = restaurant.getName();
+        if(restaurant.getAddress() != null) this.address = restaurant.getAddress();
+        if(restaurant.getPhone() != null) this.phone = restaurant.getPhone();
+        if (restaurant.getLogo() != null) this.logoBase64 = restaurant.getLogo();
+        if(restaurant.getTaxFee() != null) this.tax_fee = restaurant.getTaxFee();
+        if(restaurant.getAdditionalFee() != null) this.additional_fee = restaurant.getAdditionalFee();
     }
 
     public RestaurantDto(long id, String name, String address, String phone, String logoBase64, Double tax_fee) {

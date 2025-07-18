@@ -14,16 +14,22 @@ public class UserDto {
     String role;
     String address;
     String profileImageBase64;
-    bankInfoDto bank_info;
+    bankInfoDto bank_info = new bankInfoDto();
 
     public UserDto(User user) {
         this.id = user.getId().intValue();
-        this.full_name = user.getFullName();
-        this.email = user.getEmail();
-        this.phone = user.getMobile();
-        this.role = user.getRole().toString();
-        this.address = user.getAddress();
-        this.profileImageBase64 = user.getPhoto();
-        this.bank_info = new bankInfoDto(user.getBankInfo());
+        if(user.getFullName() != null) this.full_name = user.getFullName();
+        if(user.getEmail() != null) this.email = user.getEmail();
+        if(user.getMobile() != null) this.phone = user.getMobile();
+        if(user.getRole() != null) this.role = user.getRole().toString();
+        if(user.getAddress() != null) this.address = user.getAddress();
+        if(user.getPhoto() != null) this.profileImageBase64 = user.getPhoto();
+        if(user.getBankInfo() != null) {
+            this.bank_info = new bankInfoDto();
+            if(user.getBankInfo().getBankName() != null)
+                this.bank_info.setBank_name(user.getBankInfo().getBankName());
+            if(user.getBankInfo().getAccountNumber() != null)
+                this.bank_info.setAccount_number(user.getBankInfo().getAccountNumber());
+        }
     }
 }

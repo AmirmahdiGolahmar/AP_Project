@@ -14,8 +14,8 @@ import java.util.Map;
 import static exception.ExceptionHandler.expHandler;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
-import static util.AuthorizationHandler.authorizeUserForRole;
-import static util.validator.SellerValidator.validateRestaurant;
+import static util.AuthorizationHandler.authorizeUser;
+import static util.validator.RestaurantValidator.validateRestaurant;
 import static util.validator.RestaurantValidator.validateCouponId;
 
 public class CustomerController {
@@ -31,7 +31,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 RestaurantSearchRequestDto request = gson.fromJson(req.body(), RestaurantSearchRequestDto.class);
                 List<RestaurantDto> response = customerService.searchRestaurant(request);
                 res.status(200);
@@ -45,7 +45,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 long restaurantId = Long.parseLong(req.params(":id"));
                 validateRestaurant(restaurantId);
                 RestaurantDisplayResponse response = customerService.displayRestaurant(restaurantId);
@@ -60,7 +60,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 ItemSearchRequestDto request = gson.fromJson(req.body(), ItemSearchRequestDto.class);
                 List<ItemDto> response = customerService.searchItem(request);
                 res.status(200);
@@ -74,7 +74,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 long itemId = Long.parseLong(req.params(":id"));
                 ItemDto response = customerService.displayItem(itemId);
                 res.status(200);
@@ -88,7 +88,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 String couponCode = req.queryParams("coupon_code");
                 CouponDto response = customerService.getCoupon(couponCode);
                 res.status(200);
@@ -102,7 +102,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 OrderRegistrationRequest request = gson.fromJson(req.body(), OrderRegistrationRequest.class);
                 validateRestaurant(request.getVendor_id());
                 validateCouponId(request.getCoupon_id());
@@ -118,7 +118,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 Long userId = (long) Integer.parseInt(authorizeAndExtractUserId(req, res, gson));
-                authorizeUserForRole(userId, UserRole.CUSTOMER);
+                authorizeUser(userId, UserRole.CUSTOMER);
                 String search = req.queryParams("search");
                 String vendor = req.queryParams("vendor");
                 List<OrderDto> response = customerService.searchOrderHistory(search, vendor, userId);
@@ -133,7 +133,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 long orderId = Long.parseLong(req.params(":id"));
                 OrderDto response = customerService.getOrder(orderId);
                 res.status(200);
@@ -149,7 +149,7 @@ public class CustomerController {
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 long restaurantId = Long.parseLong(req.params(":id"));
                 validateRestaurant(restaurantId);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 customerService.addToFavorites(Integer.parseInt(userId), restaurantId);
                 res.status(200);
                 return gson.toJson("Added to favorites");
@@ -164,7 +164,7 @@ public class CustomerController {
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 long restaurantId = Long.parseLong(req.params(":id"));
                 validateRestaurant(restaurantId);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 customerService.removeFromFavorites(Integer.parseInt(userId), restaurantId);
                 res.status(200);
                 return gson.toJson("Removed to favorites");
@@ -177,7 +177,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 List<RestaurantDto> response = customerService.getFavorites(Integer.parseInt(userId));
                 res.status(200);
                 return gson.toJson(Map.of("List of favorite restaurants", response));
@@ -190,7 +190,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 OrderRatingDto request =  gson.fromJson(req.body(), OrderRatingDto.class);
                 customerService.submitOrderRating(request, (long)Integer.parseInt(userId));
                 res.status(200);
@@ -205,7 +205,7 @@ public class CustomerController {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 Long itemId = (long) Integer.parseInt(req.params(":id"));
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 ItemRatingAvgResponseDto response = customerService.getItemAvgRating(itemId);
                 res.status(200);
                 return gson.toJson(Map.of("List of ratings and reviews", response));
@@ -219,7 +219,7 @@ public class CustomerController {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 Long itemId = (long) Integer.parseInt(req.params(":id"));
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 ItemRatingResponseDto response = customerService.getItemRating(itemId);
                 res.status(200);
                 return gson.toJson(Map.of("Rating details", response));
@@ -233,7 +233,7 @@ public class CustomerController {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
                 Long itemId = (long) Integer.parseInt(req.params(":id"));
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 customerService.deleteRating(itemId);
                 res.status(200);
                 return gson.toJson("Rating deleted");
@@ -246,7 +246,7 @@ public class CustomerController {
             try {
                 res.type("application/json");
                 String userId = authorizeAndExtractUserId(req, res, gson);
-                authorizeUserForRole(Integer.parseInt(userId), UserRole.CUSTOMER);
+                authorizeUser(Integer.parseInt(userId), UserRole.CUSTOMER);
                 Long ratingId = (long) Integer.parseInt(req.params(":id"));
                 ItemRatingRequestDto request =  gson.fromJson(req.body(), ItemRatingRequestDto.class);
                 customerService.updateItemRating(request, (long)Integer.parseInt(userId), ratingId);

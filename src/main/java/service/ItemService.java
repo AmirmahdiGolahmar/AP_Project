@@ -10,6 +10,7 @@ import exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import static util.validator.validator.*;
 
 public class ItemService {
     private final ItemDao itemDao;
@@ -20,82 +21,60 @@ public class ItemService {
         this.restaurantDao = new RestaurantDao();
     }
 
-    public ItemDto addItem(Long restaurantId, ItemDto itemRequest) {
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
+    public ItemDto addItem(Restaurant restaurant, ItemDto request) {
 
         Optional<Item> it = restaurant.getItems()
                 .stream()
-                .filter(i -> i.getName().equals(itemRequest.getName()))
+                .filter(i -> i.getName().equals(request.getName()))
                 .findFirst();
 
-        if(!it.isEmpty()) throw new AlreadyExistsException("Item with this name already exists");
+        if(it.isPresent()) throw new AlreadyExistsException("Item with this name already exists");
 
-        Item item = new Item();
-        item.setName(itemRequest.getName());
-        item.setPhoto(itemRequest.getImageBase64());
-        item.setDescription(itemRequest.getDescription());
-        item.setPrice(itemRequest.getPrice());
-        item.setSupply(itemRequest.getSupply());
-        item.setRating(0.0);
-        item.setKeywords(itemRequest.getKeywords() != null ? itemRequest.getKeywords() : new ArrayList<>());
-        item.setRestaurant(restaurant);
+        Item item = new Item(request.getName(), request.getImageBase64(), request.getDescription(),
+                        request.getPrice(), request.getSupply(), request.getKeywords(), restaurant, 0.0);
 
         restaurant.addItem(item);
         restaurantDao.update(restaurant);
 
-        ItemDto response = new ItemDto();
-        response.setId(item.getId());
-        response.setName(item.getName());
-        response.setImageBase64(item.getPhoto());
-        response.setDescription(item.getDescription());
-        response.setPrice(item.getPrice());
-        response.setSupply(item.getSupply());
-        response.setKeywords(item.getKeywords());
-        
-        return response;
+        return new ItemDto(item);
     }
 
-    public ItemDto editItem(Long restaurantId, Long itemId, ItemDto request, Long userId) {
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
+    public ItemDto editItem(Restaurant restaurant, Item item, ItemDto request) {
 
 
-        Item item = restaurant.getItems()
+        Item it = restaurant.getItems()
                 .stream()
-                .filter(i -> i.getId().equals(itemId))
+                .filter(i -> i.getId().equals(item.getId()))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Item not found in restaurant"));
 
-        // Edit item
-        if (request.getName() != null) item.setName(request.getName());
-        if (request.getImageBase64() != null) item.setPhoto(request.getImageBase64());
-        if (request.getDescription() != null) item.setDescription(request.getDescription());
-        if (request.getPrice() != null) item.setPrice(request.getPrice());
-        if (request.getSupply() != null) item.setSupply(request.getSupply());
-        if (request.getKeywords() != null) item.setKeywords(new ArrayList<>(request.getKeywords()));
+        if (request.getName() != null) it.setName(request.getName());
+        if (request.getImageBase64() != null) it.setPhoto(request.getImageBase64());
+        if (request.getDescription() != null) it.setDescription(request.getDescription());
+        if (request.getPrice() != null){
+            priceValidator(request.getPrice());
+            it.setPrice(request.getPrice());
+        }
+        if (request.getSupply() != null){
+            supplyValidator(request.getSupply());
+            it.setSupply(request.getSupply());
+        }
+        if (request.getKeywords() != null) it.setKeywords(new ArrayList<>(request.getKeywords()));
 
-        itemDao.update(item);
+        itemDao.update(it);
 
-        return  new ItemDto(item);
+        return  new ItemDto(it);
     }
 
-    public void deleteItem(Long restaurantId, Long itemId) {
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
-
-        Item item = restaurant.getItems()
+    public void deleteItem(Restaurant restaurant, Item item) {
+        Item it = restaurant.getItems()
                 .stream()
-                .filter(i -> i.getId().equals(itemId))
+                .filter(i -> i.getId().equals(item.getId()))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Item doesn't exist"));
 
-        restaurant.removeItem(item);
+        restaurant.removeItem(it);
 
         restaurantDao.update(restaurant);
     }
-
-    // Future methods can be added here:
-    // - updateItem()
-    // - deleteItem()
-    // - findItemsByRestaurant()
-    // - findItemById()
-    // etc.
 } 

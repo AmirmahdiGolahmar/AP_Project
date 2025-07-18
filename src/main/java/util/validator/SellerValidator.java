@@ -1,55 +1,18 @@
 package util.validator;
 
 import dao.RestaurantDao;
-import dao.UserDao;
 import entity.Restaurant;
-import entity.User;
-import entity.UserRole;
+import entity.Seller;
 import exception.AccessDeniedException;
 import exception.NotFoundException;
 import exception.SellerNotFoundException;
 import exception.UnauthorizedUserException;
 
-import java.util.Map;
-
 
 public class SellerValidator {
-    public static void validateSellerAndRestaurant(String userId, Long restaurantId) {
-
-        Restaurant restaurant = new RestaurantDao().findById(restaurantId);
-
-        User seller = new UserDao().findById(Long.parseLong(userId));
-        if (seller == null) {
-           throw new SellerNotFoundException("there is no seller with this mobile");
-        }
-
-        if(seller.getRole() != UserRole.SELLER){
-            throw new AccessDeniedException("only seller can edit restaurant info");
-        }
-
-        if (restaurant == null) {
-            throw new NotFoundException("Restaurant not found");
-        }
-
-        if (!restaurant.getSeller().getId().equals(seller.getId())) {
-            throw new AccessDeniedException("You are not authorized to update this restaurant");
+    public static void matchSellerRestaurant(Seller seller, Restaurant restaurant) throws SellerNotFoundException, UnauthorizedUserException, AccessDeniedException {
+        if(restaurant.getSeller().getId() != seller.getId()) {
+            throw new UnauthorizedUserException("Restaurant and seller do not match");
         }
     }
-
-    public static void validateRestaurant(Long restaurantId) {
-
-        Restaurant restaurant = new RestaurantDao().findById(restaurantId);
-        if (restaurant == null) {
-            throw new NotFoundException("Restaurant doesn't exist");
-        }
-    }
-
-    // public static void validateSeller(Long userId) {
-
-    //     User user = new UserDao().findById(userId);
-    //     if (user.getRole() != UserRole.SELLER) {
-    //         throw new UnauthorizedUserException("You are not authrize as seller");
-    //     }
-    // }
-
 }

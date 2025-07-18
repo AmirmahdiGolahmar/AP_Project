@@ -10,6 +10,7 @@ public class Main {
         LogManager.getLogManager().reset();
         HttpServer server = HttpServer.create(new InetSocketAddress(4567), 0);
         server.createContext("/auth", new UserControllerHttpServer());
+        server.createContext("/restaurants", new RestaurantControllerHttpServer());
         server.setExecutor(null); // default executor
         System.out.println("HTTP server running on port 4567...");
         server.start();

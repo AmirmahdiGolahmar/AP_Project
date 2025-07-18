@@ -6,11 +6,9 @@ import entity.UserRole;
 import exception.AuthenticationException;
 import exception.NotFoundException;
 import io.jsonwebtoken.Claims;
-import spark.HaltException;
 import spark.Request;
 import spark.Response;
 import com.sun.net.httpserver.HttpExchange;
-import java.util.Map;
 import com.google.gson.Gson;
 
 
@@ -60,14 +58,15 @@ public class AuthorizationHandler {
         }
     }
 
-    public static void authorizeUserForRole (long userId, UserRole role) {
+    public static User authorizeUser(long userId, UserRole role) {
         User user = new UserDao().findById(userId);
         if(user == null) {
-            throw new NotFoundException("User dons't exist");
+            throw new NotFoundException("User doesn't exist");
         }
         if(user.getRole() != role) {
             throw new AuthenticationException("You are not Authorized for this role");
         }
+        return user;
     }
 
 }

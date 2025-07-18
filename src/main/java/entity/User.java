@@ -44,26 +44,22 @@ public class User {
 
     @Setter(AccessLevel.PRIVATE)
     private String username;
-
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false) @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserRole role;
 
-    @Embedded @Column(nullable = true)
+    @Embedded
     private BankInfo bankInfo = new BankInfo();
 
-    @Column(nullable = false)
     private String fullName;
 
-    @Column(nullable = true)
     private String email;
 
-    @Column(nullable = true)
     private String photo;
 
-    @Column(nullable = false)
     private String address;
 
     @Column(nullable = false, unique = true)

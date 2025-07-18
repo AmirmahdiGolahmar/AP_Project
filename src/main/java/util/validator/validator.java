@@ -1,6 +1,7 @@
 package util.validator;
 
 import exception.InvalidInputException;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
 public class validator {
     public static void mobileValidator(String mobile) {
@@ -40,6 +41,26 @@ public class validator {
     public static void addressValidator(String address) {
         if(address == null || address.isBlank()) {
             throw new InvalidInputException("Invalid field address");
+        }
+    }
+
+    public static void priceValidator(Double price) {
+        if(price == null || price < 0) throw new InvalidInputException("Invalid field price");
+    }
+
+    public static void supplyValidator(Integer supply) {
+        if(supply == null || supply < 0) throw new InvalidInputException("Invalid field supply");
+    }
+
+    public static void taxFeeValidator(Double  taxFee) {
+        if(taxFee != null && (taxFee < 0 || taxFee > 100)) {
+            throw new InvalidInputException("Invalid field tax fee");
+        }
+    }
+
+    public static void additionalFeeValidator(Double  additionalFee) {
+        if(additionalFee != null && (additionalFee < 0 || additionalFee > 100)) {
+            throw new InvalidInputException("Invalid field additionalFee");
         }
     }
 }

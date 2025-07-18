@@ -9,7 +9,6 @@ import service.UserService;
 import util.JwtUtil;
 import util.LocalDateTimeAdapter;
 import util.TokenBlacklist;
-import util.ResponseUtil;
 
 import com.sun.net.httpserver.*;
 
@@ -18,14 +17,15 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Map;
+import static util.HttpUtil.*;
 
 import static exception.ExceptionHandler.expHandler;
-import static util.ResponseUtil.sendResponse;
+import static exception.ExceptionHandler.handleNullPointerException;
 
 public class UserControllerHttpServer implements HttpHandler {
 
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).serializeNulls()
             .create();
 
     private static final UserService userService = new UserService();
@@ -50,92 +50,59 @@ public class UserControllerHttpServer implements HttpHandler {
             } else {
                 sendResponse(exchange, 404, gson.toJson(Map.of("error", "Not found")));
             }
-        } catch (Exception e) {
+        }catch(NullPointerException e){
+            handleNullPointerException(e);
+        }
+        catch (Exception e) {
             expHandler(e, exchange, gson);
         }
     }
 
     private void handleRegister(HttpExchange exchange) throws IOException {
-        UserRegistrationRequest request = readRequestBody(exchange, UserRegistrationRequest.class);
-        try {
-            User user = userService.createUser(request);
-            User loggedInUser = userService.login(request.getMobile(), request.getPassword());
-            String token = JwtUtil.generateToken(loggedInUser.getId(), loggedInUser.getRole().toString());
+        UserRegistrationRequest request = readRequestBody(exchange, UserRegistrationRequest.class, gson);
+        User user = userService.createUser(request);
+        User loggedInUser = userService.login(request.getMobile(), request.getPassword());
+        String token = JwtUtil.generateToken(loggedInUser.getId(), loggedInUser.getRole().toString());
 
-            UserRegistrationResponse response = new UserRegistrationResponse();
-            response.setMessage("User registered successfully");
-            response.setUser_id(loggedInUser.getId().toString());
-            response.setToken(token);
+        UserRegistrationResponse response = new UserRegistrationResponse();
+        response.setMessage("User registered successfully");
+        response.setUser_id(loggedInUser.getId().toString());
+        response.setToken(token);
 
-            sendResponse(exchange, 201, gson.toJson(response));
-        } catch (Exception e) {
-            expHandler(e, exchange, gson);
-        }
+        sendResponse(exchange, 201, gson.toJson(response));
     }
 
     private void handleLogin(HttpExchange exchange) throws IOException {
-        LoginRequest request = readRequestBody(exchange, LoginRequest.class);
-        try {
-            User user = userService.login(request.getMobile(), request.getPassword());
-            String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
+        LoginRequest request = readRequestBody(exchange, LoginRequest.class, gson);
+        User user = userService.login(request.getMobile(), request.getPassword());
+        String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
 
-            loginResponse response = new loginResponse("User Login successfully", token, user);
-            sendResponse(exchange, 200, gson.toJson(response));
-        } catch (Exception e) {
-            expHandler(e, exchange, gson);
-        }
+        loginResponse response = new loginResponse("User Login successfully", token, user);
+        sendResponse(exchange, 200, gson.toJson(response));
     }
 
     private void handleGetProfile(HttpExchange exchange) throws IOException {
-        try {
-            String token = extractToken(exchange);
-            Claims claims = JwtUtil.validateToken(token);
-            Long userId = Long.parseLong(claims.getSubject());
+        String token = extractToken(exchange);
+        Claims claims = JwtUtil.validateToken(token);
+        Long userId = Long.parseLong(claims.getSubject());
 
-            UserDto user = new UserDto(userService.findUserById(userId));
-            sendResponse(exchange, 200, gson.toJson(user));
-        } catch (Exception e) {
-            expHandler(e, exchange, gson);
-        }
+        UserDto user = new UserDto(userService.findUserById(userId));
+        sendResponse(exchange, 200, gson.toJson(user));
     }
 
     private void handleUpdateProfile(HttpExchange exchange) throws IOException {
-        try {
-            String token = extractToken(exchange);
-            Claims claims = JwtUtil.validateToken(token);
-            Long userId = Long.parseLong(claims.getSubject());
+        String token = extractToken(exchange);
+        Claims claims = JwtUtil.validateToken(token);
+        Long userId = Long.parseLong(claims.getSubject());
 
-            UserProfileUpdateRequest request = readRequestBody(exchange, UserProfileUpdateRequest.class);
-            userService.updateProfile(userId, request);
-            sendResponse(exchange, 200, gson.toJson(Map.of("message", "User profile updated successfully")));
-        } catch (Exception e) {
-            expHandler(e, exchange, gson);
-        }
+        UserProfileUpdateRequest request = readRequestBody(exchange, UserProfileUpdateRequest.class, gson);
+        userService.updateProfile(userId, request);
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "User profile updated successfully")));
     }
 
     private void handleLogout(HttpExchange exchange) throws IOException {
-        try {
-            String token = extractToken(exchange);
-            TokenBlacklist.add(token);
-            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Logout successfully")));
-        } catch (Exception e) {
-            expHandler(e, exchange, gson);
-        }
+        String token = extractToken(exchange);
+        TokenBlacklist.add(token);
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "Logout successfully")));
     }
-
-    private String extractToken(HttpExchange exchange) {
-        String auth = exchange.getRequestHeaders().getFirst("Authorization");
-        if (auth == null || !auth.startsWith("Bearer ")) {
-            throw new RuntimeException("Missing or invalid Authorization header");
-        }
-        return auth.substring(7);
-    }
-
-    private <T> T readRequestBody(HttpExchange exchange, Class<T> clazz) throws IOException {
-        InputStream inputStream = exchange.getRequestBody();
-        String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-        return gson.fromJson(body, clazz);
-    }
-
-
 }
