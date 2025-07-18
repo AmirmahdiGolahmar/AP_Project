@@ -51,15 +51,16 @@ public class User {
     @Column(nullable = false) @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Embedded @Column(nullable = false)
-    private BankInfo bankInfo;
+    @Embedded @Column(nullable = true)
+    private BankInfo bankInfo = new BankInfo();
 
     @Column(nullable = false)
     private String fullName;
 
+    @Column(nullable = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String photo;
 
     @Column(nullable = false)

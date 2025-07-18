@@ -14,9 +14,8 @@ import java.time.LocalDateTime;
 import static exception.ExceptionHandler.expHandler;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
-import static util.AuthorizationHandler.authorizeUserForRole;
-import static validator.RestaurantValidator.itemValidator;
-import static validator.SellerValidator.validateSellerAndRestaurant;
+import static util.validator.RestaurantValidator.itemValidator;
+import static util.validator.SellerValidator.validateSellerAndRestaurant;
 
 import dao.*;
 import entity.*;

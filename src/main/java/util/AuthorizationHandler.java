@@ -28,7 +28,7 @@ public class AuthorizationHandler {
                 throw new AuthenticationException("login first");
             }
 
-            Claims claims = JwtUtil.decodeJWT(token);
+            Claims claims = JwtUtil.validateToken(token);
             return claims.getSubject();
 
         } catch (AuthenticationException e) {
@@ -50,7 +50,7 @@ public class AuthorizationHandler {
                 throw new AuthenticationException("login first");
             }
 
-            Claims claims = JwtUtil.decodeJWT(token);
+            Claims claims = JwtUtil.validateToken(token);
             return claims.getSubject();
 
         } catch (AuthenticationException e) {

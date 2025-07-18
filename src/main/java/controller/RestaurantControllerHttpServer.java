@@ -23,8 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
-import static validator.RestaurantValidator.itemValidator;
-import static validator.SellerValidator.validateSellerAndRestaurant;
+import static util.validator.RestaurantValidator.itemValidator;
+import static util.validator.SellerValidator.validateSellerAndRestaurant;
 
 public class RestaurantControllerHttpServer {
 

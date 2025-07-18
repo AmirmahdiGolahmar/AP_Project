@@ -6,9 +6,12 @@ import exception.*;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
-import validator.*;
+import util.validator.UserValidator;
 import dto.UserRegistrationRequest;
 import dao.*;
+import util.validator.validator.*;
+
+import static util.validator.validator.*;
 
 public class UserService {
     private final CustomerDao customerDao;
@@ -25,22 +28,14 @@ public class UserService {
 
     public User createUser(UserRegistrationRequest request) {
 
-        UserValidator.validateUser(request);
+        UserValidator.validateUserRegistrationRequest(request);
 
-        UserRole userRole;
-        switch (request.getRole().toLowerCase()) {
-            case "buyer" :
-                userRole = UserRole.CUSTOMER;
-                break;
-            case "customer" :
-                userRole = UserRole.CUSTOMER;
-                break;
-            case "seller":
-                userRole = UserRole.SELLER;
-                break;
-            default:
-                userRole = UserRole.DELIVERY;
-        }
+        UserRole userRole = switch (request.getRole().toLowerCase()) {
+            case "buyer" -> UserRole.CUSTOMER;
+            case "customer" -> UserRole.CUSTOMER;
+            case "seller" -> UserRole.SELLER;
+            default -> UserRole.DELIVERY;
+        };
 
         if (userRole == UserRole.CUSTOMER) {
             Customer customer = new Customer(request.getMobile());
@@ -61,48 +56,11 @@ public class UserService {
         }
     }
 
-
-    public List<Customer> findAllCustomers() { return customerDao.findAll(); }
-
-    public List<Seller> findAllSellers() { return sellerDao.findAll(); }
-
-    public List<Delivery> findAllDeliveries() { return deliveryDao.findAll(); }
-
-    public List<User> findAllUsers() {
-        List<User> allUsers = new java.util.ArrayList<>();
-        allUsers.addAll(customerDao.findAll());
-        allUsers.addAll(sellerDao.findAll());
-        allUsers.addAll(deliveryDao.findAll());
-        return allUsers;
-    }
-
-    public void deleteUser(Long id) {
-        User user = findUserById(id);
-        if (user instanceof Customer) {
-            customerDao.delete(id);
-        } else if (user instanceof Seller) {
-            sellerDao.delete(id);
-        } else if (user instanceof Delivery) {
-            deliveryDao.delete(id);
-        } else {
-            throw new RuntimeException("User not found with id: " + id);
-        }
-    }
-
     public User findUserById(Long id) {
-//        User user = customerDao.findById(id);
-//        if (user != null) return user;
-//
-//        user = sellerDao.findById(id);
-//        if (user != null) return user;
-//
-//        user = deliveryDao.findById(id);
-//        if (user != null) return user;
 
        User user = userDao.findById(id);
-        if (user != null) return user;
-
-        return null;
+        if (user == null) throw new NotFoundException("This user doesn't exist");
+        return user;
     }
 
     public User login(String mobile, String password) {
@@ -149,20 +107,12 @@ public class UserService {
         user.setPassword(request.getPassword());
         user.setFullName(request.getFull_name());
         user.setMobile(request.getMobile());
-        user.setEmail(request.getEmail());
+        if(request.getEmail() != null)  user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
-        user.setPhoto(request.getProfileImageBase64());
-        user.setBankInfo(new BankInfo(request.getBank_info().getBank_name(), request.getBank_info().getAccount_number()));
-        switch (request.getRole().toLowerCase()) {
-            case "buyer":
-            case "customer":
-                user.setRole(UserRole.CUSTOMER);
-                break;
-            case "seller":
-                user.setRole(UserRole.SELLER);
-                break;
-            default:
-                user.setRole(UserRole.DELIVERY);
+        if(request.getProfileImageBase64() != null) user.setPhoto(request.getProfileImageBase64());
+        if(user.getBankInfo() != null){
+            if(user.getBankInfo().getBankName() != null) user.setBankName(request.getBank_info().getBank_name());
+            if(user.getBankInfo().getAccountNumber() != null) user.setAccountNumber(request.getBank_info().getAccount_number());
         }
     }
 
@@ -170,15 +120,19 @@ public class UserService {
         User user = userDao.findById(userId);
 
         if (request.getFull_name() != null) {
+            fullNameValidator(request.getFull_name());
             user.setFullName(request.getFull_name());
         }
         if (request.getPhone() != null) {
+            mobileValidator(request.getPhone());
             user.setMobile(request.getPhone());
         }
         if (request.getEmail() != null) {
+            emailValidator(request.getEmail());
             user.setEmail(request.getEmail());
         }
         if (request.getAddress() != null) {
+            addressValidator(request.getAddress());
             user.setAddress(request.getAddress());
         }
         if (request.getProfileImageBase64() != null) {

@@ -1,4 +1,4 @@
-package validator;
+package util.validator;
 
 import dao.RestaurantDao;
 import dao.UserDao;

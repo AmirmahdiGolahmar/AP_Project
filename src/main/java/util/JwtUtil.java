@@ -1,5 +1,6 @@
 package util;
 
+import exception.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -27,7 +28,11 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static Claims decodeJWT(String token) {
+    public static Claims validateToken(String token) {
+        if (TokenBlacklist.contains(token)) {
+            throw new AuthenticationException("Token has been revoked (blacklisted).");
+        }
+
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -35,7 +40,8 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (JwtException e) {
-            throw new RuntimeException("Invalid or expired token.");
+            throw new AuthenticationException("Invalid or expired token.");
         }
     }
+
 }

@@ -13,10 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import validator.RestaurantValidator.*;
-
 import static util.LocalDateTimeAdapter.StringToDateTime;
-import static validator.RestaurantValidator.couponValidator;
+import static util.validator.RestaurantValidator.couponValidator;
 
 public class AdminService {
 

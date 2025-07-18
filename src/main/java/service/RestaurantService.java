@@ -4,7 +4,6 @@ import dto.RestaurantRegistrationRequest;
 import dto.OrderDto;
 import dto.RestaurantDto;
 import dto.RestaurantUpdateRequest;
-import dto.SearchRestaurantOrdesrDto;
 import entity.Order;
 import entity.OrderStatus;
 import entity.Restaurant;
@@ -12,9 +11,8 @@ import entity.Seller;
 import entity.User;
 import exception.AlreadyExistsException;
 import exception.NotFoundException;
-import exception.UnauthorizedUserException;
 import util.SearchUtil;
-import validator.SellerValidator;
+import util.validator.SellerValidator;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

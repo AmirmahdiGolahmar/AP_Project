@@ -15,8 +15,8 @@ import static exception.ExceptionHandler.expHandler;
 import static spark.Spark.*;
 import static util.AuthorizationHandler.authorizeAndExtractUserId;
 import static util.AuthorizationHandler.authorizeUserForRole;
-import static validator.SellerValidator.validateRestaurant;
-import static validator.RestaurantValidator.validateCouponId;
+import static util.validator.SellerValidator.validateRestaurant;
+import static util.validator.RestaurantValidator.validateCouponId;
 
 public class CustomerController {
     private static final CustomerService customerService = new CustomerService();
