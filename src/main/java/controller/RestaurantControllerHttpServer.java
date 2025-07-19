@@ -38,7 +38,7 @@ public class RestaurantControllerHttpServer implements HttpHandler {
     private static final ItemService itemService = new ItemService();
     private static final MenuService menuService = new MenuService();
     private static final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).serializeNulls()
             .create();
 
     @Override
@@ -62,24 +62,26 @@ public class RestaurantControllerHttpServer implements HttpHandler {
                 return;
             }
 
-            /*Restaurant*/
+            /*Restaurant*/  /*Match Seller and Restaurant*/
             Long restaurantId = null;
+            Restaurant restaurant = null;
             matcher = Pattern.compile("/restaurants/(\\d+)").matcher(path);
             if (matcher.find()) {
                 restaurantId = Long.parseLong(matcher.group(1));
+                restaurant = validateRestaurant(restaurantId);
+                matchSellerRestaurant(seller, restaurant);
             }
-            Restaurant restaurant = validateRestaurant(restaurantId);
 
-            /*Match Seller and Restaurant*/
-            matchSellerRestaurant(seller, restaurant);
 
             /*item*/
             Long itemId = null;
+            Item item = null;
             matcher = Pattern.compile("/item/(\\d+)").matcher(path);
             if (matcher.find()) {
                 itemId = Long.parseLong(matcher.group(1));
+                item = validateItem(itemId, restaurant);
             }
-            Item item = validateItem(itemId, restaurant);
+
 
             /*Menu*/
             String menuTitle = null;
@@ -90,14 +92,16 @@ public class RestaurantControllerHttpServer implements HttpHandler {
 
             /*Order*/
             Long orderId = null;
+            Order order = null;
             matcher = Pattern.compile("/orders/(\\d+)").matcher(path);
             if (matcher.find()) {
                 orderId = Long.parseLong(matcher.group(1));
+                order = new OrderDao().findById(orderId);
+                if (order == null || order.getRestaurant().getId() != restaurantId)
+                    throw new NotFoundException("This order does not exist");
             }
-            Order order = new OrderDao().findById(orderId);
-            if (order == null || order.getRestaurant().getId() != restaurantId)
-                throw new NotFoundException("This order does not exist");
 
+            /*Routing*/
             if (path.equals("/restaurants") && method.equals("POST")) {
                 handleCreateRestaurant(exchange, seller);
             } else if (path.equals("/restaurants/mine") && method.equals("GET")) {

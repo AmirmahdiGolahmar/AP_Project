@@ -1,6 +1,10 @@
 package util;
 
+import Log.LogUtil;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -12,9 +16,17 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 public class HttpUtil {
+
+    static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static void sendResponse(HttpExchange exchange, int statusCode, String responseJson) throws IOException {
         exchange.getResponseHeaders().set("Content-Type", "application/json");
         byte[] responseBytes = responseJson.getBytes(StandardCharsets.UTF_8);
+
+
+        JsonElement jsonElement = JsonParser.parseString(responseJson);
+        String prettyResponse = gson.toJson(jsonElement);
+
+        LogUtil.logRequest(exchange.getRequestMethod(), exchange.getRequestURI().toString(), prettyResponse, "Response");
         exchange.sendResponseHeaders(statusCode, responseBytes.length);
         OutputStream os = exchange.getResponseBody();
         os.write(responseBytes);
