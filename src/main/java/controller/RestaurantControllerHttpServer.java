@@ -20,6 +20,7 @@ import util.LocalDateTimeAdapter;
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -104,7 +105,7 @@ public class RestaurantControllerHttpServer implements HttpHandler {
             if (matcher.find()) {
                 orderId = Long.parseLong(matcher.group(1));
                 order = new OrderDao().findById(orderId);
-                if (order == null || order.getRestaurant().getId() != restaurantId)
+                if (order == null)
                     throw new NotFoundException("This order does not exist");
             }
 
@@ -134,10 +135,11 @@ public class RestaurantControllerHttpServer implements HttpHandler {
             } else if (path.matches("/restaurants/orders/\\d+") && method.equals("PATCH")) {
                 handleChangeOrderStatus(exchange, order);
             } else {
-                sendResponse(exchange, 404, gson.toJson(Map.of("error", "Not found")));
+                sendResponse(exchange, 404, gson.toJson(Map.of("error", "Invalid path")));
             }
         } catch (NullPointerException e) {
             handleNullPointerException(e);
+            sendResponse(exchange, 500, gson.toJson(Map.of("error", "Internal Server Error")));
         } catch (Exception e) {
             expHandler(e, exchange, gson);
         }
@@ -207,12 +209,17 @@ public class RestaurantControllerHttpServer implements HttpHandler {
     }
 
     private void handleGetRestaurantOrders(HttpExchange exchange, Restaurant restaurant) throws IOException {
-        Map<String, String> params = Map.of(
-                "search", getQueryParam(exchange, "search"),
-                "courier", getQueryParam(exchange, "courier"),
-                "user", getQueryParam(exchange, "user"),
-                "status", getQueryParam(exchange, "status")
-        );
+        Map<String, String> params = new HashMap<>();
+        String search = getQueryParam(exchange, "search");
+        String courier = getQueryParam(exchange, "courier");
+        String user = getQueryParam(exchange, "user");
+        String status = getQueryParam(exchange, "status");
+
+        if (search != null) params.put("search", search);
+        if (courier != null) params.put("courier", courier);
+        if (user != null) params.put("user", user);
+        if (status != null) params.put("status", status);
+
         List<OrderDto> orders = restaurantService.searchRestaurantOrders(
                 params.get("search"), params.get("courier"), params.get("user"), params.get("status"), restaurant);
         sendResponse(exchange, 200, gson.toJson(Map.of("List of orders", orders)));

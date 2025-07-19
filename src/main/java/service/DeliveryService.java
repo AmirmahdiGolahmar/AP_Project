@@ -35,14 +35,13 @@ public class DeliveryService {
             o.getDelivery() == null).map(OrderDto::new).toList();
     }
 
-    public OrderDto changeOrderStatus(String userId, Long order_id, String newStaus) {
+    public OrderDto changeOrderStatus(Delivery delivery, Long order_id, String newStaus) {
 
         Order order = orderDao.findById(order_id);
         if(order == null) throw new NotFoundException("This order doesn't exist.");
 
-        Delivery delivery = (Delivery) userDao.findById((long)Integer.parseInt(userId));
 
-        if(order.getDelivery() != null && (order.getDelivery().getId() != (long)Integer.parseInt(userId)))
+        if(order.getDelivery() != null && (order.getDelivery().getId() != delivery.getId()))
             throw new ForbiddenException("This Order has already accepted.");
 
         OrderStatus status = OrderStatus.strToStatus(newStaus);
@@ -61,14 +60,14 @@ public class DeliveryService {
         return new OrderDto(order);
     }
 
-    public List<OrderDto> searchDeliveryHistory(String search, String vendor, String user, Long userId) {
-        Delivery delivery = deliveryDao.findById(userId);
+    public List<OrderDto> searchDeliveryHistory(String search, String vendor, String user, Delivery delivery) {
 
         String searchFilter = (search == null || search.isBlank()) ? "" : search.toLowerCase();
         String vendorFilter = (vendor == null || vendor.isBlank()) ? "" : vendor.toLowerCase();
         String userFilter = (user == null || user.isBlank()) ? "" : user.toLowerCase();
 
-        List<Order> allOrders = orderDao.findAll().stream().filter(o -> o.getDelivery() != null && o.getDelivery().getId().equals(userId)).collect(Collectors.toList());
+        List<Order> allOrders = orderDao.findAll().stream()
+                .filter(o -> o.getDelivery() != null && o.getDelivery().getId().equals(delivery.getId())).toList();
 
         List<String> searchFields = List.of("deliveryAddress", "coupon.code", "status",
                 "restaurant.name", "customer.fullName", "createdAt", "updatedAt");

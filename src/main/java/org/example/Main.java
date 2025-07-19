@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
 import controller.CustomerControllerHttpServer;
+import controller.DeliveryControllerHttpServer;
 import controller.UserControllerHttpServer;
 import controller.RestaurantControllerHttpServer;
 
@@ -35,6 +36,8 @@ public class Main {
                 .getFilters().add(new LoggingFilter());
 
         CustomerControllerHttpServer.init(server);
+
+        DeliveryControllerHttpServer.init(server);
 
 
         // Use a thread pool executor
