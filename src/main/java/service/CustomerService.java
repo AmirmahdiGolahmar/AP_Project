@@ -30,39 +30,59 @@ public class CustomerService {
     public List<RestaurantDto> searchRestaurant(RestaurantSearchRequestDto request) {
         List<Restaurant> restaurants = restaurantDao.getAllRestaurants();
 
-        String search = request.getSearch() == null ? "" : request.getSearch().toLowerCase();
-        List<String> keywords = request.getKeywords() == null ? List.of() :
-                request.getKeywords().stream().map(String::toLowerCase).toList();
+        if (request == null)
+            return restaurants.stream().map(RestaurantDto::new).toList();
 
-        if (search.isEmpty() && keywords.isEmpty()) {
-            return restaurants.stream().map(RestaurantDto::new).collect(Collectors.toList());
-        }
+        String search = Optional.ofNullable(request.getSearch())
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
+                .map(String::toLowerCase)
+                .orElse(null);
+
+        List<String> keywords = Optional.ofNullable(request.getKeywords())
+                .filter(list -> !list.isEmpty())
+                .map(list -> list.stream()
+                        .filter(Objects::nonNull)
+                        .map(String::trim)
+                        .filter(s -> !s.isBlank())
+                        .map(String::toLowerCase)
+                        .toList())
+                .orElse(null);
+
+        if (search == null && (keywords == null || keywords.isEmpty()))
+            return restaurants.stream().map(RestaurantDto::new).toList();
 
         return restaurants.stream()
-                .filter(restaurant ->
-                        restaurant.getName().toLowerCase().contains(search) ||
-                                restaurant.getAddress().toLowerCase().contains(search) ||
-                                restaurant.getSeller().getFullName().toLowerCase().contains(search) ||
-                                restaurant.getPhone().contains(search) ||
-                                restaurant.getMenus().stream()
-                                        .anyMatch(mn -> mn.getTitle().toLowerCase().contains(search)) ||
+                .filter(restaurant -> {
+                    boolean matchesSearch = search != null && (
+                            restaurant.getName().toLowerCase().contains(search) ||
+                                    restaurant.getAddress().toLowerCase().contains(search) ||
+                                    restaurant.getSeller().getFullName().toLowerCase().contains(search) ||
+                                    restaurant.getPhone().contains(search) ||
+                                    restaurant.getMenus().stream()
+                                            .anyMatch(m -> m.getTitle().toLowerCase().contains(search))
+                    );
 
-                                keywords.stream().anyMatch(keyword ->
-                                        restaurant.getName().toLowerCase().contains(keyword) ||
-                                                restaurant.getAddress().toLowerCase().contains(keyword) ||
-                                                restaurant.getSeller().getFullName().toLowerCase().contains(keyword)) ||
+                    boolean matchesKeywords = keywords != null && (
+                            keywords.stream().anyMatch(keyword ->
+                                    restaurant.getName().toLowerCase().contains(keyword) ||
+                                            restaurant.getAddress().toLowerCase().contains(keyword) ||
+                                            restaurant.getSeller().getFullName().toLowerCase().contains(keyword)) ||
 
-                                restaurant.getMenus().stream()
-                                        .anyMatch(menu -> keywords.stream()
-                                                .anyMatch(keyword -> menu.getTitle().toLowerCase().contains(keyword)))
-                )
+                                    restaurant.getMenus().stream()
+                                            .anyMatch(menu -> keywords.stream()
+                                                    .anyMatch(keyword -> menu.getTitle().toLowerCase().contains(keyword)))
+                    );
+
+                    return matchesSearch || matchesKeywords;
+                })
                 .map(RestaurantDto::new)
                 .toList();
     }
 
 
-    public RestaurantDisplayResponse displayRestaurant(long restaurantId) {
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
+
+    public RestaurantDisplayResponse displayRestaurant(Restaurant restaurant) {
         RestaurantDisplayResponse response = new RestaurantDisplayResponse();
         response.setVendor(new RestaurantDto(restaurant));
         response.setMenu_titles(restaurant.getMenus().stream().map(Menu::getTitle).collect(Collectors.toList()));
@@ -73,32 +93,61 @@ public class CustomerService {
     public List<ItemDto> searchItem(ItemSearchRequestDto request) {
         List<Item> items = itemDao.findAll();
 
-        if ((request.getSearch() == null || request.getSearch().isEmpty()) &&
-                (request.getKeywords() == null || request.getKeywords().isEmpty()) &&
-                request.getPrice() == 0) {
-            return items.stream().map(ItemDto::new).collect(Collectors.toList());
+        if (request == null) {
+            return items.stream().map(ItemDto::new).toList();
         }
 
-        String search = request.getSearch() == null ? "" : request.getSearch().toLowerCase();
-        List<String> keywords = request.getKeywords() == null ? List.of() :
-                request.getKeywords().stream().map(String::toLowerCase).toList();
-        double price = request.getPrice();
+        String search = Optional.ofNullable(request.getSearch())
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
+                .map(String::toLowerCase)
+                .orElse(null);
+
+        List<String> keywords = Optional.ofNullable(request.getKeywords())
+                .filter(list -> !list.isEmpty())
+                .map(list -> list.stream()
+                        .filter(Objects::nonNull)
+                        .map(String::trim)
+                        .filter(s -> !s.isBlank())
+                        .map(String::toLowerCase)
+                        .toList())
+                .orElse(null);
+
+        Long price = request.getPrice() == null ?  null : request.getPrice();
+
+        if (search == null && (keywords == null || keywords.isEmpty()) && price == null) {
+            return items.stream().map(ItemDto::new).toList();
+        }
 
         return items.stream()
-                .filter(i -> i.getName().toLowerCase().contains(search) ||
-                        i.getKeywords().stream().anyMatch(keyword -> keyword.toLowerCase().contains(search)) ||
-                        i.getPrice() == price ||
-                        keywords.stream().anyMatch(keyword -> i.getName().toLowerCase().contains(keyword)) ||
-                        keywords.stream().anyMatch(keyword -> i.getKeywords().stream().anyMatch(word -> word.toLowerCase().contains(keyword)))
-                )
+                .filter(item -> {
+                    boolean matchSearch = search != null && (
+                            item.getName().toLowerCase().contains(search) ||
+                                    item.getKeywords().stream()
+                                            .filter(Objects::nonNull)
+                                            .anyMatch(k -> k.toLowerCase().contains(search))
+                    );
+
+                    boolean matchKeywords = keywords != null && (
+                            keywords.stream().anyMatch(kw -> item.getName().toLowerCase().contains(kw)) ||
+                                    keywords.stream().anyMatch(kw ->
+                                            item.getKeywords().stream()
+                                                    .filter(Objects::nonNull)
+                                                    .anyMatch(w -> w.toLowerCase().contains(kw))
+                                    )
+                    );
+
+                    boolean matchPrice = price != null && item.getPrice() == price;
+
+                    return matchSearch || matchKeywords || matchPrice;
+                })
                 .map(ItemDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
-    public ItemDto displayItem(long itemId){
-        Item item = itemDao.findById(itemId);
-        if(item == null) throw new NotFoundException("Item not found");
+
+    public ItemDto displayItem(Item item){
         return new ItemDto(item);
     }
 
@@ -108,10 +157,7 @@ public class CustomerService {
         return new CouponDto(coupon);
     }
 
-    public OrderDto addOrder(OrderRegistrationRequest request, long customerId) {
-        Customer customer = (Customer) userDao.findById(customerId);
-        Restaurant restaurant = restaurantDao.findById(request.getVendor_id());
-        if(request.getItems().isEmpty()) throw new InvalidInputException("Cart can't be empty");
+    public OrderDto addOrder(OrderRegistrationRequest request, Customer customer, Restaurant restaurant, Coupon coupon) {
         List<CartItem> cartItems = new ArrayList<>();
         for(CartItemDto ci : request.getItems()){
           Optional<Item> it = restaurant.getItems().stream().filter(itm -> itm.getId() == ci.getItem_id()).findFirst();
@@ -124,13 +170,10 @@ public class CustomerService {
         }
 
         Order order;
-        Coupon coupon = null;
-        if(request.getCoupon_id() == null){
+        if(coupon == null){
             order = new Order(cartItems, request.getDelivery_address(),
                     customer, restaurant, LocalDateTime.now(), LocalDateTime.now(), OrderStatus.submitted);
         }else{
-            coupon = couponDao.findById(request.getCoupon_id());
-            if(coupon == null) throw new NotFoundException("Coupon doesn't exist");
             coupon.subtractUserCount();
             couponDao.update(coupon);
             order = new Order(cartItems, request.getDelivery_address(),
@@ -148,12 +191,12 @@ public class CustomerService {
         return new OrderDto(order);
     }
 
-    public List<OrderDto> searchOrderHistory(String search, String vendor, Long userId){
+    public List<OrderDto> searchOrderHistory(String search, String vendor, Customer customer){
         String searchFilter = (search == null || search.isBlank()) ? "" : search.toLowerCase();
         String vendorFilter = (vendor == null || vendor.isBlank()) ? "" : vendor.toLowerCase();
 
         List<Order> allOrders = orderDao.findAll().stream()
-                .filter(o -> o.getCustomer().getId().equals(userId)).collect(Collectors.toList());
+                .filter(o -> o.getCustomer().getId().equals(customer.getId())).collect(Collectors.toList());
 
         List<String> searchFields = List.of("deliveryAddress", "coupon.code", "status",
                 "delivery.fullName", "restaurant.name", "createdAt", "updatedAt");
@@ -167,29 +210,24 @@ public class CustomerService {
         return result.stream().map(OrderDto::new).toList();
     }
 
-    public void addToFavorites(long userId, long restaurantId) {
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
-        User user = userDao.findByIdLoadFavorites(userId);
-        user.addToFavorite(restaurant);
-        userDao.update(user);
+    public void addToFavorites(User user, Restaurant restaurant) {
+        User u =  userDao.findByIdLoadFavorites(user.getId());
+        u.addToFavorite(restaurant);
+        userDao.update(u);
     }
 
-    public void removeFromFavorites(long userId, long restaurantId) {
-        Restaurant restaurant = restaurantDao.findById(restaurantId);
-        User user = userDao.findByIdLoadFavorites(userId);
-        user.removeFromFavorite(restaurant);
-        userDao.update(user);
+    public void removeFromFavorites(User user, Restaurant restaurant) {
+        User u =  userDao.findByIdLoadFavorites(user.getId());
+        u.removeFromFavorite(restaurant);
+        userDao.update(u);
     }
 
-    public List<RestaurantDto> getFavorites(long userId) {
-        User user = userDao.findByIdLoadFavorites(userId);
-        return user.getFavoriteRestaurants().stream().map(RestaurantDto::new).collect(Collectors.toList());
+    public List<RestaurantDto> getFavorites(User user) {
+        User u =  userDao.findByIdLoadFavorites(user.getId());
+        return u.getFavoriteRestaurants().stream().map(RestaurantDto::new).toList();
     }
 
-    public void submitOrderRating(OrderRatingDto request, long userId) {
-        if (request == null || request.getOrder_id() == null || request.getRating() < 0 || request.getRating() > 5) {
-            throw new InvalidInputException("Invalid rating request");
-        }
+    public void submitOrderRating(OrderRatingDto request, User user) {
         Order order = orderDao.findById(request.getOrder_id());
         if (order == null) {
             throw new NotFoundException("Order not found");
@@ -198,14 +236,12 @@ public class CustomerService {
             throw new AlreadyExistsException("Order already rated");
         }
 
-        User user = userDao.findById(userId);
-
         //Submit order rating
         OrderRating rating = new OrderRating();
         rating.setComment(request.getComment());
-        rating.setImageBase64(request.getImageBase64());
+        rating.setImageBase64(request.getImageBase64() == null ? null : request.getImageBase64());
         rating.setRating(request.getRating());
-        rating.setOrder(orderDao.findById(request.getOrder_id()));
+        rating.setOrder(order);
         rating.setCreatedAt(LocalDateTime.now());
 
         order.setRating(rating);
@@ -233,7 +269,7 @@ public class CustomerService {
 
         List<ItemRatingResponseDto> itemsRating = itemRatingDao.findAll().stream()
             .filter(i -> i.getItem().getId().equals(itemId))
-            .map(ItemRatingResponseDto::new).collect(Collectors.toList());
+            .map(ItemRatingResponseDto::new).toList();
 
         ItemRatingAvgResponseDto response = new ItemRatingAvgResponseDto();
         response.setAvg_rating( itemsRating.stream()
@@ -257,20 +293,18 @@ public class CustomerService {
         itemRatingDao.delete(itemId);
     }
 
-    public void updateItemRating(ItemRatingRequestDto request, long userId, long ratingId) {
-        if(request.getRating() == null || request.getComment() == null){
-            throw new InvalidInputException("rating and comment can not be empty");
-        }
+    public void updateItemRating(ItemRatingRequestDto request, User user, long ratingId) {
+        if(request == null) throw new InvalidInputException("Invalid request");
 
         ItemRating itemRating = itemRatingDao.findById(ratingId);
         if(itemRating == null) throw new NotFoundException("This rating doesn't exist");
 
-        if(itemRating.getUser().getId() != userId) 
+        if(itemRating.getUser().getId() != user.getId())
             throw new UnauthorizedUserException("You can't edit this rating");
         
-        itemRating.setRating(request.getRating());
-        itemRating.setComment(request.getComment());
-        itemRating.setImageBase64(request.getImageBase64());
+        if(request.getRating() != null) itemRating.setRating(request.getRating());
+        if(request.getComment() != null || !request.getComment().isBlank()) itemRating.setComment(request.getComment());
+        if(request.getImageBase64() != null || !request.getImageBase64().isEmpty()) itemRating.setImageBase64(request.getImageBase64());
 
         itemRatingDao.update(itemRating);
     }

@@ -5,10 +5,7 @@ import dao.ItemDao;
 import dao.OrderDao;
 import dao.RestaurantDao;
 import dto.*;
-import entity.Item;
-import entity.Menu;
-import entity.Order;
-import entity.Restaurant;
+import entity.*;
 import exception.InvalidInputException;
 import exception.NotFoundException;
 
@@ -40,11 +37,11 @@ public class RestaurantValidator {
         if(request.getItem_id() == null) throw new InvalidInputException("Invalid item id");
     }
 
-    public static void validateCouponId(Long CouponId) {
-        if(CouponId == null)  return;
-        if(CouponId < 0) throw new InvalidInputException("Invalid coupon");
-        CouponDao couponDao = new CouponDao();
-        if(couponDao.findById(CouponId) == null) throw new InvalidInputException("Invalid coupon");
+    public static Coupon validateCouponId(Long CouponId) {
+        if(CouponId != null && CouponId < 0) throw new InvalidInputException("Invalid coupon");
+        Coupon coupon = new CouponDao().findById(CouponId);
+        if(coupon == null) throw new InvalidInputException("Invalid coupon");
+        return coupon;
     }
 
     public static void couponValidator(CouponRequest req) {
@@ -87,16 +84,36 @@ public class RestaurantValidator {
     }
 
     public static Item validateItem(Long itemId, Restaurant restaurant) {
+        if(restaurant == null){
+            Item item = new ItemDao().findById(itemId);
+            if (item == null) throw new NotFoundException("Item doesn't exist");
+            return item;
+        }
+
        return restaurant.getItems().stream().
                filter(item -> item.getId().equals(itemId)).findFirst()
                .orElseThrow(() -> new NotFoundException("Item doesn't exist"));
     }
 
-    public static Order validateOrder(Long orderId, Restaurant restaurant) {
-        Order order = new OrderDao().findById(orderId);
-        if(order == null || order.getRestaurant().getId() != restaurant.getId())
-            throw new NotFoundException("Order doesn't exist");
+    public static void validateOrderRegistrationRequest(OrderRegistrationRequest request) {
+        if(request == null) throw new InvalidInputException("Invalid request");
+        if(request.getVendor_id() == null || request.getVendor_id() < 0) throw new InvalidInputException("Invalid vendor");
+        if(request.getDelivery_address() == null || request.getDelivery_address().isBlank()) throw new InvalidInputException("Invalid address");
+        if(request.getItems().isEmpty()) throw new InvalidInputException("Invalid items");
+        if(request.getCoupon_id() != null && request.getCoupon_id() < 0) throw new InvalidInputException("Invalid coupon");
+    }
 
+    public static Order validateOrder(Long orderId) {
+        if(orderId == null) throw new InvalidInputException("Invalid order id");
+        Order order = new OrderDao().findById(orderId);
+        if (order == null) throw new NotFoundException("Order doesn't exist");
         return order;
+    }
+
+    public static void validateRatingRegistrationRequest(OrderRatingDto request) {
+        if(request == null) throw new InvalidInputException("Invalid request");
+        if(request.getOrder_id() == null || request.getOrder_id() < 0) throw new InvalidInputException("Invalid order id");
+        if(request.getRating() < 0 || request.getRating() > 5) throw new InvalidInputException("Invalid rating");
+        if(request.getComment() == null || request.getComment().isBlank()) throw new InvalidInputException("Invalid comment");
     }
 }

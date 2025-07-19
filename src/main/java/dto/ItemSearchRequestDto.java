@@ -10,7 +10,6 @@ import java.util.List;
 @Setter
 public class ItemSearchRequestDto {
     String search;
-    int price;
-    @SerializedName("categories")
+    Long price;
     List<String> keywords;
 }

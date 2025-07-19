@@ -89,7 +89,16 @@ public class Order {
                 .sum();
     }
     public Long getPayPrice() {
-       long price = (long) (getRawPrice() * (restaurant.getTaxFee() + restaurant.getAdditionalFee()));
+        long price;
+
+        double taxFee = restaurant.getTaxFee() == null ? 0.0 : restaurant.getTaxFee();
+        double additionalTaxFee = restaurant.getAdditionalFee() == null ? 0.0 : restaurant.getAdditionalFee();
+
+        if(taxFee > 0 && taxFee <= 1 && additionalTaxFee > 0 && additionalTaxFee <= 1)
+            price = (long)  (getRawPrice() * (restaurant.getTaxFee() + restaurant.getAdditionalFee()));
+        else
+            price = (long) (getRawPrice() + restaurant.getTaxFee() + restaurant.getAdditionalFee());
+
        if(coupon == null){
            return price;
        }else{

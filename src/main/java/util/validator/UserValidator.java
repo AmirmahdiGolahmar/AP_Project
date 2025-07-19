@@ -1,6 +1,7 @@
 package util.validator;
 
 
+import entity.BankInfo;
 import exception.InvalidInputException;
 import dto.UserRegistrationRequest;
 

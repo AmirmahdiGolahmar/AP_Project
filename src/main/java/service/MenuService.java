@@ -3,6 +3,7 @@ package service;
 import dao.ItemDao;
 import dao.MenuDao;
 import dao.RestaurantDao;
+import dto.ItemAddToMenuRequestDto;
 import dto.ItemDto;
 import dto.MenuDto;
 import dto.MenuRegistrationDto;
@@ -12,6 +13,7 @@ import entity.Restaurant;
 import exception.AlreadyExistsException;
 import exception.NotFoundException;
 
+import java.util.List;
 import java.util.Optional;
 
 public class MenuService {
@@ -49,15 +51,15 @@ public class MenuService {
         restaurantDao.update(restaurant);
     }
 
-    public void addItem(String title, Item item, Restaurant restaurant){
+    public void addItem(String title, Restaurant restaurant, ItemAddToMenuRequestDto request){
 
         Menu menu = restaurant.getMenus().stream().filter(m -> m.getTitle().equalsIgnoreCase(title))
                 .findFirst().orElseThrow(() -> new NotFoundException("This menu does not exist"));
 
-        Item it = restaurant.getItems().stream().filter(i -> i.getId() == item.getId())
+        Item it = restaurant.getItems().stream().filter(i -> i.getId() == request.getItem_id())
                 .findFirst().orElseThrow(() -> new NotFoundException("This item does not exist"));
 
-        if(menu.getItems().stream().anyMatch(itm -> itm.getId() == item.getId()))
+        if(menu.getItems().stream().anyMatch(itm -> itm.getId() == it.getId()))
             throw new AlreadyExistsException("This item already exists in this menu");
 
         menu.addItem(it);
@@ -67,8 +69,8 @@ public class MenuService {
     }
 
     public void deleteItem(String menuTile, Item item, Restaurant restaurant){
-
-        Menu menu = restaurant.getMenus().stream().filter(m -> m.getTitle().equals(menuTile))
+        List<Menu> menus = restaurant.getMenus();
+        Menu menu = menus.stream().filter(m -> m.getTitle().equalsIgnoreCase(menuTile))
                 .findFirst().orElseThrow(() -> new NotFoundException("This menu does not exist"));
 
         Item it = menu.getItems().stream().filter(i -> i.getId() == item.getId()).

@@ -46,8 +46,8 @@ public class Restaurant {
     private String workingHours;
     private int totalOrders;
     private Double averageRating;
-    private Double taxFee;
-    private Double additionalFee;
+    private Double taxFee = 0.0;
+    private Double additionalFee = 0.0;
 
 
     @Getter

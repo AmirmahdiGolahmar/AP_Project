@@ -38,7 +38,8 @@ public class RestaurantService {
         Restaurant restaurant = new Restaurant(
                 request.getName(), seller, request.getAddress(),
                 request.getPhone(), request.getLogoBase64(),
-                request.getTax_fee(), request.getAdditional_fee()
+                request.getTax_fee() == null ? 0.0 : request.getTax_fee(),
+                request.getAdditional_fee() == null ? 0.0 : request.getAdditional_fee()
         );
 
         restaurantDao.save(restaurant);

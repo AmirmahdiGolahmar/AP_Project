@@ -11,6 +11,8 @@ import spark.Response;
 import com.sun.net.httpserver.HttpExchange;
 import com.google.gson.Gson;
 
+import static util.HttpUtil.extractToken;
+
 
 public class AuthorizationHandler {
     public static String authorizeAndExtractUserId (Request req, Response res, Gson gson) throws AuthenticationException  {
@@ -67,6 +69,13 @@ public class AuthorizationHandler {
             throw new AuthenticationException("You are not Authorized for this role");
         }
         return user;
+    }
+
+    public static <T> T authorize(HttpExchange exchange, UserRole expectedRole) {
+        String token = extractToken(exchange);
+        Claims claims = JwtUtil.validateToken(token);
+        Long userId = Long.parseLong(claims.getSubject());
+        return (T) authorizeUser(userId, expectedRole);
     }
 
 }

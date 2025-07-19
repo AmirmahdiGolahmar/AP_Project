@@ -53,13 +53,13 @@ public class validator {
     }
 
     public static void taxFeeValidator(Double  taxFee) {
-        if(taxFee != null && (taxFee < 0 || taxFee > 100)) {
+        if(taxFee != null && (taxFee < 0)) {
             throw new InvalidInputException("Invalid field tax fee");
         }
     }
 
     public static void additionalFeeValidator(Double  additionalFee) {
-        if(additionalFee != null && (additionalFee < 0 || additionalFee > 100)) {
+        if(additionalFee != null && (additionalFee < 0)) {
             throw new InvalidInputException("Invalid field additionalFee");
         }
     }

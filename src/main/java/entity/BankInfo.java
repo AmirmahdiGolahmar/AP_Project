@@ -21,7 +21,9 @@ public class BankInfo {
     private Double balance;
 
 
-    public BankInfo() {}
+    public BankInfo() {
+        this.balance = 0.0;
+    }
 
     public BankInfo(String bankName, String accountNumber) {
         this.bankName = bankName;

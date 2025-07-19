@@ -41,9 +41,22 @@ public class OrderDto {
         }
         this.setItem_ids(order.getCartItems().stream().map(i -> i.getItem().getId()).collect(Collectors.toList()));
         this.setRaw_price(order.getRawPrice());
-        this.setTax_fee(order.getRestaurant().getTaxFee());
-        this.setAddtional_fee(order.getRestaurant().getAdditionalFee());
-        this.setCourier_fee(order.getRestaurant().getAdditionalFee());
+
+        if(order.getRestaurant().getTaxFee() != null)
+            this.setTax_fee(order.getRestaurant().getTaxFee());
+        else
+            this.setTax_fee(0.0);
+
+        if(order.getRestaurant().getAdditionalFee() != null)
+            this.setAddtional_fee(order.getRestaurant().getAdditionalFee());
+        else
+            this.setAddtional_fee(0.0);
+
+        if(order.getRestaurant().getAdditionalFee() != null)
+            this.setCourier_fee(order.getRestaurant().getAdditionalFee()/4);
+        else
+            this.setCourier_fee(0.0);
+
         this.setPay_price(order.getPayPrice());
         if(order.getDelivery() != null) {
             this.setCourier_id(order.getDelivery().getId());

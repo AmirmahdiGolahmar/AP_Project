@@ -1,0 +1,2515 @@
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 19:22:31
+----  HTTP Request  ----
+Time   : 2025-07-19 19:23:13
+Method : POST
+URI    : /restaurants
+Body   : {
+  "name": "restaurant3-seller2",
+  "address": "Tehran"
+}
+
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:23:16
+Body   : {
+  "error": "Invalid input",
+  "message": "Invalid Phone"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 19:26:02
+Method : PUT
+URI    : /restaurants/3
+Body   : {
+  "name": "restaurant3-seller2_new",
+  "address": "Tehran-change",
+  "phone": "02100000023",
+  "logoBase64": "IMAGE-change"
+}
+
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:26:03
+Body   : {
+  "error": "Unauthorized",
+  "message": "Restaurant and seller do not match"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 19:26:37
+Method : POST
+URI    : /auth/login
+Body   : {
+  "mobile": "09190000002",
+  "password": "1234"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:26:38
+Body   : {
+  "message": "User Login successfully",
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1Mjk0MDU5OCwiZXhwIjoxNzUzMDI2OTk4fQ.zaP-aQt1lYbpiq3pFv28Wmb4KeWjzVvCJjeWLYLYvNw",
+  "user": {
+    "id": 6,
+    "full_name": "seller2",
+    "phone": "09190000002",
+    "email": "seller2@gmail.com",
+    "role": "seller",
+    "address": "Iran, Tehran",
+    "profileImageBase64": "https://seller2.com/photo.png",
+    "bank_info": {}
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 19:26:46
+Method : PUT
+URI    : /restaurants/3
+Body   : {
+  "name": "restaurant3-seller2_new",
+  "address": "Tehran-change",
+  "phone": "02100000023",
+  "logoBase64": "IMAGE-change"
+}
+
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:26:46
+Body   : {
+  "id": 3,
+  "name": "restaurant3-seller2_new",
+  "address": "Tehran-change",
+  "phone": "02100000023",
+  "logoBase64": "IMAGE-change"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 19:36:03
+----  HTTP Request  ----
+Time   : 2025-07-19 19:57:11
+Method : POST
+URI    : /auth/login
+Body   : {
+  "mobile": "09190000001",
+  "password": "1234"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:57:14
+Body   : {
+  "message": "User Login successfully",
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1Mjk0MjQzMywiZXhwIjoxNzUzMDI4ODMzfQ.AClms2OyXfeZew5qKCu27wKQtabM53hb8G-PxbopLNk",
+  "user": {
+    "id": 3,
+    "full_name": "seller1",
+    "phone": "09190000001",
+    "role": "seller",
+    "address": "Iran, Tehran",
+    "bank_info": {}
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 19:57:36
+Method : POST
+URI    : /restaurants/1/item
+Body   : {
+    "name" : "item1",
+    "imageBase64" : "image1",
+    "description" : "description1",
+    "price" : 100 ,
+    "supply" : 10,
+    "keywords" : ["item1", "food1"]
+
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:57:36
+Body   : {
+  "Food item created and added to restaurant successfully": {
+    "id": 1,
+    "name": "item1",
+    "imageBase64": "image1",
+    "description": "description1",
+    "price": 100.0,
+    "supply": 10,
+    "keywords": [
+      "item1",
+      "food1"
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 19:58:04
+Method : POST
+URI    : /restaurants/1/item
+Body   : {
+    "name": "item2",
+    "description": "description2",
+    "price": 100,
+    "supply": 8,
+    "keywords": [
+        "item2",
+        "food2"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:58:04
+Body   : {
+  "Food item created and added to restaurant successfully": {
+    "id": 2,
+    "name": "item2",
+    "description": "description2",
+    "price": 100.0,
+    "supply": 8,
+    "keywords": [
+      "item2",
+      "food2"
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 19:58:25
+Method : POST
+URI    : /restaurants/1/item
+Body   : {
+    "name": "item3",
+    "description": "description3",
+    "price": 100,
+    "supply": 12,
+    "keywords": [
+        "item3",
+        "food3",
+        "3"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:58:26
+Body   : {
+  "Food item created and added to restaurant successfully": {
+    "id": 3,
+    "name": "item3",
+    "description": "description3",
+    "price": 100.0,
+    "supply": 12,
+    "keywords": [
+      "item3",
+      "food3",
+      "3"
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 19:58:39
+Method : POST
+URI    : /auth/login
+Body   : {
+  "mobile": "09190000002",
+  "password": "1234"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:58:39
+Body   : {
+  "message": "User Login successfully",
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1Mjk0MjUxOSwiZXhwIjoxNzUzMDI4OTE5fQ.bNWpCpi8XGo3LPdnJlDlvXljfNVwxO4sh-0wbWsRYiM",
+  "user": {
+    "id": 6,
+    "full_name": "seller2",
+    "phone": "09190000002",
+    "email": "seller2@gmail.com",
+    "role": "seller",
+    "address": "Iran, Tehran",
+    "profileImageBase64": "https://seller2.com/photo.png",
+    "bank_info": {}
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 19:59:17
+Method : POST
+URI    : /restaurants/3/item
+Body   : {
+    "name": "item3",
+    "description": "description3",
+    "price": 100,
+    "supply": 12,
+    "keywords": [
+        "item3",
+        "food3",
+        "3"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 19:59:17
+Body   : {
+  "Food item created and added to restaurant successfully": {
+    "id": 4,
+    "name": "item3",
+    "description": "description3",
+    "price": 100.0,
+    "supply": 12,
+    "keywords": [
+      "item3",
+      "food3",
+      "3"
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:00:02
+Method : POST
+URI    : /restaurants/3/item
+Body   : {
+    "name": "item4",
+    "imageBase64": "image4",
+    "price": 100,
+    "supply": 15,
+    "keywords": [
+        "item4",
+        "food4"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:00:02
+Body   : {
+  "error": "Invalid input",
+  "message": "Invalid description"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:00:13
+Method : POST
+URI    : /restaurants/3/item
+Body   : {
+    "name": "item4",
+    "description": "description4",
+    "price": 100.0,
+    "supply": 10,
+    "keywords": [
+        "item4",
+        "food4"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:00:13
+Body   : {
+  "Food item created and added to restaurant successfully": {
+    "id": 5,
+    "name": "item4",
+    "description": "description4",
+    "price": 100.0,
+    "supply": 10,
+    "keywords": [
+      "item4",
+      "food4"
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:00:48
+Method : POST
+URI    : /restaurants/2/item
+Body   : {
+    "name": "item5",
+    "imageBase64": "image5",
+    "description": "description5",
+    "price": 150,
+    "supply": 9,
+    "keywords": [
+        "item5",
+        "food5"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:00:48
+Body   : {
+  "error": "Unauthorized",
+  "message": "Restaurant and seller do not match"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:01:05
+Method : POST
+URI    : /auth/login
+Body   : {
+  "mobile": "09190000001",
+  "password": "1234"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:01:05
+Body   : {
+  "message": "User Login successfully",
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1Mjk0MjY2NSwiZXhwIjoxNzUzMDI5MDY1fQ.2puLh4rzbojUwJmnUFoapJpXXoY3EVL1Bkqt4cdCq3Q",
+  "user": {
+    "id": 3,
+    "full_name": "seller1",
+    "phone": "09190000001",
+    "role": "seller",
+    "address": "Iran, Tehran",
+    "bank_info": {}
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:01:14
+Method : POST
+URI    : /restaurants/2/item
+Body   : {
+    "name": "item5",
+    "imageBase64": "image5",
+    "description": "description5",
+    "price": 150,
+    "supply": 9,
+    "keywords": [
+        "item5",
+        "food5"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:01:14
+Body   : {
+  "Food item created and added to restaurant successfully": {
+    "id": 6,
+    "name": "item5",
+    "imageBase64": "image5",
+    "description": "description5",
+    "price": 150.0,
+    "supply": 9,
+    "keywords": [
+      "item5",
+      "food5"
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:01:34
+Method : POST
+URI    : /restaurants/2/item
+Body   : {
+    "name": "item6",
+    "description": "description6",
+    "price": 135,
+    "supply": 10,
+    "keywords": [
+        "item6",
+        "food6"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:01:34
+Body   : {
+  "error": "Unauthorized",
+  "message": "Invalid or expired token."
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:01:42
+Method : POST
+URI    : /restaurants/2/item
+Body   : {
+    "name": "item6",
+    "description": "description6",
+    "price": 135,
+    "supply": 10,
+    "keywords": [
+        "item6",
+        "food6"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:01:42
+Body   : {
+  "Food item created and added to restaurant successfully": {
+    "id": 7,
+    "name": "item6",
+    "description": "description6",
+    "price": 135.0,
+    "supply": 10,
+    "keywords": [
+      "item6",
+      "food6"
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:01:59
+Method : POST
+URI    : /restaurants/3/item
+Body   : {
+    "name": "item3",
+    "description": "description3",
+    "price": 180,
+    "supply": 12,
+    "keywords": [
+        "item3",
+        "food3",
+        "3"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:01:59
+Body   : {
+  "error": "Unauthorized",
+  "message": "Restaurant and seller do not match"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:02:03
+Method : POST
+URI    : /restaurants/2/item
+Body   : {
+    "name": "item3",
+    "description": "description3",
+    "price": 180,
+    "supply": 12,
+    "keywords": [
+        "item3",
+        "food3",
+        "3"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:02:03
+Body   : {
+  "Food item created and added to restaurant successfully": {
+    "id": 8,
+    "name": "item3",
+    "description": "description3",
+    "price": 180.0,
+    "supply": 12,
+    "keywords": [
+      "item3",
+      "food3",
+      "3"
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:03:59
+Method : PUT
+URI    : /restaurants/2/item/7
+Body   : {
+    "name": "item6",
+    "imageBase64": "image6",
+    "description": "description6-new",
+    "price": 130.0,
+    "supply": 6,
+    "keywords": [
+        "item1",
+        "food1",
+        "item1-update"
+    ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:04:00
+Body   : {
+  "item": {
+    "id": 7,
+    "name": "item6",
+    "imageBase64": "image6",
+    "description": "description6-new",
+    "price": 130.0,
+    "supply": 6,
+    "keywords": [
+      "item1",
+      "food1",
+      "item1-update"
+    ]
+  },
+  "message": "Item updated successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:05:52
+Method : DELETE
+URI    : /restaurants/3/item/19
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:05:52
+Body   : {
+  "error": "Unauthorized",
+  "message": "Restaurant and seller do not match"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:06:02
+Method : POST
+URI    : /auth/login
+Body   : {
+  "mobile": "09190000002",
+  "password": "1234"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:06:02
+Body   : {
+  "message": "User Login successfully",
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1Mjk0Mjk2MiwiZXhwIjoxNzUzMDI5MzYyfQ.sOaZIiUgZPOzlVcLrBRQPEXIKYK9rDVSojGtV3SgPZ0",
+  "user": {
+    "id": 6,
+    "full_name": "seller2",
+    "phone": "09190000002",
+    "email": "seller2@gmail.com",
+    "role": "seller",
+    "address": "Iran, Tehran",
+    "profileImageBase64": "https://seller2.com/photo.png",
+    "bank_info": {}
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:06:12
+Method : DELETE
+URI    : /restaurants/3/item/19
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:06:12
+Body   : {
+  "error": "Resource not found",
+  "message": "Item doesn\u0027t exist"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:06:18
+Method : DELETE
+URI    : /restaurants/3/item/4
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:06:18
+Body   : {
+  "message": "Food item removed successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:08:01
+Method : POST
+URI    : /restaurants/3/menu
+Body   : {
+    "title" : "menu1"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:08:01
+Body   : {
+  "title": "menu1",
+  "message": "Food menu created and added to restaurant successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:08:24
+Method : POST
+URI    : /auth/login
+Body   : {
+  "mobile": "09190000001",
+  "password": "1234"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:08:24
+Body   : {
+  "message": "User Login successfully",
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1Mjk0MzEwNCwiZXhwIjoxNzUzMDI5NTA0fQ.Jv2drM_rqr0N2YXH2BK920jEor_WYtusySkYCZMLwHE",
+  "user": {
+    "id": 3,
+    "full_name": "seller1",
+    "phone": "09190000001",
+    "role": "seller",
+    "address": "Iran, Tehran",
+    "bank_info": {}
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:08:46
+Method : POST
+URI    : /restaurants/1/menu
+Body   : {
+    "title" : "menu1"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:08:46
+Body   : {
+  "title": "menu1",
+  "message": "Food menu created and added to restaurant successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:08:53
+Method : POST
+URI    : /restaurants/1/menu
+Body   : {
+    "title" : "menu2"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:08:53
+Body   : {
+  "title": "menu2",
+  "message": "Food menu created and added to restaurant successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:09:27
+Method : POST
+URI    : /restaurants/2/menu
+Body   : {
+    "title" : "menu2"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:09:27
+Body   : {
+  "title": "menu2",
+  "message": "Food menu created and added to restaurant successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:09:51
+Method : POST
+URI    : /restaurants/2/menu
+Body   : {
+    "title" : "menu1"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:09:51
+Body   : {
+  "title": "menu1",
+  "message": "Food menu created and added to restaurant successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:10:56
+Method : POST
+URI    : /restaurants/2/menu
+Body   : {
+    "title" : "meun1"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:10:56
+Body   : {
+  "title": "meun1",
+  "message": "Food menu created and added to restaurant successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:11:40
+Method : DELETE
+URI    : /restaurants/2/menu/menu1
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:11:40
+Body   : {
+  "message": "Food menu removed from restaurant successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:12:01
+Method : DELETE
+URI    : /restaurants/2/menu/menu1
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:12:01
+Body   : {
+  "error": "Resource not found",
+  "message": "This menu does not exist"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:12:17
+Method : DELETE
+URI    : /restaurants/2/menu/meun1
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:12:17
+Body   : {
+  "message": "Food menu removed from restaurant successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:14:21
+Method : PUT
+URI    : /restaurants/1/menu/menu1
+Body   : {
+    "item_id" : 1
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:15:50
+Method : PUT
+URI    : /restaurants/1/menu/menu1
+Body   : {
+    "item_id" : 1
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:18:43
+----  HTTP Request  ----
+Time   : 2025-07-19 20:18:47
+Method : PUT
+URI    : /restaurants/1/menu/menu1
+Body   : {
+    "item_id" : 1
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:25:00
+----  HTTP Request  ----
+Time   : 2025-07-19 20:25:02
+Method : PUT
+URI    : /restaurants/1/menu/menu1
+Body   : {
+    "item_id" : 1
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:25:06
+Body   : {
+  "error": "Internal server error",
+  "message": "No match found"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:25:48
+----  HTTP Request  ----
+Time   : 2025-07-19 20:25:50
+Method : PUT
+URI    : /restaurants/1/menu/menu1
+Body   : {
+    "item_id" : 1
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:25:54
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:26:21
+Method : PUT
+URI    : /restaurants/1/menu/menu1
+Body   : {
+    "item_id" : 10
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:26:21
+Body   : {
+  "error": "Resource not found",
+  "message": "This item does not exist"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:26:25
+Method : PUT
+URI    : /restaurants/1/menu/menu1
+Body   : {
+    "item_id" : 2
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:26:25
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:26:44
+Method : PUT
+URI    : /restaurants/1/menu/menu2
+Body   : {
+    "item_id" : 3
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:26:44
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:26:49
+Method : PUT
+URI    : /restaurants/1/menu/menu1
+Body   : {
+    "item_id" : 3
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:26:49
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:27:22
+Method : PUT
+URI    : /restaurants/2/menu/menu2
+Body   : {
+    "item_id" : 6
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:27:22
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:27:25
+Method : PUT
+URI    : /restaurants/2/menu/menu2
+Body   : {
+    "item_id" : 7
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:27:25
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:27:27
+Method : PUT
+URI    : /restaurants/2/menu/menu2
+Body   : {
+    "item_id" : 8
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:27:27
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:29:08
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:29:08
+Body   : {
+  "error": "Unauthorized",
+  "message": "Invalid or expired token."
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:29:25
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:29:25
+Body   : {
+  "error": "Resource not found",
+  "message": "This menu does not exist"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:30:18
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:30:18
+Body   : {
+  "error": "Resource not found",
+  "message": "This menu does not exist"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:31:03
+----  HTTP Request  ----
+Time   : 2025-07-19 20:31:06
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:31:10
+Body   : {
+  "error": "Resource not found",
+  "message": "This menu does not exist"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:31:54
+----  HTTP Request  ----
+Time   : 2025-07-19 20:31:56
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:32:01
+Body   : {
+  "message": "This menu does not exist",
+  "error": "Resource not found"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:32:14
+----  HTTP Request  ----
+Time   : 2025-07-19 20:32:17
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:32:22
+Body   : {
+  "message": "This menu does not exist",
+  "error": "Resource not found"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:32:35
+----  HTTP Request  ----
+Time   : 2025-07-19 20:32:36
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:32:41
+Body   : {
+  "message": "This menu does not exist",
+  "error": "Resource not found"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-19 20:33:29
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:33:29
+Body   : {
+  "message": "This menu does not exist",
+  "error": "Resource not found"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:34:57
+----  HTTP Request  ----
+Time   : 2025-07-19 20:35:04
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:35:10
+Body   : {
+  "message": "This menu does not exist",
+  "error": "Resource not found"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:35:34
+----  HTTP Request  ----
+Time   : 2025-07-19 20:35:35
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:36:04
+Body   : {
+  "error": "Resource not found",
+  "message": "This menu does not exist"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:38:16
+----  HTTP Request  ----
+Time   : 2025-07-19 20:38:18
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-19 20:40:29
+----  HTTP Request  ----
+Time   : 2025-07-19 20:40:31
+Method : DELETE
+URI    : /restaurants/2/menu/menu2/8
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-19 20:40:37
+Body   : {
+  "message": "Item removed from restaurant menu successfully"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 00:44:30
+----  HTTP Request  ----
+Time   : 2025-07-20 00:44:45
+Method : POST
+URI    : /auth/login
+Body   : {
+    "password": "1234",
+  "mobile": "09120000001"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:44:48
+Body   : {
+  "message": "User Login successfully",
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNzUyOTU5Njg4LCJleHAiOjE3NTMwNDYwODh9.76trCqf7gdBQA8n6yyWLuGKU7fg_mccZjr97-HQrM3Y",
+  "user": {
+    "id": 1,
+    "full_name": "customer1",
+    "phone": "09120000001",
+    "email": "customer1@gmail.com",
+    "role": "customer",
+    "address": "Tehran, Iran",
+    "profileImageBase64": "https://customer1.com/photo.jpg",
+    "bank_info": {
+      "account_number": ""
+    }
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:45:12
+Method : POST
+URI    : /vendors
+Body   : {
+    "search" : "menu1",
+    "keywords" : []
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:45:12
+Body   : {
+  "List of vendors": [
+    {
+      "id": 1,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 0.09,
+      "additional_fee": 0.02
+    },
+    {
+      "id": 3,
+      "name": "restaurant3-seller2_new",
+      "address": "Tehran-change",
+      "phone": "02100000023",
+      "logoBase64": "IMAGE-change"
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:45:41
+Method : POST
+URI    : /vendors
+Body   : {
+    "search" : "menu1",
+    "keywords" : ["food1"]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:45:41
+Body   : {
+  "List of vendors": [
+    {
+      "id": 1,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 0.09,
+      "additional_fee": 0.02
+    },
+    {
+      "id": 3,
+      "name": "restaurant3-seller2_new",
+      "address": "Tehran-change",
+      "phone": "02100000023",
+      "logoBase64": "IMAGE-change"
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:45:50
+Method : POST
+URI    : /vendors
+Body   : {
+    "search" : "menu1",
+    "keywords" : ["restaurant1"]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:45:50
+Body   : {
+  "List of vendors": [
+    {
+      "id": 1,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 0.09,
+      "additional_fee": 0.02
+    },
+    {
+      "id": 3,
+      "name": "restaurant3-seller2_new",
+      "address": "Tehran-change",
+      "phone": "02100000023",
+      "logoBase64": "IMAGE-change"
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:45:58
+Method : POST
+URI    : /vendors
+Body   : {
+    "search" : "menu1",
+    "keywords" : ["seller1"]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:45:58
+Body   : {
+  "List of vendors": [
+    {
+      "id": 1,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 0.09,
+      "additional_fee": 0.02
+    },
+    {
+      "id": 2,
+      "name": "restaurant2-seller1",
+      "address": "Tehran",
+      "phone": "02100000012"
+    },
+    {
+      "id": 3,
+      "name": "restaurant3-seller2_new",
+      "address": "Tehran-change",
+      "phone": "02100000023",
+      "logoBase64": "IMAGE-change"
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:46:06
+Method : POST
+URI    : /vendors
+Body   : {
+    "search" : "",
+    "keywords" : []
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:46:06
+Body   : {
+  "List of vendors": [
+    {
+      "id": 1,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 0.09,
+      "additional_fee": 0.02
+    },
+    {
+      "id": 2,
+      "name": "restaurant2-seller1",
+      "address": "Tehran",
+      "phone": "02100000012"
+    },
+    {
+      "id": 3,
+      "name": "restaurant3-seller2_new",
+      "address": "Tehran-change",
+      "phone": "02100000023",
+      "logoBase64": "IMAGE-change"
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:46:47
+Method : GET
+URI    : /vendors/1
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:46:47
+Body   : {
+  "Vendor menu items": {
+    "vendor": {
+      "id": 1,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 0.09,
+      "additional_fee": 0.02
+    },
+    "menu_titles": [
+      "menu1",
+      "menu2"
+    ],
+    "menus": [
+      {
+        "title": "menu1",
+        "items": [
+          {
+            "id": 1,
+            "name": "item1",
+            "imageBase64": "image1",
+            "description": "description1",
+            "price": 100.0,
+            "supply": 10,
+            "keywords": [
+              "item1",
+              "food1"
+            ]
+          },
+          {
+            "id": 2,
+            "name": "item2",
+            "description": "description2",
+            "price": 100.0,
+            "supply": 8,
+            "keywords": [
+              "item2",
+              "food2"
+            ]
+          },
+          {
+            "id": 3,
+            "name": "item3",
+            "description": "description3",
+            "price": 100.0,
+            "supply": 12,
+            "keywords": [
+              "item3",
+              "food3",
+              "3"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "menu2",
+        "items": [
+          {
+            "id": 3,
+            "name": "item3",
+            "description": "description3",
+            "price": 100.0,
+            "supply": 12,
+            "keywords": [
+              "item3",
+              "food3",
+              "3"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:47:00
+Method : GET
+URI    : /vendors/10
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:47:00
+Body   : {
+  "error": "Resource not found",
+  "message": "Restaurant doesn\u0027t exist"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:47:08
+Method : POST
+URI    : /items
+Body   : {
+  "search": "",
+  "price": 0,
+  "keywords": []
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:47:08
+Body   : {
+  "error": "Internal server error",
+  "message": "Missing or invalid Authorization header"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:47:18
+Method : POST
+URI    : /items
+Body   : {
+  "search": "",
+  "price": 0,
+  "keywords": []
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:47:18
+Body   : {
+  "List of items": [
+    {
+      "id": 1,
+      "name": "item1",
+      "imageBase64": "image1",
+      "description": "description1",
+      "price": 100.0,
+      "supply": 10,
+      "keywords": [
+        "item1",
+        "food1"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "item2",
+      "description": "description2",
+      "price": 100.0,
+      "supply": 8,
+      "keywords": [
+        "item2",
+        "food2"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "item3",
+      "description": "description3",
+      "price": 100.0,
+      "supply": 12,
+      "keywords": [
+        "item3",
+        "food3",
+        "3"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "item4",
+      "description": "description4",
+      "price": 100.0,
+      "supply": 10,
+      "keywords": [
+        "item4",
+        "food4"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "item5",
+      "imageBase64": "image5",
+      "description": "description5",
+      "price": 150.0,
+      "supply": 9,
+      "keywords": [
+        "item5",
+        "food5"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "item6",
+      "imageBase64": "image6",
+      "description": "description6-new",
+      "price": 130.0,
+      "supply": 6,
+      "keywords": [
+        "item1",
+        "food1",
+        "item1-update"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "item3",
+      "description": "description3",
+      "price": 180.0,
+      "supply": 12,
+      "keywords": [
+        "item3",
+        "food3",
+        "3"
+      ]
+    }
+  ]
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 00:49:29
+----  HTTP Request  ----
+Time   : 2025-07-20 00:50:00
+Method : POST
+URI    : /items
+Body   : {
+  "search": "",
+  "price": null,
+  "keywords": []
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:50:02
+Body   : {
+  "error": "Internal server error",
+  "message": "Cannot invoke \"java.lang.Long.longValue()\" because \"price\" is null"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 00:50:38
+----  HTTP Request  ----
+Time   : 2025-07-20 00:50:39
+Method : POST
+URI    : /items
+Body   : {
+  "search": "",
+  "price": null,
+  "keywords": []
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:50:42
+Body   : {
+  "List of items": [
+    {
+      "id": 1,
+      "name": "item1",
+      "imageBase64": "image1",
+      "description": "description1",
+      "price": 100.0,
+      "supply": 10,
+      "keywords": [
+        "item1",
+        "food1"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "item2",
+      "description": "description2",
+      "price": 100.0,
+      "supply": 8,
+      "keywords": [
+        "item2",
+        "food2"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "item3",
+      "description": "description3",
+      "price": 100.0,
+      "supply": 12,
+      "keywords": [
+        "item3",
+        "food3",
+        "3"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "item4",
+      "description": "description4",
+      "price": 100.0,
+      "supply": 10,
+      "keywords": [
+        "item4",
+        "food4"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "item5",
+      "imageBase64": "image5",
+      "description": "description5",
+      "price": 150.0,
+      "supply": 9,
+      "keywords": [
+        "item5",
+        "food5"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "item6",
+      "imageBase64": "image6",
+      "description": "description6-new",
+      "price": 130.0,
+      "supply": 6,
+      "keywords": [
+        "item1",
+        "food1",
+        "item1-update"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "item3",
+      "description": "description3",
+      "price": 180.0,
+      "supply": 12,
+      "keywords": [
+        "item3",
+        "food3",
+        "3"
+      ]
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:51:13
+Method : GET
+URI    : /items/5
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:51:13
+Body   : {
+  "message": "Missing or invalid Authorization header",
+  "error": "Internal server error"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:51:23
+Method : GET
+URI    : /items/5
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:51:23
+Body   : {
+  "message": "Cannot invoke \"entity.Restaurant.getItems()\" because \"restaurant\" is null",
+  "error": "Internal server error"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 00:52:03
+----  HTTP Request  ----
+Time   : 2025-07-20 00:52:06
+Method : GET
+URI    : /items/5
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:52:08
+Body   : {
+  "Item details": {
+    "id": 5,
+    "name": "item4",
+    "description": "description4",
+    "price": 100.0,
+    "supply": 10,
+    "keywords": [
+      "item4",
+      "food4"
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:52:13
+Method : GET
+URI    : /items/51
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:52:13
+Body   : {
+  "error": "Resource not found",
+  "message": "Item doesn\u0027t exist"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 00:52:17
+Method : GET
+URI    : /items/6
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:52:17
+Body   : {
+  "Item details": {
+    "id": 6,
+    "name": "item5",
+    "imageBase64": "image5",
+    "description": "description5",
+    "price": 150.0,
+    "supply": 9,
+    "keywords": [
+      "item5",
+      "food5"
+    ]
+  }
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 00:59:36
+----  HTTP Request  ----
+Time   : 2025-07-20 00:59:45
+Method : POST
+URI    : /orders
+Body   : {
+  "delivery_address": "Tehran, tajrish",
+  "vendor_id": 1,
+  "coupon_id" : null,
+  "items": [
+    {"item_id": 1,
+        "quantity": 2},
+    {"item_id": 3,
+        "quantit": 2}
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 00:59:47
+Body   : {
+  "message": "id to load is required for loading",
+  "error": "Internal server error"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 01:01:49
+----  HTTP Request  ----
+Time   : 2025-07-20 01:01:52
+Method : POST
+URI    : /orders
+Body   : {
+  "delivery_address": "Tehran, tajrish",
+  "vendor_id": 1,
+  "coupon_id" : null,
+  "items": [
+    {"item_id": 1,
+        "quantity": 2},
+    {"item_id": 3,
+        "quantit": 2}
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:01:54
+Body   : {
+  "Order submitted": {
+    "id": 1,
+    "delivery_address": "Tehran, tajrish",
+    "customer_id": 1,
+    "vendor_id": 1,
+    "item_ids": [
+      1,
+      3
+    ],
+    "raw_price": 200,
+    "tax_fee": 0.09,
+    "addtional_fee": 0.02,
+    "courier_fee": 0.02,
+    "pay_price": 22,
+    "status": "submitted",
+    "created_at": "2025-07-20 01:01:54",
+    "updated_at": "2025-07-20 01:01:54"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:02:38
+Method : POST
+URI    : /orders
+Body   : {
+  "delivery_address": "Tehran, tajrish",
+  "vendor_id": 2,
+  "coupon_id" : null,
+  "items": [
+    {"item_id": 6,
+        "quantity": 2},
+    {"item_id": 8,
+        "quantit": 2}
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:02:38
+Body   : {
+  "message": "Cannot invoke \"java.lang.Double.doubleValue()\" because the return value of \"entity.Restaurant.getTaxFee()\" is null",
+  "error": "Internal server error"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:02:55
+Method : POST
+URI    : /orders
+Body   : {
+  "delivery_address": "Tehran, tajrish",
+  "vendor_id": 2,
+  "coupon_id" : null,
+  "items": [
+    {"item_id": 6,
+        "quantity": 2},
+    {"item_id": 8,
+        "quantit": 2}
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:02:55
+Body   : {
+  "message": "Cannot invoke \"java.lang.Double.doubleValue()\" because the return value of \"entity.Restaurant.getTaxFee()\" is null",
+  "error": "Internal server error"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 01:06:13
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 01:08:47
+----  HTTP Request  ----
+Time   : 2025-07-20 01:08:50
+Method : POST
+URI    : /orders
+Body   : {
+  "delivery_address": "Tehran, tajrish",
+  "vendor_id": 2,
+  "coupon_id" : null,
+  "items": [
+    {"item_id": 6,
+        "quantity": 2},
+    {"item_id": 8,
+        "quantit": 2}
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:08:52
+Body   : {
+  "error": "Internal server error",
+  "message": "Cannot invoke \"java.lang.Double.doubleValue()\" because the return value of \"entity.Restaurant.getTaxFee()\" is null"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 01:09:57
+----  HTTP Request  ----
+Time   : 2025-07-20 01:09:59
+Method : POST
+URI    : /orders
+Body   : {
+  "delivery_address": "Tehran, tajrish",
+  "vendor_id": 2,
+  "coupon_id" : null,
+  "items": [
+    {"item_id": 6,
+        "quantity": 2},
+    {"item_id": 8,
+        "quantit": 2}
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:10:01
+Body   : {
+  "error": "Internal server error",
+  "message": "Cannot invoke \"java.lang.Double.doubleValue()\" because the return value of \"entity.Restaurant.getTaxFee()\" is null"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 01:13:13
+----  HTTP Request  ----
+Time   : 2025-07-20 01:13:14
+Method : POST
+URI    : /orders
+Body   : {
+  "delivery_address": "Tehran, tajrish",
+  "vendor_id": 2,
+  "coupon_id" : null,
+  "items": [
+    {"item_id": 6,
+        "quantity": 2},
+    {"item_id": 8,
+        "quantit": 2}
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:13:17
+Body   : {
+  "message": "Supply isn\u0027t enough",
+  "error": "Invalid input"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:13:52
+Method : POST
+URI    : /orders
+Body   : {
+  "delivery_address": "Tehran, tajrish",
+  "vendor_id": 2,
+  "coupon_id" : null,
+  "items": [
+    {"item_id": 6,
+        "quantity": 1},
+    {"item_id": 8,
+        "quantit": 2}
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:13:52
+Body   : {
+  "Order submitted": {
+    "id": 6,
+    "delivery_address": "Tehran, tajrish",
+    "customer_id": 1,
+    "vendor_id": 2,
+    "item_ids": [
+      6,
+      8
+    ],
+    "raw_price": 150,
+    "tax_fee": 0.0,
+    "addtional_fee": 0.0,
+    "courier_fee": 0.0,
+    "pay_price": 150,
+    "status": "submitted",
+    "created_at": "2025-07-20 01:13:52",
+    "updated_at": "2025-07-20 01:13:52"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:14:07
+Method : GET
+URI    : /orders/21
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:14:07
+Body   : {
+  "message": "Invalid or expired token.",
+  "error": "Unauthorized"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:14:45
+Method : GET
+URI    : /orders/21
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:14:45
+Body   : {
+  "message": "Order doesn\u0027t exist",
+  "error": "Resource not found"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:14:51
+Method : GET
+URI    : /orders/2
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:14:51
+Body   : {
+  "Order details": {
+    "id": 2,
+    "delivery_address": "Tehran, tajrish",
+    "customer_id": 1,
+    "vendor_id": 2,
+    "item_ids": [
+      6,
+      8
+    ],
+    "raw_price": 300,
+    "tax_fee": 0.0,
+    "addtional_fee": 0.0,
+    "courier_fee": 0.0,
+    "pay_price": 300,
+    "status": "submitted",
+    "created_at": "2025-07-20 01:02:38",
+    "updated_at": "2025-07-20 01:02:38"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:15:00
+Method : GET
+URI    : /coupons?coupon_code=coupon_code_1
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:15:00
+Body   : {
+  "message": "Invalid or expired token.",
+  "error": "Unauthorized"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:15:06
+Method : GET
+URI    : /coupons?coupon_code=coupon_code_1
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:15:06
+Body   : {
+  "message": "Coupon doesn\u0027t exist",
+  "error": "Resource not found"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:15:14
+Method : GET
+URI    : /orders/history?search=&vendor
+Body   : {
+    "search" : "",
+    "vendor" : ""
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:15:14
+Body   : {
+  "message": "Invalid or expired token.",
+  "error": "Unauthorized"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:15:18
+Method : GET
+URI    : /orders/history?search=&vendor
+Body   : {
+    "search" : "",
+    "vendor" : ""
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:15:18
+Body   : {
+  "List of past orders": [
+    {
+      "id": 1,
+      "delivery_address": "Tehran, tajrish",
+      "customer_id": 1,
+      "vendor_id": 1,
+      "item_ids": [
+        1,
+        3
+      ],
+      "raw_price": 200,
+      "tax_fee": 0.09,
+      "addtional_fee": 0.02,
+      "courier_fee": 0.005,
+      "pay_price": 22,
+      "status": "submitted",
+      "created_at": "2025-07-20 01:01:54",
+      "updated_at": "2025-07-20 01:01:54"
+    },
+    {
+      "id": 2,
+      "delivery_address": "Tehran, tajrish",
+      "customer_id": 1,
+      "vendor_id": 2,
+      "item_ids": [
+        6,
+        8
+      ],
+      "raw_price": 300,
+      "tax_fee": 0.0,
+      "addtional_fee": 0.0,
+      "courier_fee": 0.0,
+      "pay_price": 300,
+      "status": "submitted",
+      "created_at": "2025-07-20 01:02:38",
+      "updated_at": "2025-07-20 01:02:38"
+    },
+    {
+      "id": 3,
+      "delivery_address": "Tehran, tajrish",
+      "customer_id": 1,
+      "vendor_id": 2,
+      "item_ids": [
+        6,
+        8
+      ],
+      "raw_price": 300,
+      "tax_fee": 0.0,
+      "addtional_fee": 0.0,
+      "courier_fee": 0.0,
+      "pay_price": 300,
+      "status": "submitted",
+      "created_at": "2025-07-20 01:02:55",
+      "updated_at": "2025-07-20 01:02:55"
+    },
+    {
+      "id": 4,
+      "delivery_address": "Tehran, tajrish",
+      "customer_id": 1,
+      "vendor_id": 2,
+      "item_ids": [
+        6,
+        8
+      ],
+      "raw_price": 300,
+      "tax_fee": 0.0,
+      "addtional_fee": 0.0,
+      "courier_fee": 0.0,
+      "pay_price": 300,
+      "status": "submitted",
+      "created_at": "2025-07-20 01:08:52",
+      "updated_at": "2025-07-20 01:08:52"
+    },
+    {
+      "id": 5,
+      "delivery_address": "Tehran, tajrish",
+      "customer_id": 1,
+      "vendor_id": 2,
+      "item_ids": [
+        6,
+        8
+      ],
+      "raw_price": 300,
+      "tax_fee": 0.0,
+      "addtional_fee": 0.0,
+      "courier_fee": 0.0,
+      "pay_price": 300,
+      "status": "submitted",
+      "created_at": "2025-07-20 01:10:01",
+      "updated_at": "2025-07-20 01:10:01"
+    },
+    {
+      "id": 6,
+      "delivery_address": "Tehran, tajrish",
+      "customer_id": 1,
+      "vendor_id": 2,
+      "item_ids": [
+        6,
+        8
+      ],
+      "raw_price": 150,
+      "tax_fee": 0.0,
+      "addtional_fee": 0.0,
+      "courier_fee": 0.0,
+      "pay_price": 150,
+      "status": "submitted",
+      "created_at": "2025-07-20 01:13:52",
+      "updated_at": "2025-07-20 01:13:52"
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:16:57
+Method : PUT
+URI    : /favorites/2
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:16:57
+Body   : {
+  "message": "failed to lazily initialize a collection of role: entity.User.favoriteRestaurants: could not initialize proxy - no Session",
+  "error": "Internal server error"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 01:19:34
+----  HTTP Request  ----
+Time   : 2025-07-20 01:19:37
+Method : PUT
+URI    : /favorites/2
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:19:39
+Body   : "Added to favorites"
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:20:17
+Method : PUT
+URI    : /favorites/3
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:20:17
+Body   : "Added to favorites"
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:20:23
+Method : GET
+URI    : /favorites
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:20:23
+Body   : {
+  "List of favorite restaurants": [
+    {
+      "id": 2,
+      "name": "restaurant2-seller1",
+      "address": "Tehran",
+      "phone": "02100000012",
+      "tax_fee": 0.0,
+      "additional_fee": 0.0
+    },
+    {
+      "id": 3,
+      "name": "restaurant3-seller2_new",
+      "address": "Tehran-change",
+      "phone": "02100000023",
+      "logoBase64": "IMAGE-change",
+      "tax_fee": 0.0,
+      "additional_fee": 0.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:20:35
+Method : DELETE
+URI    : /favorites/3
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:20:35
+Body   : "Removed from favorites"
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:20:39
+Method : GET
+URI    : /favorites
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:20:39
+Body   : {
+  "List of favorite restaurants": [
+    {
+      "id": 2,
+      "name": "restaurant2-seller1",
+      "address": "Tehran",
+      "phone": "02100000012",
+      "tax_fee": 0.0,
+      "additional_fee": 0.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:36:23
+Method : POST
+URI    : /ratings
+Body   : {
+  "order_id": 5,
+  "rating": 3,
+  "comment": "good",
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:36:23
+Body   : {
+  "message": "Invalid or expired token.",
+  "error": "Unauthorized"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:36:30
+Method : POST
+URI    : /ratings
+Body   : {
+  "order_id": 5,
+  "rating": 3,
+  "comment": "good",
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:36:30
+Body   : {
+  "message": "com.google.gson.stream.MalformedJsonException: Expected name at line 5 column 2 path $.comment",
+  "error": "Internal server error"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-20 01:37:21
+----  HTTP Request  ----
+Time   : 2025-07-20 01:37:25
+Method : POST
+URI    : /ratings
+Body   : {
+  "order_id": 5,
+  "rating": 3,
+  "comment": "good"
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:37:27
+Body   : "Rating submitted"
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:38:42
+Method : POST
+URI    : /ratings
+Body   : {
+  "order_id": 1,
+  "rating": 2,
+  "comment": "bad",
+  "imageBase64" : ["image1"]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:38:42
+Body   : "Rating submitted"
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:38:48
+Method : GET
+URI    : /ratings/items/8
+Body   : {
+  "order_id": 4,
+  "rating": 2,
+  "comment": "bad",
+  "imageBase64": [
+    "img1", "img2"
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:38:48
+Body   : {
+  "message": "Invalid or expired token.",
+  "error": "Unauthorized"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:39:10
+Method : GET
+URI    : /ratings/items/8
+Body   : {
+  "order_id": 4,
+  "rating": 2,
+  "comment": "bad",
+  "imageBase64": [
+    "img1", "img2"
+  ]
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:39:10
+Body   : {
+  "List of ratings and reviews": {
+    "avg_rating": 3.0,
+    "comments": [
+      {
+        "id": 2,
+        "item_id": 8,
+        "rating": 3,
+        "comment": "good",
+        "imageBase64": [],
+        "userId": 1,
+        "created_at": "2025-07-20 01:37:27"
+      }
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:39:23
+Method : GET
+URI    : /ratings/7
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:39:23
+Body   : {
+  "message": "Invalid or expired token.",
+  "error": "Unauthorized"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:39:30
+Method : GET
+URI    : /ratings/7
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:39:30
+Body   : {
+  "message": "This rating doesn\u0027t exist",
+  "error": "Resource not found"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:39:34
+Method : GET
+URI    : /ratings/
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:39:34
+Body   : {
+  "message": "com.google.gson.stream.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 1 column 10 path $",
+  "error": "Internal server error"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:39:36
+Method : GET
+URI    : /ratings/2
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:39:36
+Body   : {
+  "Rating details": {
+    "id": 2,
+    "item_id": 8,
+    "rating": 3,
+    "comment": "good",
+    "imageBase64": [],
+    "userId": 1,
+    "created_at": "2025-07-20 01:37:27"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:39:40
+Method : GET
+URI    : /ratings/
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:39:40
+Body   : {
+  "message": "com.google.gson.stream.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 1 column 10 path $",
+  "error": "Internal server error"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:39:49
+Method : GET
+URI    : /ratings/9
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:39:49
+Body   : {
+  "message": "This rating doesn\u0027t exist",
+  "error": "Resource not found"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:39:53
+Method : GET
+URI    : /ratings/2
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:39:53
+Body   : {
+  "Rating details": {
+    "id": 2,
+    "item_id": 8,
+    "rating": 3,
+    "comment": "good",
+    "imageBase64": [],
+    "userId": 1,
+    "created_at": "2025-07-20 01:37:27"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:46:44
+Method : DELETE
+URI    : /ratings/4
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:46:44
+Body   : {
+  "message": "Invalid or expired token.",
+  "error": "Unauthorized"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:46:51
+Method : DELETE
+URI    : /ratings/4
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:46:51
+Body   : "Rating deleted"
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-20 01:47:23
+Method : PUT
+URI    : /ratings/3
+Body   : {
+    "rating" : 3,
+    "comment" : "not good not bad",
+    "imageBase64" : []
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-20 01:47:23
+Body   : {
+  "Rating updated": {
+    "rating": 3,
+    "comment": "not good not bad",
+    "imageBase64": []
+  }
+}
+-----------------------

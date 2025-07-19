@@ -37,6 +37,13 @@ public class UserService {
             default -> UserRole.DELIVERY;
         };
 
+        if(userRole != UserRole.CUSTOMER &&
+                (request.getBank_info() == null || request.getBank_info().getAccount_number() == null ||
+                        request.getBank_info().getAccount_number().isBlank() ||
+                        request.getBank_info().getBank_name() == null) ||
+                        request.getBank_info().getBank_name().isBlank()
+        ) throw new InvalidInputException(userRole.toString() + " must register bank name and account number");
+
         if (userRole == UserRole.CUSTOMER) {
             Customer customer = new Customer(request.getMobile());
             fillUserFields(customer, request);

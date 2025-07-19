@@ -85,8 +85,15 @@ public class RestaurantControllerHttpServer implements HttpHandler {
 
             /*Menu*/
             String menuTitle = null;
+            matcher = Pattern.compile("/menu/(.+)/(\\d+)").matcher(path);
+            if(matcher.find()){
+                menuTitle = matcher.group(1);
+                itemId = Long.parseLong(matcher.group(2));
+                item = validateItem(itemId, restaurant);
+            }
+
             matcher = Pattern.compile("/menu/(.+)").matcher(path);;
-            if (matcher.find()) {
+            if (matcher.find() && menuTitle == null) {
                 menuTitle = matcher.group(1);
             }
 
@@ -116,12 +123,12 @@ public class RestaurantControllerHttpServer implements HttpHandler {
                 handleDeleteItem(exchange, restaurant, item);
             } else if (path.matches("/restaurants/\\d+/menu") && method.equals("POST")) {
                 handleAddMenu(exchange, restaurant);
+            } else if (path.matches("/restaurants/\\d+/menu/.+/\\d+") && method.equals("DELETE")) {
+                handleDeleteItemFromMenu(exchange, restaurant, menuTitle, item);
             } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("DELETE")) {
                 handleDeleteMenu(exchange, restaurant, menuTitle);
             } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("PUT")) {
-                handleAddItemToMenu(exchange, restaurant, menuTitle, item);
-            } else if (path.matches("/restaurants/\\d+/menu/.+/\\d+") && method.equals("DELETE")) {
-                handleDeleteItemFromMenu(exchange, restaurant, menuTitle, item);
+                handleAddItemToMenu(exchange, restaurant, menuTitle);
             } else if (path.matches("/restaurants/\\d+/orders") && method.equals("GET")) {
                 handleGetRestaurantOrders(exchange, restaurant);
             } else if (path.matches("/restaurants/orders/\\d+") && method.equals("PATCH")) {
@@ -141,7 +148,7 @@ public class RestaurantControllerHttpServer implements HttpHandler {
         validateRestaurantRegistrationRequest(request);
         Restaurant restaurant = restaurantService.createRestaurant(request, seller);
         RestaurantDto response = new RestaurantDto(restaurant);
-        sendResponse(exchange, 201, gson.toJson(Map.of("message", "Restaurant created successfully", "response", response)));
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "Restaurant created successfully", "response", response)));
     }
 
     private void handleGetMyRestaurants(HttpExchange exchange, Seller seller) throws IOException {
@@ -187,10 +194,10 @@ public class RestaurantControllerHttpServer implements HttpHandler {
         sendResponse(exchange, 200, gson.toJson(Map.of("message", "Food menu removed from restaurant successfully")));
     }
 
-    private void handleAddItemToMenu(HttpExchange exchange, Restaurant restaurant, String menuTitle, Item item) throws IOException {
+    private void handleAddItemToMenu(HttpExchange exchange, Restaurant restaurant, String menuTitle) throws IOException {
         ItemAddToMenuRequestDto request = readRequestBody(exchange, ItemAddToMenuRequestDto.class, gson);
         validateItemAddToMenuRequest(request);
-        menuService.addItem(menuTitle, item, restaurant);
+        menuService.addItem(menuTitle, restaurant, request);
         sendResponse(exchange, 200, gson.toJson(Map.of("message", "Food item added to restaurant menu successfully")));
     }
 

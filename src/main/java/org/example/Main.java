@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
+import controller.CustomerControllerHttpServer;
 import controller.UserControllerHttpServer;
 import controller.RestaurantControllerHttpServer;
 
@@ -27,16 +28,13 @@ public class Main {
         // Create HTTP Server on port 4567
         HttpServer server = HttpServer.create(new InetSocketAddress(4567), 0);
 
-        // Register /auth context and add a logging filter
         server.createContext("/auth", new UserControllerHttpServer())
                 .getFilters().add(new LoggingFilter());
 
-        // Register /restaurants context and add a logging filter
         server.createContext("/restaurants", new RestaurantControllerHttpServer())
                 .getFilters().add(new LoggingFilter());
 
-//        server.createContext("/auth", new UserControllerHttpServer());
-//        server.createContext("/restaurants", new RestaurantControllerHttpServer());
+        CustomerControllerHttpServer.init(server);
 
 
         // Use a thread pool executor
