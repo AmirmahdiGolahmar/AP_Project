@@ -65,6 +65,7 @@ public class AuthorizationHandler {
         if(user == null) {
             throw new NotFoundException("User doesn't exist");
         }
+        if(role == null) return user;
         if(user.getRole() != role) {
             throw new AuthenticationException("You are not Authorized for this role");
         }

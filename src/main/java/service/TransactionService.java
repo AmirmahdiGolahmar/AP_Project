@@ -3,6 +3,7 @@ package service;
 import dao.OrderDao;
 import dao.TransactionDao;
 import dao.UserDao;
+import dto.AmountDto;
 import dto.PaymentReceiptDto;
 import dto.PaymentRequestDto;
 import entity.*;
@@ -26,10 +27,11 @@ public class TransactionService {
         orderDao = new OrderDao();
     }
 
-    public void topUp(Long userId, Long amount) {
-        User user = userDao.findById(userId);
-        if(amount == null || amount <= 0) throw new InvalidInputException("Invalid amount");
-        user.deposit(amount);
+    public void topUp(User user, AmountDto request) {
+        if(request == null) throw new InvalidInputException("Invalid request");
+        if(request.getAmount() == null || request.getAmount() <= 0)
+            throw new InvalidInputException("Invalid amount");
+        user.deposit(request.getAmount());
         userDao.update(user);
     }
 
@@ -42,12 +44,10 @@ public class TransactionService {
     }
 
 
-    public PaymentReceiptDto pay(PaymentRequestDto request, Long userId) {
+    public PaymentReceiptDto pay(PaymentRequestDto request, User user) {
         if(request == null) throw new InvalidInputException("Invalid request");
         if(request.getOrder_id() == null) throw new InvalidInputException("Invalid input");
         if(request.getMethod() == null) throw new InvalidInputException("Invalid input");
-
-        User user = userDao.findById(userId);
 
         Order order = orderDao.findById(request.getOrder_id());
         if(order == null) throw new NotFoundException("This order does not exist");

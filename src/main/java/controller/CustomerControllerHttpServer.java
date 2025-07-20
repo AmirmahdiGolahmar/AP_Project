@@ -38,12 +38,12 @@ public class CustomerControllerHttpServer {
             .create();
 
     public static void init(HttpServer server) {
-        server.createContext("/vendors", new VendorsHandler()).getFilters().add(new LoggingFilter());;
-        server.createContext("/items", new ItemsHandler()).getFilters().add(new LoggingFilter());;
-        server.createContext("/coupons", new CouponsHandler()).getFilters().add(new LoggingFilter());;
-        server.createContext("/orders", new OrdersHandler()).getFilters().add(new LoggingFilter());;
-        server.createContext("/favorites", new FavoritesHandler()).getFilters().add(new LoggingFilter());;
-        server.createContext("/ratings", new RatingsHandler()).getFilters().add(new LoggingFilter());;
+        server.createContext("/vendors", new VendorsHandler()).getFilters().add(new LoggingFilter());
+        server.createContext("/items", new ItemsHandler()).getFilters().add(new LoggingFilter());
+        server.createContext("/coupons", new CouponsHandler()).getFilters().add(new LoggingFilter());
+        server.createContext("/orders", new OrdersHandler()).getFilters().add(new LoggingFilter());
+        server.createContext("/favorites", new FavoritesHandler()).getFilters().add(new LoggingFilter());
+        server.createContext("/ratings", new RatingsHandler()).getFilters().add(new LoggingFilter());
     }
 
     static class VendorsHandler implements HttpHandler {

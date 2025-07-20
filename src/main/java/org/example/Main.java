@@ -14,10 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
-import controller.CustomerControllerHttpServer;
-import controller.DeliveryControllerHttpServer;
-import controller.UserControllerHttpServer;
-import controller.RestaurantControllerHttpServer;
+import controller.*;
 
 import static Log.LogUtil.startLogging;
 
@@ -38,6 +35,8 @@ public class Main {
         CustomerControllerHttpServer.init(server);
 
         DeliveryControllerHttpServer.init(server);
+
+        TransactionControllerHttpServer.init(server);
 
 
         // Use a thread pool executor
