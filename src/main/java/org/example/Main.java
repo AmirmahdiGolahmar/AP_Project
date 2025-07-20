@@ -38,6 +38,8 @@ public class Main {
 
         TransactionControllerHttpServer.init(server);
 
+        AdminControllerHttpServer.init(server);
+
 
         // Use a thread pool executor
         server.setExecutor(Executors.newFixedThreadPool(10));

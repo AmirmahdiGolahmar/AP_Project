@@ -65,7 +65,8 @@ public class User {
     @Column(nullable = false, unique = true)
     private String mobile;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private UserStatus status =  UserStatus.not_approved;
 
    public void setBankName(String bankName) {
        this.bankInfo.setBankName(bankName);

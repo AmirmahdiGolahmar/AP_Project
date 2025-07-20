@@ -4,6 +4,7 @@ import dao.*;
 import dto.*;
 import entity.*;
 import exception.AlreadyExistsException;
+import exception.InvalidInputException;
 import exception.NotFoundException;
 import util.SearchUtil;
 
@@ -66,13 +67,13 @@ public class AdminService {
     public CouponDto updateCoupon(CouponRequest request, Long id) {
         Coupon coupon = couponDao.findById(id);
         if (coupon == null) throw new NotFoundException("This coupon doesn't exists");
-        couponValidator(request);
-        coupon.setCode(request.getCoupon_code());
-        coupon.setValue(request.getValue());
-        coupon.setMinPrice(request.getMin_price());
-        coupon.setUserCount(request.getUser_count());
-        coupon.setStartDate(StringToDateTime(request.getStart_date()));
-        coupon.setEndDate(StringToDateTime(request.getEnd_date()));
+        if(request == null) throw new InvalidInputException("Invalid request");
+        if(request.getCoupon_code() != null) coupon.setCode(request.getCoupon_code());
+        if(request.getValue() != null) coupon.setValue(request.getValue());
+        if(request.getMin_price() != null) coupon.setMinPrice(request.getMin_price());
+        if(request.getUser_count() != null) coupon.setUserCount(request.getUser_count());
+        if(request.getStart_date() != null) coupon.setStartDate(StringToDateTime(request.getStart_date()));
+        if(request.getEnd_date() != null) coupon.setEndDate(StringToDateTime(request.getEnd_date()));
         couponDao.update(coupon);
         return new CouponDto(coupon);
     }
@@ -87,8 +88,9 @@ public class AdminService {
         return userDao.findAll().stream().map(UserDto::new).toList();
     }
 
-    public void changeUserStatus(Long userId, String status) {
-        User user = userDao.findById(userId);
+    public void changeUserStatus(User user, StatusDto request) {
+        if(request == null) throw new InvalidInputException("Request is null");
+        UserStatus status = UserStatus.strToStatus(request.getStatus());
         user.setStatus(status);
         userDao.update(user);
     }
