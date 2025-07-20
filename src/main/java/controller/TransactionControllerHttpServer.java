@@ -16,10 +16,10 @@ import service.TransactionService;
 import util.LocalDateTimeAdapter;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import static exception.ExceptionHandler.expHandler;
 import static util.AuthorizationHandler.authorize;
@@ -36,7 +36,7 @@ public class TransactionControllerHttpServer {
 
     public static void init(HttpServer server) {
         server.createContext("/transactions", new TransactionsHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/wallet/top-up", new WalletTopUpHandler()).getFilters().add(new LoggingFilter());
+        server.createContext("/wallet", new WalletHandler()).getFilters().add(new LoggingFilter());
         server.createContext("/payment/online", new OnlinePaymentHandler()).getFilters().add(new LoggingFilter());
     }
 
@@ -57,16 +57,25 @@ public class TransactionControllerHttpServer {
 
         private void handleGetTransactions(HttpExchange exchange) throws IOException {
             User user = authorize(exchange, null);
-            List<TransactionDto> response = transactionService.getTransactions(user.getId());
+            List<TransactionDto> response = transactionService.getTransactions(user);
             sendResponse(exchange, 200, gson.toJson(Map.of("List of transactions", response)));
         }
     }
 
-    static class WalletTopUpHandler implements HttpHandler {
+    static class WalletHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
             try {
-                if ("POST".equals(exchange.getRequestMethod())) {
+                String method = exchange.getRequestMethod();
+                URI uri = exchange.getRequestURI();
+                String path = uri.getPath();
+
+                if ("POST".equalsIgnoreCase(method) && "/wallet/topUp".equals(path)) {
                     handleTopUp(exchange);
+                    return;
+                }
+
+                if("GET".equalsIgnoreCase(method) && "/wallet/balance".equalsIgnoreCase(path)) {
+                    handleGetBalance(exchange);
                     return;
                 }
 
@@ -82,6 +91,12 @@ public class TransactionControllerHttpServer {
             AmountDto request = readRequestBody(exchange, AmountDto.class, gson);
             transactionService.topUp(user, request);
             sendResponse(exchange, 200, gson.toJson("Wallet topped up successfully"));
+        }
+
+        private void handleGetBalance(HttpExchange exchange) throws IOException {
+            User user = authorize(exchange, null);
+            Double amount = transactionService.getBalance(user);
+            sendResponse(exchange, 200, gson.toJson(Map.of("Balance", amount)));
         }
     }
 

@@ -1,5 +1,7 @@
 package util.validator;
 
+import entity.BankInfo;
+import exception.ForbiddenException;
 import exception.InvalidInputException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 
@@ -62,5 +64,12 @@ public class validator {
         if(additionalFee != null && (additionalFee < 0)) {
             throw new InvalidInputException("Invalid field additionalFee");
         }
+    }
+
+    public static void bankInfoValidator(BankInfo bankInfo) {
+        if (bankInfo == null) throw new ForbiddenException("Complete your bank info first");
+        if(bankInfo.getBankName() == null) throw new ForbiddenException("Complete your bank info first");
+        if(bankInfo.getAccountNumber() == null) throw new ForbiddenException("Complete your bank info first");
+
     }
 }
