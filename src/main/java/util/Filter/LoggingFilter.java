@@ -1,5 +1,7 @@
-package Log;
+package util.Filter;
 
+import util.Log.LogUtil;
+import util.Log.WrappedHttpExchange;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.Filter;
 
@@ -7,8 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 
 public class LoggingFilter extends Filter {

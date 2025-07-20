@@ -1,6 +1,7 @@
 package controller;
 
-import Log.LoggingFilter;
+import com.sun.net.httpserver.Filter;
+import util.Filter.LoggingFilter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
@@ -34,10 +35,10 @@ public class TransactionControllerHttpServer {
             .serializeNulls()
             .create();
 
-    public static void init(HttpServer server) {
-        server.createContext("/transactions", new TransactionsHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/wallet", new WalletHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/payment/online", new OnlinePaymentHandler()).getFilters().add(new LoggingFilter());
+    public static void init(HttpServer server, List<Filter> filters) {
+        server.createContext("/transactions", new TransactionsHandler()).getFilters().addAll(filters);
+        server.createContext("/wallet", new WalletHandler()).getFilters().addAll(filters);
+        server.createContext("/payment/online", new OnlinePaymentHandler()).getFilters().addAll(filters);
     }
 
     static class TransactionsHandler implements HttpHandler {

@@ -1,15 +1,12 @@
 package controller;
 
-import Log.LoggingFilter;
+import util.Filter.LoggingFilter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import dto.OrderDto;
 import dto.StatusDto;
 import entity.Delivery;
-import entity.User;
 import entity.UserRole;
-import exception.ExceptionHandler;
 import service.DeliveryService;
 import util.LocalDateTimeAdapter;
 
@@ -27,6 +24,8 @@ import java.util.Map;
 import static util.AuthorizationHandler.authorize;
 import static util.HttpUtil.*;
 import static exception.ExceptionHandler.expHandler;
+import com.sun.net.httpserver.Filter;
+
 
 public class DeliveryControllerHttpServer {
 
@@ -36,10 +35,10 @@ public class DeliveryControllerHttpServer {
             .serializeNulls()
             .create();
 
-    public static void init(HttpServer server) {
-        server.createContext("/deliveries/available", new AvailableDeliveriesHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/deliveries/history", new DeliveryHistoryHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/deliveries", new DeliveryStatusHandler()).getFilters().add(new LoggingFilter());
+    public static void init(HttpServer server, List<Filter> filters) {
+        server.createContext("/deliveries/available", new AvailableDeliveriesHandler()).getFilters().addAll(filters);
+        server.createContext("/deliveries/history", new DeliveryHistoryHandler()).getFilters().addAll(filters);
+        server.createContext("/deliveries", new DeliveryStatusHandler()).getFilters().addAll(filters);
     }
 
     static class AvailableDeliveriesHandler implements HttpHandler {

@@ -1,925 +1,176 @@
 HTTP server running on port 4567 ...
-Started Logging At   : 2025-07-20 22:33:03
+Started Logging At   : 2025-07-21 02:16:40
 ----  HTTP Request  ----
-Time   : 2025-07-20 22:33:10
+Time   : 2025-07-21 02:16:42
 Method : GET
-URI    : /transactions
+URI    : /heavy-task
 Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 22:33:12
-Body   : {
-  "List of transactions": [
-    {
-      "id": 1,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "failed"
-    },
-    {
-      "id": 2,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "success"
-    }
-  ]
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 22:33:26
-Method : POST
-URI    : /auth/login
-Body   : {
-  "mobile": "09190000001",
-  "password": "1234"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 22:33:26
-Body   : {
-  "message": "User Login successfully",
-  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1MzAzODIwNiwiZXhwIjoxNzUzMTI0NjA2fQ.cac2mX1z9ORcOUMB_61suYKYKtSBeB4mkOI_Up5kMtE",
-  "user": {
-    "id": 3,
-    "full_name": "seller1",
-    "phone": "09190000001",
-    "email": "",
-    "role": "seller",
-    "address": "Iran, Tehran",
-    "bank_info": {
-      "bank_name": "mellat",
-      "account_number": "123456789"
-    }
-  }
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 22:33:45
-Method : POST
-URI    : /wallet/top-up
-Body   : {
-    "amount" : 130
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 22:33:45
-Body   : {
-  "message": "You are not Authorized for this role",
-  "error": "Unauthorized"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 22:33:57
-Method : POST
-URI    : /payment/online
-Body   : {
-    "order_id" : 6,
-    "method" : "wallet"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 22:33:57
-Body   : {
-  "message": "You are not Authorized for this role",
-  "error": "Unauthorized"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 22:34:06
-Method : GET
-URI    : /transactions
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 22:34:06
-Body   : {
-  "List of transactions": [
-    {
-      "id": 1,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "failed"
-    },
-    {
-      "id": 2,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "success"
-    }
-  ]
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 22:34:09
-Method : GET
-URI    : /transactions
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 22:34:09
-Body   : {
-  "List of transactions": [
-    {
-      "id": 1,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "failed"
-    },
-    {
-      "id": 2,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "success"
-    }
-  ]
-}
 -----------------------
 HTTP server running on port 4567 ...
-Started Logging At   : 2025-07-20 23:42:44
+Started Logging At   : 2025-07-21 02:19:45
 ----  HTTP Request  ----
-Time   : 2025-07-20 23:45:16
+Time   : 2025-07-21 02:19:47
 Method : GET
-URI    : /wallet
+URI    : /heavy-task
 Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:45:18
-Body   : {
-  "error": "Invalid input",
-  "message": "Complete your bank info first"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:45:30
-Method : POST
-URI    : /auth/login
-Body   : {
-    "password": "1234",
-  "mobile": "09120000001"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:45:30
-Body   : {
-  "message": "User Login successfully",
-  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNzUzMDQyNTMwLCJleHAiOjE3NTMxMjg5MzB9._LpltHPJDZfTBqrE1a8kYanTaoxT2SahJ693Pno5T7M",
-  "user": {
-    "id": 1,
-    "full_name": "customer1",
-    "phone": "09120000001",
-    "email": "customer1@gmail.com",
-    "role": "customer",
-    "address": "Tehran, Iran",
-    "profileImageBase64": "https://customer1.com/photo.jpg",
-    "bank_info": {
-      "account_number": ""
-    }
-  }
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:45:39
-Method : GET
-URI    : /wallet
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:45:39
-Body   : {
-  "error": "Invalid input",
-  "message": "Complete your bank info first"
-}
 -----------------------
 HTTP server running on port 4567 ...
-Started Logging At   : 2025-07-20 23:48:27
+Started Logging At   : 2025-07-21 02:20:25
 ----  HTTP Request  ----
-Time   : 2025-07-20 23:48:29
+Time   : 2025-07-21 02:20:26
 Method : GET
-URI    : /wallet
+URI    : /heavy-task
 Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:48:31
-Body   : {
-  "message": "Complete your bank info first",
-  "error": "Forbidden request"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:48:44
-Method : GET
-URI    : /auth/profile
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:48:44
-Body   : {
-  "message": "Invalid or expired token.",
-  "error": "Unauthorized"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:49:00
-Method : GET
-URI    : /auth/profile
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:49:00
-Body   : {
-  "id": 1,
-  "full_name": "customer1",
-  "phone": "09120000001",
-  "email": "customer1@gmail.com",
-  "role": "customer",
-  "address": "Tehran, Iran",
-  "profileImageBase64": "https://customer1.com/photo.jpg",
-  "bank_info": {
-    "account_number": ""
-  }
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:49:17
-Method : PUT
-URI    : /auth/profile
-Body   : {
-  "bank_info" : {
-    "bank_name": "Meli",
-    "account_number": "123456789"
-  }
-}
-    
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:49:17
-Body   : {
-  "message": "User profile updated successfully"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:49:21
-Method : GET
-URI    : /auth/profile
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:49:21
-Body   : {
-  "id": 1,
-  "full_name": "customer1",
-  "phone": "09120000001",
-  "email": "customer1@gmail.com",
-  "role": "customer",
-  "address": "Tehran, Iran",
-  "profileImageBase64": "https://customer1.com/photo.jpg",
-  "bank_info": {
-    "bank_name": "Meli",
-    "account_number": "123456789"
-  }
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:49:33
-Method : GET
-URI    : /wallet
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:49:33
-Body   : {
-  "Balance": 480.0
-}
 -----------------------
 HTTP server running on port 4567 ...
-Started Logging At   : 2025-07-20 23:50:17
+Started Logging At   : 2025-07-21 02:21:27
 ----  HTTP Request  ----
-Time   : 2025-07-20 23:50:21
-Method : POST
-URI    : /auth/login
-Body   : {
-  "mobile": "09190000001",
-  "password": "1234"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:50:24
-Body   : {
-  "message": "User Login successfully",
-  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1MzA0MjgyNCwiZXhwIjoxNzUzMTI5MjI0fQ.n0my025oW7QN7tqCma3rXRGLTWrqS4-jo6ICiciw7m0",
-  "user": {
-    "id": 3,
-    "full_name": "seller1",
-    "phone": "09190000001",
-    "email": "",
-    "role": "seller",
-    "address": "Iran, Tehran",
-    "bank_info": {
-      "bank_name": "mellat",
-      "account_number": "123456789"
-    }
-  }
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:50:34
+Time   : 2025-07-21 02:21:29
 Method : GET
-URI    : /wallet
+URI    : /health
 Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:50:34
-Body   : {
-  "Balance": 0.0
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:50:47
-Method : POST
-URI    : /auth/login
-Body   : {
-  "mobile": "09190000002",
-  "password": "1234"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:50:47
-Body   : {
-  "message": "User Login successfully",
-  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2Iiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1MzA0Mjg0NywiZXhwIjoxNzUzMTI5MjQ3fQ.nu3rjrTWQrwd9j9MwHyBeFlsDu5-q9s1GwqmnaRfzOQ",
-  "user": {
-    "id": 6,
-    "full_name": "seller2",
-    "phone": "09190000002",
-    "email": "seller2@gmail.com",
-    "role": "seller",
-    "address": "Iran, Tehran",
-    "profileImageBase64": "https://seller2.com/photo.png",
-    "bank_info": {
-      "bank_name": "mellat",
-      "account_number": "123456789"
-    }
-  }
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:50:56
-Method : GET
-URI    : /wallet
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:50:56
-Body   : {
-  "Balance": 0.0
-}
 -----------------------
 HTTP server running on port 4567 ...
-Started Logging At   : 2025-07-20 23:53:27
+Started Logging At   : 2025-07-21 02:21:34
 ----  HTTP Request  ----
-Time   : 2025-07-20 23:54:47
-Method : POST
-URI    : /payment/online
-Body   : {
-    "order_id" : 6,
-    "method" : "wallet"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:54:49
-Body   : {
-  "Payment successful": {
-    "id": 3,
-    "order_id": 6,
-    "user_id": 1,
-    "method": "wallet",
-    "status": "success"
-  }
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:54:56
+Time   : 2025-07-21 02:21:39
 Method : GET
-URI    : /wallet
+URI    : /heavy-task
 Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:54:56
-Body   : {
-  "Balance": 330.0
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:55:08
-Method : GET
-URI    : /wallet
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:55:08
-Body   : {
-  "Balance": 0.0
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:55:14
-Method : POST
-URI    : /auth/login
-Body   : {
-  "mobile": "09190000001",
-  "password": "1234"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:55:14
-Body   : {
-  "message": "User Login successfully",
-  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTc1MzA0MzExNCwiZXhwIjoxNzUzMTI5NTE0fQ.anJBmEw7wZHXylfCqEYoviBRmnG9NTh1ivazgQrq0Eg",
-  "user": {
-    "id": 3,
-    "full_name": "seller1",
-    "phone": "09190000001",
-    "email": "",
-    "role": "seller",
-    "address": "Iran, Tehran",
-    "bank_info": {
-      "bank_name": "mellat",
-      "account_number": "123456789"
-    }
-  }
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:55:22
-Method : GET
-URI    : /wallet
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:55:22
-Body   : {
-  "Balance": 150.0
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-20 23:55:31
-Method : GET
-URI    : /transactions
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:55:31
-Body   : {
-  "List of transactions": [
-    {
-      "id": 1,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "failed"
-    },
-    {
-      "id": 2,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "success"
-    },
-    {
-      "id": 3,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "success"
-    }
-  ]
-}
 -----------------------
 HTTP server running on port 4567 ...
-Started Logging At   : 2025-07-20 23:58:57
+Started Logging At   : 2025-07-21 02:22:09
 ----  HTTP Request  ----
-Time   : 2025-07-20 23:59:01
+Time   : 2025-07-21 02:22:11
 Method : GET
-URI    : /wallet/balance
+URI    : /heavy-task
 Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-20 23:59:03
-Body   : {
-  "Balance": 150.0
-}
 -----------------------
 HTTP server running on port 4567 ...
-Started Logging At   : 2025-07-21 00:35:35
+Started Logging At   : 2025-07-21 02:24:44
 ----  HTTP Request  ----
-Time   : 2025-07-21 00:36:28
-Method : PATCH
-URI    : /admin/users/1/status
-Body   : {
-    "status" : "approved"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:36:30
-Body   : "Status updated"
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:36:44
+Time   : 2025-07-21 02:24:46
 Method : GET
-URI    : /admin/orders?search=&vendor=restaurant1&courier=&customer&status=
+URI    : /heavy-task
 Body   : 
 -----------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:36:44
-Body   : {
-  "List of orders": [
-    {
-      "id": 1,
-      "delivery_address": "Tehran, tajrish",
-      "customer_id": 1,
-      "vendor_id": 1,
-      "item_ids": [
-        1,
-        3
-      ],
-      "raw_price": 200,
-      "tax_fee": 0.09,
-      "addtional_fee": 0.02,
-      "courier_fee": 0.005,
-      "pay_price": 22,
-      "status": "submitted",
-      "created_at": "2025-07-20 01:01:54",
-      "updated_at": "2025-07-20 01:01:54"
-    }
-  ]
-}
------------------------
 ----  HTTP Request  ----
-Time   : 2025-07-21 00:37:01
+Time   : 2025-07-21 02:25:01
 Method : GET
-URI    : /admin/transactions?search&user=&method&status=fail
+URI    : /heavy-task
 Body   : 
 -----------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:37:01
-Body   : {
-  "List of financial transactions": [
-    {
-      "id": 1,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "failed"
-    }
-  ]
-}
------------------------
 ----  HTTP Request  ----
-Time   : 2025-07-21 00:37:06
+Time   : 2025-07-21 02:25:08
 Method : GET
-URI    : /admin/transactions?search&user=&method&status=
+URI    : /heavy-task
 Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:37:06
-Body   : {
-  "List of financial transactions": [
-    {
-      "id": 1,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "failed"
-    },
-    {
-      "id": 2,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "success"
-    },
-    {
-      "id": 3,
-      "order_id": 6,
-      "user_id": 1,
-      "method": "wallet",
-      "status": "success"
-    }
-  ]
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:37:21
-Method : GET
-URI    : /admin/users
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:37:21
-Body   : {
-  "List of users": [
-    {
-      "id": 1,
-      "full_name": "customer1",
-      "phone": "09120000001",
-      "email": "customer1@gmail.com",
-      "role": "customer",
-      "address": "Tehran, Iran",
-      "profileImageBase64": "https://customer1.com/photo.jpg",
-      "bank_info": {
-        "bank_name": "Meli",
-        "account_number": "123456789"
-      }
-    },
-    {
-      "id": 2,
-      "full_name": "customer2",
-      "phone": "09120000002",
-      "email": "customer2@gmail.com",
-      "role": "customer",
-      "address": "Tehran, Iran, pasdaran",
-      "bank_info": {}
-    },
-    {
-      "id": 3,
-      "full_name": "seller1",
-      "phone": "09190000001",
-      "email": "",
-      "role": "seller",
-      "address": "Iran, Tehran",
-      "bank_info": {
-        "bank_name": "mellat",
-        "account_number": "123456789"
-      }
-    },
-    {
-      "id": 4,
-      "full_name": "delivery1",
-      "phone": "09220000001",
-      "role": "delivery",
-      "address": "Iran, Tehran",
-      "bank_info": {
-        "bank_name": "mellat",
-        "account_number": "123456789"
-      }
-    },
-    {
-      "id": 5,
-      "full_name": "delivery2",
-      "phone": "09220000002",
-      "role": "delivery",
-      "address": "Iran, Tehran",
-      "bank_info": {
-        "bank_name": "mellat",
-        "account_number": "123456789"
-      }
-    },
-    {
-      "id": 6,
-      "full_name": "seller2",
-      "phone": "09190000002",
-      "email": "seller2@gmail.com",
-      "role": "seller",
-      "address": "Iran, Tehran",
-      "profileImageBase64": "https://seller2.com/photo.png",
-      "bank_info": {
-        "bank_name": "mellat",
-        "account_number": "123456789"
-      }
-    }
-  ]
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:37:54
-Method : POST
-URI    : /admin/coupons
-Body   : {
-  "coupon_code": "coupon_code_1",
-  "type": "percent",
-  "value": 60,
-  "min_price": 10,
-  "user_count": 3,
-  "start_date": "2025-07-22",
-  "end_date":"2025-07-25"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:37:54
-Body   : {
-  "coupon": {
-    "id": 1,
-    "code": "coupon_code_1",
-    "type": "percent",
-    "value": 60,
-    "min_price": 10,
-    "user_count": 3,
-    "start_date": "2025-07-22",
-    "end_date": "2025-07-25"
-  },
-  "message": "coupon added successfully"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:38:34
-Method : POST
-URI    : /admin/coupons
-Body   : {
-  "coupon_code": "coupon_code_2",
-  "type": "fixed",
-  "value": 10,
-  "min_price": 100,
-  "user_count": 5,
-  "start_date": "2025-07-22",
-  "end_date":"2025-07-25"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:38:34
-Body   : {
-  "coupon": {
-    "id": 2,
-    "code": "coupon_code_2",
-    "type": "fixed",
-    "value": 10,
-    "min_price": 100,
-    "user_count": 5,
-    "start_date": "2025-07-22",
-    "end_date": "2025-07-25"
-  },
-  "message": "coupon added successfully"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:38:57
-Method : GET
-URI    : /admin/coupons/1
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:38:57
-Body   : {
-  "coupon details": {
-    "id": 1,
-    "code": "coupon_code_1",
-    "type": "percent",
-    "value": 60,
-    "min_price": 10,
-    "user_count": 3,
-    "start_date": "2025-07-22",
-    "end_date": "2025-07-25"
-  }
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:39:01
-Method : GET
-URI    : /admin/coupons/2
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:39:01
-Body   : {
-  "coupon details": {
-    "id": 2,
-    "code": "coupon_code_2",
-    "type": "fixed",
-    "value": 10,
-    "min_price": 100,
-    "user_count": 5,
-    "start_date": "2025-07-22",
-    "end_date": "2025-07-25"
-  }
-}
 -----------------------
 HTTP server running on port 4567 ...
-Started Logging At   : 2025-07-21 00:42:06
+Started Logging At   : 2025-07-21 02:25:40
 ----  HTTP Request  ----
-Time   : 2025-07-21 00:42:17
-Method : PUT
-URI    : /admin/coupons/1
-Body   : {
-  "user_count": 3
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:42:19
-Body   : {
-  "coupon": {
-    "id": 1,
-    "code": "coupon_code_1",
-    "type": "percent",
-    "value": 60,
-    "min_price": 10,
-    "user_count": 3,
-    "start_date": "2025-07-22",
-    "end_date": "2025-07-25"
-  },
-  "message": "Coupon updated successfully"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:42:25
-Method : PUT
-URI    : /admin/coupons/1
-Body   : {
-  "user_count": 4
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:42:25
-Body   : {
-  "coupon": {
-    "id": 1,
-    "code": "coupon_code_1",
-    "type": "percent",
-    "value": 60,
-    "min_price": 10,
-    "user_count": 4,
-    "start_date": "2025-07-22",
-    "end_date": "2025-07-25"
-  },
-  "message": "Coupon updated successfully"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:42:48
-Method : POST
-URI    : /admin/coupons
-Body   : {
-  "coupon_code": "coupon_code_3",
-  "type": "fixed",
-  "value": 10,
-  "min_price": 100,
-  "user_count": 5,
-  "start_date": "2025-07-22",
-  "end_date":"2025-07-25"
-}
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:42:48
-Body   : {
-  "coupon": {
-    "id": 3,
-    "code": "coupon_code_3",
-    "type": "fixed",
-    "value": 10,
-    "min_price": 100,
-    "user_count": 5,
-    "start_date": "2025-07-22",
-    "end_date": "2025-07-25"
-  },
-  "message": "coupon added successfully"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:42:54
-Method : DELETE
-URI    : /admin/coupons/3
-Body   : 
------------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:42:54
-Body   : {
-  "message": "Coupon deleted"
-}
------------------------
-----  HTTP Request  ----
-Time   : 2025-07-21 00:42:57
+Time   : 2025-07-21 02:25:44
 Method : GET
-URI    : /admin/coupons
+URI    : /heavy-task
 Body   : 
 -----------------------
-----  HTTP Response  ----
-Time   : 2025-07-21 00:42:57
-Body   : {
-  "List of all coupons": [
-    {
-      "id": 1,
-      "code": "coupon_code_1",
-      "type": "percent",
-      "value": 60,
-      "min_price": 10,
-      "user_count": 4,
-      "start_date": "2025-07-22",
-      "end_date": "2025-07-25"
-    },
-    {
-      "id": 2,
-      "code": "coupon_code_2",
-      "type": "fixed",
-      "value": 10,
-      "min_price": 100,
-      "user_count": 5,
-      "start_date": "2025-07-22",
-      "end_date": "2025-07-25"
-    }
-  ]
-}
+----  HTTP Request  ----
+Time   : 2025-07-21 02:25:51
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-21 02:25:56
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-21 02:26:06
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-21 02:26:38
+----  HTTP Request  ----
+Time   : 2025-07-21 02:26:39
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-21 02:27:12
+----  HTTP Request  ----
+Time   : 2025-07-21 02:27:15
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-21 02:27:18
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-21 02:29:19
+----  HTTP Request  ----
+Time   : 2025-07-21 02:29:21
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-21 02:29:25
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-21 02:29:46
+----  HTTP Request  ----
+Time   : 2025-07-21 02:29:54
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-21 02:30:05
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-21 02:30:30
+----  HTTP Request  ----
+Time   : 2025-07-21 02:30:36
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-21 02:31:36
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-21 02:31:40
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-21 02:31:43
+Method : GET
+URI    : /heavy-task
+Body   : 
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-21 02:31:46
+Method : GET
+URI    : /heavy-task
+Body   : 
 -----------------------

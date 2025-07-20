@@ -1,6 +1,7 @@
 package controller;
 
-import Log.LoggingFilter;
+import com.sun.net.httpserver.Filter;
+import util.Filter.LoggingFilter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
@@ -8,7 +9,6 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import entity.*;
 import dto.*;
-import exception.InvalidInputException;
 import service.AdminService;
 import util.LocalDateTimeAdapter;
 
@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static util.AuthorizationHandler.authorize;
 import static util.AuthorizationHandler.authorizeUser;
 import static util.HttpUtil.*;
 import static exception.ExceptionHandler.expHandler;
@@ -32,11 +31,11 @@ public class AdminControllerHttpServer {
             .serializeNulls()
             .create();
 
-    public static void init(HttpServer server) {
-        server.createContext("/admin/users", new UsersHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/admin/orders", new OrdersHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/admin/transactions", new TransactionsHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/admin/coupons", new CouponsHandler()).getFilters().add(new LoggingFilter());
+    public static void init(HttpServer server, List<Filter> filters) {
+        server.createContext("/admin/users", new UsersHandler()).getFilters().addAll(filters);
+        server.createContext("/admin/orders", new OrdersHandler()).getFilters().addAll(filters);
+        server.createContext("/admin/transactions", new TransactionsHandler()).getFilters().addAll(filters);
+        server.createContext("/admin/coupons", new CouponsHandler()).getFilters().addAll(filters);
     }
 
     static class UsersHandler implements HttpHandler {

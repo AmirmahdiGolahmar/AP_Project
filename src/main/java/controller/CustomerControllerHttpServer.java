@@ -1,18 +1,15 @@
 package controller;
 
-import Log.LoggingFilter;
+import com.sun.net.httpserver.Filter;
+import util.Filter.LoggingFilter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.*;
 import entity.*;
-import exception.InvalidInputException;
-import io.jsonwebtoken.Claims;
 import service.CustomerService;
-import util.JwtUtil;
 import util.LocalDateTimeAdapter;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,13 +34,13 @@ public class CustomerControllerHttpServer {
             .serializeNulls()
             .create();
 
-    public static void init(HttpServer server) {
-        server.createContext("/vendors", new VendorsHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/items", new ItemsHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/coupons", new CouponsHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/orders", new OrdersHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/favorites", new FavoritesHandler()).getFilters().add(new LoggingFilter());
-        server.createContext("/ratings", new RatingsHandler()).getFilters().add(new LoggingFilter());
+    public static void init(HttpServer server, List<Filter> filters) {
+        server.createContext("/vendors", new VendorsHandler()).getFilters().addAll(filters);
+        server.createContext("/items", new ItemsHandler()).getFilters().addAll(filters);
+        server.createContext("/coupons", new CouponsHandler()).getFilters().addAll(filters);;
+        server.createContext("/orders", new OrdersHandler()).getFilters().addAll(filters);;
+        server.createContext("/favorites", new FavoritesHandler()).getFilters().addAll(filters);;
+        server.createContext("/ratings", new RatingsHandler()).getFilters().addAll(filters);
     }
 
     static class VendorsHandler implements HttpHandler {
