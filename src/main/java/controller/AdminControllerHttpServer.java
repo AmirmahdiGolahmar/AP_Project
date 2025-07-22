@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static util.AuthorizationHandler.authorize;
 import static util.AuthorizationHandler.authorizeUser;
 import static util.HttpUtil.*;
 import static exception.ExceptionHandler.expHandler;
@@ -44,6 +45,8 @@ public class AdminControllerHttpServer {
                 String method = exchange.getRequestMethod();
                 URI uri = exchange.getRequestURI();
                 String path = uri.getPath();
+
+                authorize(exchange, UserRole.ADMIN);
 
                 Matcher matcher = Pattern.compile("/admin/users/([0-9]+)/status").matcher(path);
                 if (matcher.matches() && "PATCH".equalsIgnoreCase(method)) {
@@ -80,6 +83,9 @@ public class AdminControllerHttpServer {
     static class OrdersHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
             try {
+
+                authorize(exchange, UserRole.ADMIN);
+
                 if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
                     handleSearchOrders(exchange);
                     return;
@@ -107,6 +113,9 @@ public class AdminControllerHttpServer {
     static class TransactionsHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
             try {
+
+                authorize(exchange, UserRole.ADMIN);
+
                 if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
                     handleSearchTransactions(exchange);
                     return;
@@ -136,6 +145,8 @@ public class AdminControllerHttpServer {
                 String method = exchange.getRequestMethod();
                 URI uri = exchange.getRequestURI();
                 String path = uri.getPath();
+
+                authorize(exchange, UserRole.ADMIN);
 
                 Matcher matcher = Pattern.compile("/admin/coupons/([0-9]+)").matcher(path);
                 if (matcher.matches()) {

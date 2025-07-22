@@ -2,7 +2,6 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import dao.OrderDao;
@@ -116,6 +115,8 @@ public class RestaurantControllerHttpServer implements HttpHandler {
                 handleGetMyRestaurants(exchange, seller);
             } else if (path.matches("/restaurants/\\d+") && method.equals("PUT")) {
                 handleUpdateRestaurant(exchange, restaurant);
+            }else if (path.matches("/restaurants/\\d+/items") && method.equals("GET")) {
+                    handleGetItems(exchange, restaurant);
             } else if (path.matches("/restaurants/\\d+/item") && method.equals("POST")) {
                 handleAddItem(exchange, restaurant);
             } else if (path.matches("/restaurants/\\d+/item/\\d+") && method.equals("PUT")) {
@@ -162,6 +163,11 @@ public class RestaurantControllerHttpServer implements HttpHandler {
         RestaurantUpdateRequest request = readRequestBody(exchange, RestaurantUpdateRequest.class, gson);
         RestaurantDto response = restaurantService.updateRestaurant(restaurant, request);
         sendResponse(exchange, 200, gson.toJson(response));
+    }
+
+    private void handleGetItems(HttpExchange exchange, Restaurant restaurant) throws IOException {
+//        List<ItemSellerViewDto> response = restaurantService.getGetItems(restaurant);
+//        sendResponse(exchange, 200, gson.toJson(response));
     }
 
     private void handleAddItem(HttpExchange exchange, Restaurant restaurant) throws IOException {

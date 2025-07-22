@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import util.PasswordHasher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class User {
 
     @Setter(AccessLevel.PRIVATE)
     private String username;
+
     @Column(nullable = false)
     private String password;
 
@@ -105,5 +107,13 @@ public class User {
     public void withdraw(Long amount) {
         if(this.bankInfo.getBalance() - amount <= 0) throw new ForbiddenException("Insufficient balance");
         this.bankInfo.withdraw(amount);
+    }
+
+    public boolean checkPassword(String password) {
+        return PasswordHasher.check(password, this.password);
+    }
+
+    public void setPassword(String password) {
+        this.password = PasswordHasher.hash(password);
     }
 }

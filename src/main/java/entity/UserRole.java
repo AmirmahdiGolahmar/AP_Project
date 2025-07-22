@@ -23,4 +23,13 @@ public enum UserRole {
     public String toString() {
         return this.name().toLowerCase();}
 
+    public String view(){
+        return switch (this) {
+            case ADMIN -> "admin";
+            case SELLER -> "seller";
+            case CUSTOMER -> "buyer";
+            case DELIVERY -> "courier";
+            default -> throw new InvalidInputException("This UserRole is not valid");
+        };
+    }
 }

@@ -21,7 +21,7 @@ public class UserDto {
         if(user.getFullName() != null) this.full_name = user.getFullName();
         if(user.getEmail() != null) this.email = user.getEmail();
         if(user.getMobile() != null) this.phone = user.getMobile();
-        if(user.getRole() != null) this.role = user.getRole().toString();
+        if(user.getRole() != null) this.role = user.getRole().view();
         if(user.getAddress() != null) this.address = user.getAddress();
         if(user.getPhoto() != null) this.profileImageBase64 = user.getPhoto();
         if(user.getBankInfo() != null) {

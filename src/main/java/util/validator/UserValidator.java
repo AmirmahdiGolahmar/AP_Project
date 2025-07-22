@@ -14,7 +14,7 @@ public class UserValidator {
         passwordValidator(request.getPassword());
         fullNameValidator(request.getFull_name());
         mobileValidator(request.getMobile());
-        if(request.getEmail() != null) emailValidator(request.getEmail());
+        if(request.getEmail() != null && !request.getEmail().isBlank()) emailValidator(request.getEmail());
         roleValidator(request.getRole());
         addressValidator(request.getAddress());
     }

@@ -30,7 +30,7 @@ public class JwtUtil {
 
     public static Claims validateToken(String token) {
         if (TokenBlacklist.contains(token)) {
-            throw new AuthenticationException("Token has been revoked (blacklisted).");
+            throw new AuthenticationException("Token has been revoked.");
         }
 
         try {

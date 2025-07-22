@@ -1,7 +1,5 @@
 package dto;
 
-import com.google.gson.annotations.SerializedName;
-import entity.Coupon;
 import entity.Item;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ItemDto {
+public class ItemSellerViewDto {
     long id;
     String name;
     String imageBase64;
@@ -18,8 +16,9 @@ public class ItemDto {
     Double price;
     Integer supply;
     List<String> keywords;
+    Double avg_rating;
 
-    public ItemDto(Item item) {
+    public ItemSellerViewDto(Item item) {
         this.id = item.getId();
         this.name = item.getName();
         if(item.getPhoto() != null) this.imageBase64 = item.getPhoto();
@@ -28,11 +27,4 @@ public class ItemDto {
         this.supply = item.getSupply();
         this.keywords = item.getKeywords();
     }
-
-    public ItemDto() {
-
-    }
-
 }
-
-

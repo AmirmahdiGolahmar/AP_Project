@@ -1,7 +1,6 @@
 package service;
 import dto.*;
 import entity.*;
-import java.util.List;
 import exception.*;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceException;
@@ -9,7 +8,6 @@ import org.hibernate.exception.ConstraintViolationException;
 import util.validator.UserValidator;
 import dto.UserRegistrationRequest;
 import dao.*;
-import util.validator.validator.*;
 
 import static util.validator.validator.*;
 
@@ -18,12 +16,15 @@ public class UserService {
     private final SellerDao sellerDao;
     private final DeliveryDao deliveryDao;
     private final UserDao userDao;
+    AdminSeeder seeder;
 
     public UserService() {
         this.customerDao = new CustomerDao();
         this.sellerDao = new SellerDao();
         this.deliveryDao = new DeliveryDao();
         this.userDao = new UserDao();
+        seeder = new AdminSeeder(userDao);
+        seeder.seedAdmin();
     }
 
     public User createUser(UserRegistrationRequest request) {
@@ -89,10 +90,10 @@ public class UserService {
             } catch (NoResultException ignored) {}
         }
 
-        if (user == null) throw new UserNotFoundException(mobile);
+        if (user == null) throw new NotFoundException("Phone number " + mobile + " is not registered");
 
-        if (!user.getPassword().equals(password))
-            throw new InvalidCredentialsException();
+        if (!user.checkPassword(password))
+            throw new InvalidCredentialsException("Incorrect password");
 
         return user;
     }
@@ -160,7 +161,6 @@ public class UserService {
                 user.setAccountNumber(request.getBank_info().getAccount_number());
             }
         }
-
         userDao.update(user);
     }
 }

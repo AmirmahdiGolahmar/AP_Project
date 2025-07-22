@@ -8,6 +8,7 @@ import util.SearchUtil;
 import util.validator.SellerValidator;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,4 +123,19 @@ public class RestaurantService {
         orderDao.update(order);
     }
 
+//    public List<ItemSellerViewDto> getGetItems(Restaurant restaurant) {
+////        List<ItemRatingResponseDto> itemsRating = itemRatingDao.findAll().stream()
+////                .filter(i -> i.getItem().getId().equals(itemId))
+////                .map(ItemRatingResponseDto::new).toList();
+////
+////        ItemRatingAvgResponseDto response = new ItemRatingAvgResponseDto();
+////        response.setAvg_rating( itemsRating.stream()
+////                .mapToInt(ItemRatingResponseDto::getRating)
+////                .average()
+////                .orElse(0));
+////        response.setComments(itemsRating);
+////
+////        List<ItemSellerViewDto> response = restaurant.getItems().stream().map(ItemSellerViewDto::new).toList();
+////        response
+//    }
 }

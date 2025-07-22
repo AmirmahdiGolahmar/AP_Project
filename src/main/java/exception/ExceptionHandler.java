@@ -13,44 +13,15 @@ import com.google.gson.Gson;
 import static util.HttpUtil.sendResponse;
 
 public class ExceptionHandler {
-    public static Object expHandler(Exception ex, Response res, Gson gson) {
-        if (ex instanceof InvalidInputException) {
-            return gson.toJson(Map.of("error", "Invalid input"));
-        } else if (ex instanceof UnauthorizedUserException) {
-            res.status(401);
-            return gson.toJson(Map.of("error", "Unauthorized"));
-        } else if (ex instanceof ForbiddenException) {
-            res.status(403);
-            return gson.toJson(Map.of("error", "Forbidden request"));
-        } else if (ex instanceof NotFoundException) {
-            res.status(404);
-            return gson.toJson(Map.of("error", "Resource not found"));
-        } else if (ex instanceof AlreadyExistsException) {
-            res.status(409);
-            return gson.toJson(Map.of("error", "Conflict occurred"));
-        } else if (ex instanceof UnsupportedMediaTypeException) {
-            res.status(415);
-            return gson.toJson(Map.of("error", "Unsupported Media Type"));
-        } else if (ex instanceof TooManyRequestsException) {
-            res.status(429);
-            return gson.toJson(Map.of("error", "Too Many Requests"));
-        } else if(ex instanceof AuthenticationException) {
-            return gson.toJson(Map.of("error", "Unauthorized",
-            "message", ex.getMessage()));
-        } else {
-            res.status(500);
-            return gson.toJson(Map.of("error", "Internal server error"));
-        }
-    }
-
-    public static void expHandler(Exception ex, HttpExchange exchange, Gson gson) throws IOException {
+    public static void expHandler(Exception ex, HttpExchange exchange, Gson gson) {
         int status;
         Map<String, Object> body;
 
         if (ex instanceof InvalidInputException) {
             status = 400;
             body = Map.of("error", "Invalid input", "message", ex.getMessage());
-        } else if (ex instanceof UnauthorizedUserException || ex instanceof AuthenticationException) {
+        } else if (ex instanceof UnauthorizedUserException || ex instanceof AuthenticationException ||
+                ex instanceof AccessDeniedException) {
             status = 401;
             body = Map.of("error", "Unauthorized", "message", ex.getMessage());
         } else if (ex instanceof ForbiddenException) {
@@ -59,7 +30,7 @@ public class ExceptionHandler {
         } else if (ex instanceof NotFoundException) {
             status = 404;
             body = Map.of("error", "Resource not found", "message", ex.getMessage());
-        } else if (ex instanceof AlreadyExistsException) {
+        } else if (ex instanceof AlreadyExistsException || ex instanceof InvalidCredentialsException) {
             status = 409;
             body = Map.of("error", "Conflict occurred", "message", ex.getMessage());
         } else if (ex instanceof UnsupportedMediaTypeException) {
@@ -77,7 +48,12 @@ public class ExceptionHandler {
         ex.printStackTrace();
 
         String json = gson.toJson(body);
-        sendResponse(exchange, status, json);
+
+        try{
+            sendResponse(exchange, status, json);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 

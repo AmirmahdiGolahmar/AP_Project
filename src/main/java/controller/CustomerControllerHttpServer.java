@@ -14,6 +14,9 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,8 +37,8 @@ public class CustomerControllerHttpServer {
             .serializeNulls()
             .create();
 
-    public static void init(HttpServer server, List<Filter> filters) {
-        server.createContext("/vendors", new VendorsHandler()).getFilters().addAll(filters);
+    public static void init(HttpServer server, List<Filter> filters, Executor executor) {
+        server.createContext("/vendors", new VendorsHandler(executor)).getFilters().addAll(filters);
         server.createContext("/items", new ItemsHandler()).getFilters().addAll(filters);
         server.createContext("/coupons", new CouponsHandler()).getFilters().addAll(filters);;
         server.createContext("/orders", new OrdersHandler()).getFilters().addAll(filters);;
@@ -44,28 +47,39 @@ public class CustomerControllerHttpServer {
     }
 
     static class VendorsHandler implements HttpHandler {
+        private final Executor executor;
+
+        VendorsHandler(Executor executor) {
+            this.executor = executor;
+        }
+
+        @Override
         public void handle(HttpExchange exchange) throws IOException {
-            try {
-                String method = exchange.getRequestMethod();
-                URI uri = exchange.getRequestURI();
-                String path = uri.getPath();
-                Customer customer = authorize(exchange, UserRole.CUSTOMER);
+            executor.execute(() -> {
+                try {
+                    String method = exchange.getRequestMethod();
+                    URI uri = exchange.getRequestURI();
+                    String path = uri.getPath();
+                    Customer customer = authorize(exchange, UserRole.CUSTOMER);
 
-                if ("POST".equalsIgnoreCase(method) && "/vendors".equals(path)) {
-                    handleSearchRestaurants(exchange);
-                    return;
+                    if ("POST".equalsIgnoreCase(method) && "/vendors".equals(path)) {
+                        handleSearchRestaurants(exchange);
+                        return;
+                    }
+
+                    Matcher matcher = Pattern.compile("/vendors/([0-9]+)").matcher(uri.getPath());
+                    if ("GET".equalsIgnoreCase(method) && matcher.matches()) {
+                        handleDisplayRestaurants(exchange, matcher);
+                        return;
+                    }
+
+                    sendResponse(exchange, 404, "Invalid path");
+                } catch (Exception e) {
+                    expHandler(e, exchange, gson);
+                } finally {
+                    exchange.close();
                 }
-
-                Matcher matcher = Pattern.compile("/vendors/([0-9]+)").matcher(uri.getPath());
-                if ("GET".equalsIgnoreCase(method) && matcher.matches()) {
-                    handleDisplayRestaurants(exchange, matcher);
-                    return;
-                }
-
-                sendResponse(exchange, 404, "Invalid path");
-            } catch (Exception e) {
-                expHandler(e, exchange, gson);
-            }
+            });
         }
 
         private void handleSearchRestaurants(HttpExchange exchange) throws IOException {
