@@ -85,6 +85,7 @@ public class UserControllerHttpServer {
             response.setMessage("User registered successfully");
             response.setUser_id(loggedInUser.getId().toString());
             response.setToken(token);
+            response.setRole(loggedInUser.getRole().toString());
 
             sendResponse(exchange, 201, gson.toJson(response));
         }

@@ -166,8 +166,8 @@ public class RestaurantControllerHttpServer implements HttpHandler {
     }
 
     private void handleGetItems(HttpExchange exchange, Restaurant restaurant) throws IOException {
-//        List<ItemSellerViewDto> response = restaurantService.getGetItems(restaurant);
-//        sendResponse(exchange, 200, gson.toJson(response));
+        List<ItemSellerViewDto> response = restaurantService.getGetItems(restaurant);
+        sendResponse(exchange, 200, gson.toJson(response));
     }
 
     private void handleAddItem(HttpExchange exchange, Restaurant restaurant) throws IOException {
