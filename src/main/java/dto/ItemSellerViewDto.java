@@ -11,17 +11,17 @@ import java.util.List;
 public class ItemSellerViewDto {
     long id;
     String name;
-    String imageBase64;
+    String photo;
     String description;
     Double price;
     Integer supply;
     List<String> keywords;
-    Double avg_rating;
+    Double rating;
 
     public ItemSellerViewDto(Item item) {
         this.id = item.getId();
         this.name = item.getName();
-        if(item.getPhoto() != null) this.imageBase64 = item.getPhoto();
+        if(item.getPhoto() != null) this.photo = item.getPhoto();
         this.description = item.getDescription();
         this.price = item.getPrice();
         this.supply = item.getSupply();

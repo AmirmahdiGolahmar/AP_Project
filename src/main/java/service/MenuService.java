@@ -4,7 +4,6 @@ import dao.ItemDao;
 import dao.MenuDao;
 import dao.RestaurantDao;
 import dto.ItemAddToMenuRequestDto;
-import dto.ItemDto;
 import dto.MenuDto;
 import dto.MenuRegistrationDto;
 import entity.Item;
@@ -15,6 +14,7 @@ import exception.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MenuService {
     private final ItemDao itemDao;
@@ -79,5 +79,16 @@ public class MenuService {
         menu.removeItem(it);
         menuDao.update(menu);
         restaurantDao.update(restaurant);
+    }
+
+    public List<MenuDto> getRestaurantMenus(Restaurant restaurant) {
+        return menuDao.findAll().stream()
+                .filter(m-> m.getRestaurant().getId().equals(restaurant.getId())).map(MenuDto::new).toList();
+    }
+
+    public MenuDto getRestaurantMenu(Restaurant restaurant, String menuTitle) {
+        return menuDao.findAll().stream().filter(
+                m -> m.getRestaurant().getId().equals(restaurant.getId()) && m.getTitle().equalsIgnoreCase(menuTitle)
+        ).map(MenuDto::new).toList().get(0);
     }
 }

@@ -3,15 +3,10 @@ import dao.*;
 import dto.*;
 import entity.*;
 import exception.AlreadyExistsException;
-import exception.NotFoundException;
 import util.SearchUtil;
-import util.validator.SellerValidator;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static util.validator.validator.additionalFeeValidator;
@@ -128,14 +123,18 @@ public class RestaurantService {
     public List<ItemSellerViewDto> getGetItems(Restaurant restaurant) {
 
         List<ItemSellerViewDto> response = restaurant.getItems().stream().map(ItemSellerViewDto::new).toList();
+
         for(ItemSellerViewDto item :  response){
-            List<ItemRatingResponseDto> itemsRating = itemRatingDao.findAll().stream()
-                    .filter(i -> i.getItem().getRestaurant().getId().equals(restaurant.getId()))
-                    .map(ItemRatingResponseDto::new).toList();
-            item.setAvg_rating( itemsRating.stream()
-                .mapToInt(ItemRatingResponseDto::getRating)
-                .average()
-                .orElse(0));
+            List<ItemRating> itemsRating = Optional.ofNullable(itemRatingDao.findByRestaurantId(restaurant.getId()))
+                    .orElse(List.of());
+            if(itemsRating.isEmpty()){
+                item.setRating(0.0);
+            }else{
+                item.setRating( itemsRating.stream()
+                        .mapToInt(ItemRating::getRating)
+                        .average()
+                        .orElse(0));
+            }
         }
 
         return response;

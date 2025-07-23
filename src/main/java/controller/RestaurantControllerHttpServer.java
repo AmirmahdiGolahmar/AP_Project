@@ -123,6 +123,10 @@ public class RestaurantControllerHttpServer implements HttpHandler {
                 handleEditItem(exchange, restaurant, item);
             } else if (path.matches("/restaurants/\\d+/item/\\d+") && method.equals("DELETE")) {
                 handleDeleteItem(exchange, restaurant, item);
+            } else if (path.matches("/restaurants/\\d+/menus") && method.equals("GET")) {
+                handleGetMenus(exchange, restaurant);
+            } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("GET")) {
+                handleGetMenu(exchange, restaurant, menuTitle);
             } else if (path.matches("/restaurants/\\d+/menu") && method.equals("POST")) {
                 handleAddMenu(exchange, restaurant);
             } else if (path.matches("/restaurants/\\d+/menu/.+/\\d+") && method.equals("DELETE")) {
@@ -146,6 +150,12 @@ public class RestaurantControllerHttpServer implements HttpHandler {
         }
     }
 
+    private void handleGetMenu(HttpExchange exchange, Restaurant restaurant, String menuTitle) throws IOException {
+        MenuDto response = menuService.getRestaurantMenu(restaurant, menuTitle);
+        sendResponse(exchange, 200, gson.toJson(Map.of("menu", response)));
+    }
+
+
     private void handleCreateRestaurant(HttpExchange exchange, Seller seller) throws IOException {
         RestaurantRegistrationRequest request = readRequestBody(exchange, RestaurantRegistrationRequest.class, gson);
         validateRestaurantRegistrationRequest(request);
@@ -167,7 +177,7 @@ public class RestaurantControllerHttpServer implements HttpHandler {
 
     private void handleGetItems(HttpExchange exchange, Restaurant restaurant) throws IOException {
         List<ItemSellerViewDto> response = restaurantService.getGetItems(restaurant);
-        sendResponse(exchange, 200, gson.toJson(response));
+        sendResponse(exchange, 200, gson.toJson(Map.of("Restaurant items", response)));
     }
 
     private void handleAddItem(HttpExchange exchange, Restaurant restaurant) throws IOException {
@@ -188,6 +198,11 @@ public class RestaurantControllerHttpServer implements HttpHandler {
     private void handleDeleteItem(HttpExchange exchange, Restaurant restaurant, Item item) throws IOException {
         itemService.deleteItem(restaurant, item);
         sendResponse(exchange, 200, gson.toJson(Map.of("message", "Food item removed successfully")));
+    }
+
+    private void handleGetMenus(HttpExchange exchange, Restaurant restaurant) throws IOException {
+        List<MenuDto> response = menuService.getRestaurantMenus(restaurant);
+        sendResponse(exchange, 200, gson.toJson(Map.of("Restaurant menus", response)));
     }
 
     private void handleAddMenu(HttpExchange exchange, Restaurant restaurant) throws IOException {

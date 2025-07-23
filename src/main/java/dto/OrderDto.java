@@ -21,7 +21,7 @@ public class OrderDto {
     List<Long> item_ids;
     Long raw_price;
     Double tax_fee;
-    Double addtional_fee;
+    Double additional_fee;
     Double courier_fee;
     Long pay_price;
     Long courier_id;
@@ -48,9 +48,9 @@ public class OrderDto {
             this.setTax_fee(0.0);
 
         if(order.getRestaurant().getAdditionalFee() != null)
-            this.setAddtional_fee(order.getRestaurant().getAdditionalFee());
+            this.setAdditional_fee(order.getRestaurant().getAdditionalFee());
         else
-            this.setAddtional_fee(0.0);
+            this.setAdditional_fee(0.0);
 
         if(order.getRestaurant().getAdditionalFee() != null)
             this.setCourier_fee(order.getRestaurant().getAdditionalFee()/4);
