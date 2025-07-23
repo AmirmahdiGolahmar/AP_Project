@@ -87,7 +87,7 @@ public class UserControllerHttpServer {
             response.setToken(token);
             response.setRole(loggedInUser.getRole().toString());
 
-            sendResponse(exchange, 201, gson.toJson(response));
+            sendResponse(exchange, 200, gson.toJson(response));
         }
 
         private void handleLogin(HttpExchange exchange) throws IOException {

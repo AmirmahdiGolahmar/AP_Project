@@ -805,3 +805,222 @@ Body   : [
   }
 ]
 -----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-23 03:43:47
+----  HTTP Request  ----
+Time   : 2025-07-23 03:44:05
+Method : GET
+URI    : /auth/profile
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-23 03:44:05
+Body   : {
+  "id": 3,
+  "full_name": "seller1",
+  "phone": "09190000001",
+  "email": "",
+  "role": "seller",
+  "address": "Iran, Tehran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "123456789"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-23 03:44:07
+Method : GET
+URI    : /restaurants/mine
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-23 03:44:07
+Body   : {
+  "List of restaurants": [
+    {
+      "id": 1,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 0.09,
+      "additional_fee": 0.02
+    },
+    {
+      "id": 2,
+      "name": "restaurant2-seller1",
+      "address": "Tehran",
+      "phone": "02100000012",
+      "tax_fee": 0.0,
+      "additional_fee": 0.0
+    },
+    {
+      "id": 4,
+      "name": "restaurant1-seller1",
+      "address": "Tehran-change",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE-change",
+      "tax_fee": 400.0,
+      "additional_fee": 5000.0
+    },
+    {
+      "id": 5,
+      "name": "res-test4",
+      "address": "tehran",
+      "phone": "image1",
+      "tax_fee": 50.0,
+      "additional_fee": 87.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-23 03:44:08
+Method : GET
+URI    : /restaurants/mine
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-23 03:44:08
+Body   : {
+  "List of restaurants": [
+    {
+      "id": 1,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 0.09,
+      "additional_fee": 0.02
+    },
+    {
+      "id": 2,
+      "name": "restaurant2-seller1",
+      "address": "Tehran",
+      "phone": "02100000012",
+      "tax_fee": 0.0,
+      "additional_fee": 0.0
+    },
+    {
+      "id": 4,
+      "name": "restaurant1-seller1",
+      "address": "Tehran-change",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE-change",
+      "tax_fee": 400.0,
+      "additional_fee": 5000.0
+    },
+    {
+      "id": 5,
+      "name": "res-test4",
+      "address": "tehran",
+      "phone": "image1",
+      "tax_fee": 50.0,
+      "additional_fee": 87.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-23 03:44:08
+Method : GET
+URI    : /auth/profile
+Body   : 
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-23 03:44:08
+Body   : {
+  "id": 3,
+  "full_name": "seller1",
+  "phone": "09190000001",
+  "email": "",
+  "role": "seller",
+  "address": "Iran, Tehran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "123456789"
+  }
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-23 03:59:37
+----  HTTP Request  ----
+Time   : 2025-07-23 04:02:03
+Method : POST
+URI    : /auth/register
+Body   : {
+  "password": "1234",
+  "full_name": "seller3",
+  "mobile": "09190000003",
+  "email": "seller3@gmail.com",
+  "address": "Iran, Tehran",
+  "profileImageBase64": "https://seller3.com/photo.png",
+  "bank_info":{
+  "bank_name": "Melat",
+  "account_number": "12345"
+  },
+  "role" : "seller"  
+}
+
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-23 04:02:03
+Body   : {
+  "message": "User registered successfully",
+  "user_id": "15",
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNSIsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3NTMyMzA3MjMsImV4cCI6MTc1MzMxNzEyM30.IMn4507rcO2y_AXBTj9PmdldMAY0c_j0JAceq1mlXFg",
+  "role": "seller"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-23 04:03:52
+----  HTTP Request  ----
+Time   : 2025-07-23 04:04:09
+Method : POST
+URI    : /auth/register
+Body   : {
+  "password": "1234",
+  "full_name": "seller4",
+  "mobile": "09190000004",
+  "email": "seller4@gmail.com",
+  "address": "Iran, Tehran",
+  "profileImageBase64": "https://seller4.com/photo.png",
+  "bank_info":{
+  "bank_name": "Melat",
+  "account_number": "12345"
+  },
+  "role" : "seller"  
+}
+
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-23 04:06:51
+----  HTTP Request  ----
+Time   : 2025-07-23 04:07:01
+Method : POST
+URI    : /auth/register
+Body   : {
+  "password": "1234",
+  "full_name": "seller5",
+  "mobile": "09190000005",
+  "email": "seller5@gmail.com",
+  "address": "Iran, Tehran",
+  "profileImageBase64": "https://seller5.com/photo.png",
+  "bank_info":{
+  "bank_name": "Melat",
+  "account_number": "12345"
+  },
+  "role" : "seller"  
+}
+
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-23 04:07:01
+Body   : {
+  "message": "User registered successfully",
+  "user_id": "17",
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNyIsInJvbGUiOiJzZWxsZXIiLCJpYXQiOjE3NTMyMzEwMjEsImV4cCI6MTc1MzMxNzQyMX0.xLyjy64CDVKosr6glgJSmPKB43T03neNhd0tYako0ls",
+  "role": "seller"
+}
+-----------------------

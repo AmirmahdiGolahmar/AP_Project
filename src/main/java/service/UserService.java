@@ -125,9 +125,9 @@ public class UserService {
         if(request.getEmail() != null)  user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
         if(request.getProfileImageBase64() != null) user.setPhoto(request.getProfileImageBase64());
-        if(user.getBankInfo() != null){
-            if(user.getBankInfo().getBankName() != null) user.setBankName(request.getBank_info().getBank_name());
-            if(user.getBankInfo().getAccountNumber() != null) user.setAccountNumber(request.getBank_info().getAccount_number());
+        if(request.getBank_info() != null){
+            if(request.getBank_info().getBank_name() != null) user.setBankName(request.getBank_info().getBank_name());
+            if(request.getBank_info().getAccount_number() != null) user.setAccountNumber(request.getBank_info().getAccount_number());
         }
     }
 

@@ -21,11 +21,13 @@ public class RestaurantService {
     private final RestaurantDao restaurantDao;
     private final OrderDao orderDao;
     private final UserDao userDao;
+    private final ItemRatingDao itemRatingDao;
 
     public RestaurantService() {
         this.restaurantDao = new RestaurantDao();
         this.orderDao = new OrderDao();
         this.userDao = new UserDao();
+        this.itemRatingDao = new ItemRatingDao();
     }
 
     public Restaurant createRestaurant(RestaurantRegistrationRequest request, Seller seller) {
@@ -124,21 +126,18 @@ public class RestaurantService {
     }
 
     public List<ItemSellerViewDto> getGetItems(Restaurant restaurant) {
-//        List<ItemRatingResponseDto> itemsRating = itemRatingDao.findAll().stream()
-//                .filter(i -> i.getItem().getId().equals(itemId))
-//                .map(ItemRatingResponseDto::new).toList();
-//
-//        ItemRatingAvgResponseDto response = new ItemRatingAvgResponseDto();
-//        response.setAvg_rating( itemsRating.stream()
-//                .mapToInt(ItemRatingResponseDto::getRating)
-//                .average()
-//                .orElse(0));
-//        response.setComments(itemsRating);
-
-
 
         List<ItemSellerViewDto> response = restaurant.getItems().stream().map(ItemSellerViewDto::new).toList();
+        for(ItemSellerViewDto item :  response){
+            List<ItemRatingResponseDto> itemsRating = itemRatingDao.findAll().stream()
+                    .filter(i -> i.getItem().getRestaurant().getId().equals(restaurant.getId()))
+                    .map(ItemRatingResponseDto::new).toList();
+            item.setAvg_rating( itemsRating.stream()
+                .mapToInt(ItemRatingResponseDto::getRating)
+                .average()
+                .orElse(0));
+        }
+
         return response;
-        //for()
     }
 }
