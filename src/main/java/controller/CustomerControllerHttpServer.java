@@ -1,7 +1,7 @@
 package controller;
 
 import com.sun.net.httpserver.Filter;
-import util.Filter.LoggingFilter;
+import service.MenuService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.*;
@@ -12,11 +12,10 @@ import util.LocalDateTimeAdapter;
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,10 +31,20 @@ import static exception.ExceptionHandler.expHandler;
 public class CustomerControllerHttpServer {
 
     private static final CustomerService customerService = new CustomerService();
+    private static final MenuService menuService = new MenuService();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .serializeNulls()
             .create();
+    static String errorContent;
+
+    CustomerControllerHttpServer() {
+        Map<String,String> map = new HashMap<>();
+        map.put("message", "Invalid path");
+        errorContent = gson.toJson(map);
+    }
+
+
 
     public static void init(HttpServer server, List<Filter> filters, Executor executor) {
         server.createContext("/vendors", new VendorsHandler(executor)).getFilters().addAll(filters);
@@ -67,19 +76,38 @@ public class CustomerControllerHttpServer {
                         return;
                     }
 
-                    Matcher matcher = Pattern.compile("/vendors/([0-9]+)").matcher(uri.getPath());
+                    Matcher matcher = Pattern.compile("/vendors/([0-9]+)/items").matcher(uri.getPath());
+                    if ("GET".equalsIgnoreCase(method) && matcher.matches()) {
+                        handleGetRestaurantItems(exchange, matcher);
+                        return;
+                    }
+
+                    matcher = Pattern.compile("/vendors/([0-9]+)/menus").matcher(uri.getPath());
+                    if ("GET".equalsIgnoreCase(method) && matcher.matches()) {
+                        handleGetMenus(exchange, matcher);
+                        return;
+                    }
+
+                    matcher = Pattern.compile("/vendors/([0-9]+)").matcher(uri.getPath());
                     if ("GET".equalsIgnoreCase(method) && matcher.matches()) {
                         handleDisplayRestaurants(exchange, matcher);
                         return;
                     }
 
-                    sendResponse(exchange, 404, "Invalid path");
+                    sendResponse(exchange, 404, errorContent);
                 } catch (Exception e) {
                     expHandler(e, exchange, gson);
                 } finally {
                     exchange.close();
                 }
             });
+        }
+
+        private void handleGetRestaurantItems(HttpExchange exchange, Matcher matcher) throws IOException {
+            long restaurantId = Long.parseLong(matcher.group(1));
+            Restaurant restaurant = validateRestaurant(restaurantId);
+            List<ItemDto> response = customerService.getRestaurantItems(restaurant);
+            sendResponse(exchange, 200, gson.toJson(Map.of("Vendor items", response)));
         }
 
         private void handleSearchRestaurants(HttpExchange exchange) throws IOException {
@@ -93,6 +121,13 @@ public class CustomerControllerHttpServer {
             Restaurant restaurant = validateRestaurant(restaurantId);
             RestaurantDisplayResponse response = customerService.displayRestaurant(restaurant);
             sendResponse(exchange, 200, gson.toJson(Map.of("Vendor menu items", response)));
+        }
+
+        private void handleGetMenus(HttpExchange exchange, Matcher matcher) throws IOException {
+            long restaurantId = Long.parseLong(matcher.group(1));
+            Restaurant restaurant = validateRestaurant(restaurantId);
+            List<MenuDto> response = menuService.getRestaurantMenus(restaurant);
+            sendResponse(exchange, 200, gson.toJson(Map.of("Restaurant menus", response)));
         }
     }
 
@@ -108,16 +143,35 @@ public class CustomerControllerHttpServer {
                     handleSearchItem(exchange);
                     return;
                 }
-                Matcher matcher = Pattern.compile("/items/([0-9]+)").matcher(uri.getPath());
+                Matcher matcher = Pattern.compile("/items/cart-items").matcher(uri.getPath());
+                if ("POST".equals(method) && matcher.matches()) {
+                    handelAddToCartItems(exchange, customer);
+                    return;
+                }
+                matcher = Pattern.compile("/items/(\\d+)/cart-item").matcher(uri.getPath());
                 if ("GET".equals(method) && matcher.matches()) {
-                    handelDisplayItem(exchange, matcher);
+                    long itemId = Long.parseLong(matcher.group(1));
+                    handelGetCartItem(exchange, customer, itemId);
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+
+                sendResponse(exchange, 404, errorContent);
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
             }
+        }
+
+        private void handelGetCartItem(HttpExchange exchange, Customer customer, long itemId) throws IOException {
+            Item item = validateItem(itemId, null);
+            CartItemDto response =  customerService.getCartItemQuantity(customer, item);
+            sendResponse(exchange, 200, gson.toJson(Map.of("Cart item", response)));
+        }
+
+        private void handelAddToCartItems(HttpExchange exchange, Customer customer) throws IOException {
+            CartItemDto request = readRequestBody(exchange, CartItemDto.class, gson);
+            customerService.modifyCartItemQuantity(request, customer);
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Cart item added or modified")));
         }
 
         private void handleSearchItem(HttpExchange exchange) throws IOException {
@@ -243,7 +297,7 @@ public class CustomerControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, errorContent);
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
             }
@@ -251,12 +305,12 @@ public class CustomerControllerHttpServer {
 
         private void handelAddToFavorite(HttpExchange exchange, User user, Restaurant restaurant) throws IOException {
             customerService.addToFavorites(user, restaurant);
-            sendResponse(exchange, 200, gson.toJson("Added to favorites"));
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Added to favorites")));
         }
 
         private void handleRemoveFromFavorite(HttpExchange exchange, User user, Restaurant restaurant) throws IOException {
             customerService.removeFromFavorites(user, restaurant);
-            sendResponse(exchange, 200, gson.toJson("Removed from favorites"));
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Added to favorites")));
         }
 
         private void handleGetFavorites(HttpExchange exchange, User user) throws IOException {

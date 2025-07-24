@@ -6,21 +6,15 @@ import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import dao.ItemDao;
-import dao.OrderDao;
-import dao.RestaurantDao;
-import dao.UserDao;
+import dao.*;
 import dto.*;
+import entity.Coupon;
 import entity.Item;
-import entity.Order;
 import entity.Restaurant;
-import entity.User;
-import io.jsonwebtoken.Claims;
+import exception.NotFoundException;
 import service.RestaurantService;
 import service.UserService;
-import util.JwtUtil;
 import util.LocalDateTimeAdapter;
-import util.TokenBlacklist;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,12 +24,11 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static exception.ExceptionHandler.expHandler;
 import static exception.ExceptionHandler.handleNullPointerException;
 import static util.HttpUtil.*;
-import static util.validator.RestaurantValidator.validateItem;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class DataProvider {
@@ -45,6 +38,7 @@ public class DataProvider {
 
     private static final RestaurantDao restaurantDao = new RestaurantDao();
     private static final OrderDao orderDao = new OrderDao();
+    private static final CouponDao couponDao = new CouponDao();
     private static final ItemDao itemDao = new ItemDao();
     private static final UserService userService = new UserService();
     private static final RestaurantService restaurantService = new RestaurantService();
@@ -84,7 +78,10 @@ public class DataProvider {
                             Long itemId = null;
                             if (matcher.find()) itemId = Long.parseLong(matcher.group(1));
                             handleGetItem(exchange, itemId);
-                    } else {
+                    } else if (path.matches("/dt/coupons") && method.equals("GET")) {
+                        handleGetCoupons(exchange);
+                    }
+                    else {
                         sendResponse(exchange, 404, gson.toJson(Map.of("error", "Not found")));
                     }
                 }catch(NullPointerException e){
@@ -96,21 +93,31 @@ public class DataProvider {
             });
         }
 
+        private void handleGetCoupons(HttpExchange exchange) throws IOException {
+            List<CouponDto> coupons = couponDao.findAll().stream().map(CouponDto::new).toList();
+            sendResponse(exchange, 200, gson.toJson(Map.of("List of coupons", coupons)));
+        }
+
         private void handleGetItem(HttpExchange exchange, Long itemId) throws IOException {
             Item item = itemDao.findById(itemId);
+            if(item == null) throw new NotFoundException("this item does not exist");
             ItemDto response = new ItemDto(item);
             sendResponse(exchange, 200, gson.toJson(response));
         }
 
         private void handleGetRestaurant(HttpExchange exchange, Long restaurantId) throws IOException {
             Restaurant restaurant = restaurantDao.findById(restaurantId);
+            if(restaurant == null) throw new NotFoundException("this restaurant does not exist");
             RestaurantDto restaurantDto = new RestaurantDto(restaurant);
             sendResponse(exchange, 200, gson.toJson(restaurantDto));
         }
 
         private void handleGetUserData(HttpExchange exchange, Long userId) throws IOException {
             UserDto user = new UserDto(userService.findUserById(userId));
+            if(user == null) throw new NotFoundException("this user does not exist");
             sendResponse(exchange, 200, gson.toJson(user));
         }
+
+
     }
 }

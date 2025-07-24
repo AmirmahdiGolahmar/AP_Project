@@ -17,6 +17,8 @@ public class CustomerService {
     private final OrderDao orderDao;
     private final CouponDao couponDao;
     private final ItemRatingDao itemRatingDao;
+    private final CustomerDao customerDao;
+    private final CartItemDao cartItemDao;
 
     public CustomerService() {
         itemDao = new ItemDao();
@@ -25,6 +27,8 @@ public class CustomerService {
         orderDao = new OrderDao();
         couponDao = new CouponDao();
         itemRatingDao = new ItemRatingDao();
+        customerDao = new CustomerDao();
+        cartItemDao = new CartItemDao();
     }
 
     public List<RestaurantDto> searchRestaurant(RestaurantSearchRequestDto request) {
@@ -164,9 +168,11 @@ public class CustomerService {
             if(it.isEmpty()) throw new NotFoundException("Item doesn't exist");
             Item item = it.get();
             if(item.getSupply() < ci.getQuantity()) throw new InvalidInputException("Supply isn't enough");
-            item.subtractSupplyCount(ci.getQuantity());
-            cartItems.add(new CartItem(item, ci.getQuantity()));
-            itemDao.update(item);
+            if(ci.getQuantity() > 0){
+                item.subtractSupplyCount(ci.getQuantity());
+                cartItems.add(new CartItem(item, ci.getQuantity()));
+                itemDao.update(item);
+            }
         }
 
         Order order;
@@ -309,5 +315,48 @@ public class CustomerService {
         itemRatingDao.update(itemRating);
     }
 
+
+    public List<ItemDto> getRestaurantItems(Restaurant restaurant) {
+        return  restaurant.getItems().stream().map(ItemDto::new).toList();
+    }
+
+    public void modifyCartItemQuantity(CartItemDto request, Customer customer) {
+        Customer cust = (Customer) customerDao.findByIdLoadCartItems(customer.getId());
+        List<CartItem> cartItems = cust.getCartItems();
+
+        Item item = itemDao.findById((long)request.getItem_id());
+
+        for (CartItem cartItem : cartItems) {
+            if (cartItem.getItem().getId() == (item.getId())) {
+                int num = cartItem.getQuantity() + request.getQuantity();
+                if (num == 0) {
+                    cartItemDao.delete(cartItem.getId());
+                } else if(num < item.getSupply()){
+                    cartItem.setQuantity(num);
+                    cartItemDao.update(cartItem);
+                }
+                return;
+            }
+        }
+
+        if(request.getQuantity() > 0 && item.getSupply() > 0){
+            CartItem cartItem = new CartItem();
+            cartItem.setItem(item);
+            cartItem.setQuantity(1);
+            cartItem.setUser(cust);
+            cust.getCartItems().add(cartItem);
+            cartItemDao.save(cartItem);
+        }
+    }
+
+    public CartItemDto getCartItemQuantity(Customer customer, Item item) {
+        Customer cust = (Customer) customerDao.findByIdLoadCartItems(customer.getId());
+
+        return cust.getCartItems().stream()
+                .filter(c -> c.getItem().getId().equals(item.getId()))
+                .findFirst()
+                .map(CartItemDto::new)
+                .orElse(new CartItemDto(item.getId(), 0));
+    }
 
 }

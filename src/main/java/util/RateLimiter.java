@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RateLimiter {
     private static final long TIME_WINDOW_MS = 1_000; // 10 sec window
-    private static final int MAX_REQUESTS = 10;         // max reqs per window
+    private static final int MAX_REQUESTS = 10000;         // max reqs per window
 
     private static final Map<String, UserAccessInfo> accessMap = new ConcurrentHashMap<>();
 

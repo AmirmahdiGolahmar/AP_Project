@@ -90,7 +90,7 @@ public class User {
         if (favoriteRestaurants.stream().noneMatch(r -> r.getId().equals(restaurant.getId()))) {
             this.favoriteRestaurants.add(restaurant);
         }else{
-            throw new AlreadyExistsException("Restaurant is already favorite");
+            throw new AlreadyExistsException("Restaurant is already your favorite");
         }
     }
 
@@ -98,7 +98,7 @@ public class User {
         if (favoriteRestaurants.stream().anyMatch(r -> r.getId().equals(restaurant.getId()))) {
             this.favoriteRestaurants.removeIf(r -> r.getId().equals(restaurant.getId()));
         }else{
-            throw new NotFoundException("This restaurant is not favorite");
+            throw new NotFoundException("This restaurant is not you favorite");
         }
     }
 
@@ -117,4 +117,7 @@ public class User {
     public void setPassword(String password) {
         this.password = PasswordHasher.hash(password);
     }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
 }
