@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static util.LocalDateTimeAdapter.TimeToString;
@@ -18,7 +19,7 @@ public class OrderDto {
     Long customer_id;
     Long vendor_id;
     Long coupon_id;
-    List<Long> item_ids;
+    List<ItemHelper> items;
     Long raw_price;
     Double tax_fee;
     Double additional_fee;
@@ -39,7 +40,10 @@ public class OrderDto {
         }else{
             this.setCoupon_id(null);
         }
-        this.setItem_ids(order.getCartItems().stream().map(i -> i.getItem().getId()).collect(Collectors.toList()));
+        this.items = order.getCartItems().stream()
+                .map(i -> new ItemHelper(i.getItem().getId(), i.getQuantity()))
+                .toList();
+
         this.setRaw_price(order.getRawPrice());
 
         if(order.getRestaurant().getTaxFee() != null)
@@ -66,5 +70,15 @@ public class OrderDto {
         this.setStatus(order.getStatus().toString());
         this.setCreated_at(TimeToString(order.getCreatedAt()));
         this.setUpdated_at(TimeToString(order.getUpdatedAt()));
+    }
+
+    static class ItemHelper{
+        Long item_id;
+        Integer quantity;
+
+        ItemHelper(Long item_id, Integer quantity) {
+            this.item_id = item_id;
+            this.quantity = quantity;
+        }
     }
 }

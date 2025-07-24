@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserDto {
-    int id;
+    Long id = (long)0;
     String full_name;
     String phone;
     String email;
@@ -16,8 +16,10 @@ public class UserDto {
     String profileImageBase64;
     bankInfoDto bank_info = new bankInfoDto();
 
+    public UserDto() {}
+
     public UserDto(User user) {
-        this.id = user.getId().intValue();
+        this.id = (long) user.getId().intValue();
         if(user.getFullName() != null) this.full_name = user.getFullName();
         if(user.getEmail() != null) this.email = user.getEmail();
         if(user.getMobile() != null) this.phone = user.getMobile();

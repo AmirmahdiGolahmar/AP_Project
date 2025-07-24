@@ -1,5 +1,6 @@
 package entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import exception.AlreadyExistsException;
 import exception.ForbiddenException;
 import exception.NotFoundException;
@@ -77,7 +78,7 @@ public class User {
        this.bankInfo.setAccountNumber(accountNumber);
    }
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(
             name = "favorite_restaurants",
             joinColumns = @JoinColumn(name = "user_id"),

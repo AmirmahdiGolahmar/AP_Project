@@ -30,6 +30,8 @@ public class Main {
 
         UserControllerHttpServer.init(server, filters, executor);
 
+        DataProvider.init(server, filters, executor);
+
         server.createContext("/restaurants", new RestaurantControllerHttpServer()).getFilters().addAll(filters);
 
         CustomerControllerHttpServer.init(server, filters, executor);

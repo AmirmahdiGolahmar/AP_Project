@@ -30,7 +30,7 @@ public class ItemService {
 
         if(it.isPresent()) throw new AlreadyExistsException("Item with this name already exists");
 
-        Item item = new Item(request.getName(), request.getImageBase64(), request.getDescription(),
+        Item item = new Item(request.getName(), request.getPhoto(), request.getDescription(),
                         request.getPrice(), request.getSupply(), request.getKeywords(), restaurant, 0.0);
 
         restaurant.addItem(item);
@@ -49,7 +49,7 @@ public class ItemService {
                 .orElseThrow(() -> new NotFoundException("Item not found in restaurant"));
 
         if (request.getName() != null) it.setName(request.getName());
-        if (request.getImageBase64() != null) it.setPhoto(request.getImageBase64());
+        if (request.getPhoto() != null) it.setPhoto(request.getPhoto());
         if (request.getDescription() != null) it.setDescription(request.getDescription());
         if (request.getPrice() != null){
             priceValidator(request.getPrice());

@@ -1,7 +1,11 @@
 package dto;
 
 import entity.Restaurant;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class RestaurantDto {
     private Long id;
     private String name;
