@@ -137,7 +137,7 @@ public class RestaurantControllerHttpServer implements HttpHandler {
                 handleAddItemToMenu(exchange, restaurant, menuTitle);
             } else if (path.matches("/restaurants/\\d+/orders") && method.equals("GET")) {
                 handleGetRestaurantOrders(exchange, restaurant);
-            } else if (path.matches("/restaurants/orders/\\d+") && method.equals("PATCH")) {
+            } else if (path.matches("/restaurants/orders/\\d+") && method.equals("PUT")) {
                 handleChangeOrderStatus(exchange, order);
             } else {
                 sendResponse(exchange, 404, gson.toJson(Map.of("error", "Invalid path")));
@@ -172,7 +172,7 @@ public class RestaurantControllerHttpServer implements HttpHandler {
     private void handleUpdateRestaurant(HttpExchange exchange, Restaurant restaurant) throws IOException {
         RestaurantUpdateRequest request = readRequestBody(exchange, RestaurantUpdateRequest.class, gson);
         RestaurantDto response = restaurantService.updateRestaurant(restaurant, request);
-        sendResponse(exchange, 200, gson.toJson(response));
+        sendResponse(exchange, 200, gson.toJson(Map.of("Restaurant updated", response)));
     }
 
     private void handleGetItems(HttpExchange exchange, Restaurant restaurant) throws IOException {
@@ -250,7 +250,7 @@ public class RestaurantControllerHttpServer implements HttpHandler {
         StatusDto request = readRequestBody(exchange, StatusDto.class, gson);
         if(request == null || request.getStatus() == null) throw new InvalidInputException("Invalid request");
         restaurantService.changeOrderStatus(order, request);
-        sendResponse(exchange, 200, gson.toJson("Order status changed successfully"));
+        sendResponse(exchange, 200, gson.toJson(Map.of("message", "Order status changed successfully")));
     }
 
 

@@ -31,8 +31,11 @@ public class DeliveryService {
     }
 
     public List<OrderDto> getAvailableOrders() {
-        return orderDao.findAll().stream().filter(o -> o.getStatus().equals(OrderStatus.submitted) ||
-            o.getDelivery() == null).map(OrderDto::new).toList();
+        return orderDao.findAll().stream().filter(
+                o ->(
+                        o.getStatus().equals(OrderStatus.finding_courier)
+                ) && o.getDelivery() == null
+        ).map(OrderDto::new).toList();
     }
 
     public OrderDto changeOrderStatus(Delivery delivery, Long order_id, String newStaus) {
@@ -45,7 +48,10 @@ public class DeliveryService {
             throw new ForbiddenException("This Order has already accepted.");
 
         OrderStatus status = OrderStatus.strToStatus(newStaus);
-        if(!status.equals(OrderStatus.completed) && !status.equals(OrderStatus.on_the_way))
+        if(!status.equals(OrderStatus.completed) && !status.equals(OrderStatus.on_the_way)
+                && !status.equals(OrderStatus.cancelled) && !status.equals(OrderStatus.accepted)
+                && !status.equals(OrderStatus.finding_courier)
+        )
             throw new UnauthorizedUserException("You are not authorized for this action");
         
         order.setDelivery(delivery);

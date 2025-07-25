@@ -6,8 +6,10 @@ import entity.*;
 import exception.AlreadyExistsException;
 import exception.InvalidInputException;
 import exception.NotFoundException;
+import lombok.SneakyThrows;
 import util.SearchUtil;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +87,13 @@ public class AdminService {
     }
 
     public List<UserDto> getAllUsers() {
-        return userDao.findAll().stream().map(UserDto::new).toList();
+        return userDao.findAll().stream().map(user -> {
+            try {
+                return new UserDto(user);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create UserDto", e);
+            }
+        }).toList();
     }
 
     public void changeUserStatus(User user, StatusDto request) {
@@ -143,5 +151,11 @@ public class AdminService {
                 SearchUtil.search(allTransactions, Transaction.class, searchFilter, searchFields, filters);
 
         return result.stream().map(PaymentReceiptDto::new).toList();
+    }
+
+    public void removeUser(Long userId) {
+        User user = userDao.findById(userId);
+        if (user == null) throw new NotFoundException("This user doesn't exists");
+        userDao.delete(userId);
     }
 }

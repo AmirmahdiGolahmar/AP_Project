@@ -4,6 +4,8 @@ import entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
+
 @Getter
 @Setter
 public class UserDto {
@@ -18,7 +20,7 @@ public class UserDto {
 
     public UserDto() {}
 
-    public UserDto(User user) {
+    public UserDto(User user) throws IOException {
         this.id = (long) user.getId().intValue();
         if(user.getFullName() != null) this.full_name = user.getFullName();
         if(user.getEmail() != null) this.email = user.getEmail();

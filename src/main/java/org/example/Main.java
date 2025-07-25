@@ -22,6 +22,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
+
+
         List<Filter> filters = List.of(new LoggingFilter(), new RateLimitFilter(), new TimeoutFilter());
 
         LogManager.getLogManager().reset();

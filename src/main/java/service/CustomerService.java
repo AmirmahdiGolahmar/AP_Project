@@ -170,7 +170,11 @@ public class CustomerService {
             if(item.getSupply() < ci.getQuantity()) throw new InvalidInputException("Supply isn't enough");
             if(ci.getQuantity() > 0){
                 item.subtractSupplyCount(ci.getQuantity());
-                cartItems.add(new CartItem(item, ci.getQuantity()));
+                CartItem cartItem = new CartItem();
+                cartItem.setQuantity(ci.getQuantity());
+                cartItem.setItem(item);
+                cartItem.setUser(customer);
+                cartItems.add(cartItem);
                 itemDao.update(item);
             }
         }

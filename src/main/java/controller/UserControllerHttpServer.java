@@ -95,8 +95,11 @@ public class UserControllerHttpServer {
             User user = userService.login(request.getMobile(), request.getPassword());
             String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
 
-            loginResponse response = new loginResponse("User Login successfully", token, user);
-            sendResponse(exchange, 200, gson.toJson(response));
+            sendResponse(exchange, 200, gson.toJson(
+                    Map.of("message", "User logged in successfully",
+                    "user", new UserDto(user),
+                    "token", token)
+            ));
         }
 
         private void handleGetProfile(HttpExchange exchange) throws IOException {
@@ -105,7 +108,7 @@ public class UserControllerHttpServer {
             Long userId = Long.parseLong(claims.getSubject());
 
             UserDto user = new UserDto(userService.findUserById(userId));
-            sendResponse(exchange, 200, gson.toJson(user));
+            sendResponse(exchange, 200, gson.toJson(Map.of("Current user profile", user)));
         }
 
         private void handleUpdateProfile(HttpExchange exchange) throws IOException {

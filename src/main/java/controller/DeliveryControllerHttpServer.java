@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static util.AuthorizationHandler.authorize;
 import static util.HttpUtil.*;
@@ -52,7 +54,7 @@ public class DeliveryControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "Invalid path")));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
@@ -69,26 +71,27 @@ public class DeliveryControllerHttpServer {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+
                 URI uri = exchange.getRequestURI();
                 String method = exchange.getRequestMethod();
                 String path = uri.getPath();
 
-                String[] parts = path.split("/");
-                if (parts.length == 3 && "PATCH".equalsIgnoreCase(method)) {
-                    handelChangeOrderStatus(exchange, parts);
+                Matcher matcher = Pattern.compile("/deliveries/(\\d+)").matcher(path);
+                if (matcher.find() && "PUT".equalsIgnoreCase(method)) {
+                    handelChangeOrderStatus(exchange, matcher);
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "Invalid path")));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
             }
         }
 
-        private void handelChangeOrderStatus(HttpExchange exchange, String[] parts) throws IOException {
+        private void handelChangeOrderStatus(HttpExchange exchange, Matcher matcher) throws IOException {
             Delivery delivery = authorize(exchange, UserRole.DELIVERY);
-            Long orderId = Long.parseLong(parts[2]);
+            Long orderId = Long.parseLong(matcher.group(1));
 
             StatusDto bodyMap = readRequestBody(exchange, StatusDto.class, gson);
             String status = bodyMap.getStatus();
@@ -102,12 +105,13 @@ public class DeliveryControllerHttpServer {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+
                 if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
                     searchOrderHistory(exchange);
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "Invalid path")));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);

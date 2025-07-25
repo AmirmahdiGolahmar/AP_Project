@@ -59,11 +59,23 @@ public class AdminControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                matcher = Pattern.compile("/admin/users/([0-9]+)").matcher(path);
+                if ("DELETE".equalsIgnoreCase(method) && matcher.matches()) {
+                    handleDeleteUsers(exchange, matcher);
+                    return;
+                }
+
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "Invalid path")));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
             }
+        }
+
+        private void handleDeleteUsers(HttpExchange exchange, Matcher matcher) throws IOException {
+            Long userId = Long.parseLong(matcher.group(1));
+            adminService.removeUser(userId);
+            sendResponse(exchange, 200, gson.toJson(Map.of("message","user removed")));
         }
 
         private void handleChangeUserStatus(HttpExchange exchange ,Matcher matcher) throws IOException {
@@ -71,7 +83,7 @@ public class AdminControllerHttpServer {
             User user = authorizeUser(userId, null);
             StatusDto request = readRequestBody(exchange, StatusDto.class,gson);
             adminService.changeUserStatus(user, request);
-            sendResponse(exchange, 200, gson.toJson("Status updated"));
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Status updated")));
         }
 
         private void handleGetUsers(HttpExchange exchange ) throws IOException {
@@ -91,7 +103,7 @@ public class AdminControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "Invalid path")));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
@@ -121,7 +133,7 @@ public class AdminControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "Invalid path")));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);

@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class bankInfoDto {
-    String bank_name;
-    String account_number;
+    String bank_name = null;
+    String account_number = null;
 
     public bankInfoDto(BankInfo bankInfo) {
         this.bank_name = bankInfo.getBankName();

@@ -9,6 +9,8 @@ import util.validator.UserValidator;
 import dto.UserRegistrationRequest;
 import dao.*;
 
+import java.io.IOException;
+
 import static util.validator.validator.*;
 
 public class UserService {
@@ -27,7 +29,7 @@ public class UserService {
         seeder.seedAdmin();
     }
 
-    public User createUser(UserRegistrationRequest request) {
+    public User createUser(UserRegistrationRequest request) throws IOException {
 
         UserValidator.validateUserRegistrationRequest(request);
 
@@ -38,11 +40,11 @@ public class UserService {
             default -> UserRole.DELIVERY;
         };
 
-        if(userRole != UserRole.CUSTOMER &&
-                (request.getBank_info() == null || request.getBank_info().getAccount_number() == null ||
-                        request.getBank_info().getAccount_number().isBlank() ||
-                        request.getBank_info().getBank_name() == null) ||
-                        request.getBank_info().getBank_name().isBlank()
+        if((request.getBank_info() == null ||
+                request.getBank_info().getAccount_number() == null ||
+                request.getBank_info().getAccount_number().isBlank() ||
+                request.getBank_info().getBank_name() == null ||
+                request.getBank_info().getBank_name().isBlank()) && userRole != UserRole.CUSTOMER
         ) throw new InvalidInputException(userRole.toString() + " must register bank name and account number");
 
         if (userRole == UserRole.CUSTOMER) {
@@ -111,7 +113,7 @@ public class UserService {
         }
     }
 
-    private void fillUserFields(User user, UserRegistrationRequest request) {
+    private void fillUserFields(User user, UserRegistrationRequest request) throws IOException {
         UserRole userRole = switch (request.getRole().toLowerCase()) {
             case "buyer" -> UserRole.CUSTOMER;
             case "customer" -> UserRole.CUSTOMER;
@@ -131,33 +133,33 @@ public class UserService {
         }
     }
 
-    public void updateProfile(Long userId, UserProfileUpdateRequest request) {
+    public void updateProfile(Long userId, UserProfileUpdateRequest request) throws IOException {
         User user = userDao.findById(userId);
 
-        if (request.getFull_name() != null) {
+        if (request.getFull_name() != null && !request.getFull_name().isBlank()) {
             fullNameValidator(request.getFull_name());
             user.setFullName(request.getFull_name());
         }
-        if (request.getPhone() != null) {
+        if (request.getPhone() != null && !request.getPhone().isBlank()) {
             mobileValidator(request.getPhone());
             user.setMobile(request.getPhone());
         }
-        if (request.getEmail() != null) {
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
             emailValidator(request.getEmail());
             user.setEmail(request.getEmail());
         }
-        if (request.getAddress() != null) {
+        if (request.getAddress() != null && !request.getAddress().isBlank()) {
             addressValidator(request.getAddress());
             user.setAddress(request.getAddress());
         }
-        if (request.getProfileImageBase64() != null) {
+        if (request.getProfileImageBase64() != null && !request.getProfileImageBase64().isBlank()) {
             user.setPhoto(request.getProfileImageBase64());
         }
         if(request.getBank_info() != null){
-            if(request.getBank_info().getBank_name() != null) {
+            if(request.getBank_info().getBank_name() != null && !request.getBank_info().getBank_name().isBlank()) {
                 user.setBankName(request.getBank_info().getBank_name());
             }
-            if (request.getBank_info().getAccount_number() != null) {
+            if (request.getBank_info().getAccount_number() != null && !request.getBank_info().getAccount_number().isBlank()) {
                 user.setAccountNumber(request.getBank_info().getAccount_number());
             }
         }

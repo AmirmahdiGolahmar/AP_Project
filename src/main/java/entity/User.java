@@ -10,8 +10,13 @@ import lombok.Getter;
 import lombok.Setter;
 import util.PasswordHasher;
 
+import javax.management.openmbean.InvalidOpenTypeException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static util.ImageProcess.base64ToImageFile;
+import static util.ImageProcess.imageFileToBase64;
 
 @Entity
 @Table(name = "users")
@@ -120,4 +125,12 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
+
+    public void setPhoto(String photo) throws IOException {
+        this.photo = base64ToImageFile(photo, "User" + this.id);
+    }
+
+    public String getPhoto() throws IOException {
+        return imageFileToBase64("User" + this.id);
+    }
 }
