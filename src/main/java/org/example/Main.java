@@ -1,30 +1,31 @@
 package org.example;
 
 import com.sun.net.httpserver.Filter;
-import util.Filter.LoggingFilter;
 import com.sun.net.httpserver.HttpServer;
+import controller.*;
+import util.FileCleaner;
+import util.Filter.LoggingFilter;
+import util.Filter.RateLimitFilter;
+import util.Filter.TimeoutFilter;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
-import controller.*;
-import util.Filter.RateLimitFilter;
-import util.Filter.TimeoutFilter;
-
 import static util.Log.LogUtil.startLogging;
 
 public class Main {
     private static final ExecutorService executor = Executors.newFixedThreadPool(10);
 
+
     public static void main(String[] args) throws IOException {
 
-
-
-        List<Filter> filters = List.of(new LoggingFilter(), new RateLimitFilter(), new TimeoutFilter());
+        //new TimeoutFilter()
+        List<Filter> filters = List.of(new LoggingFilter(), new RateLimitFilter());
 
         LogManager.getLogManager().reset();
 

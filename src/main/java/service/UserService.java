@@ -77,20 +77,8 @@ public class UserService {
         User user = null;
 
         try {
-            user = customerDao.findByMobile(mobile);
+            user = userDao.findByMobile(mobile);
         } catch (NoResultException ignored) {}
-
-        if (user == null) {
-            try {
-                user = sellerDao.findByMobile(mobile);
-            } catch (NoResultException ignored) {}
-        }
-
-        if (user == null) {
-            try {
-                user = deliveryDao.findByMobile(mobile);
-            } catch (NoResultException ignored) {}
-        }
 
         if (user == null) throw new NotFoundException("Phone number " + mobile + " is not registered");
 

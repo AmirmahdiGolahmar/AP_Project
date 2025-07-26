@@ -53,11 +53,22 @@ public class DeliveryService {
                 && !status.equals(OrderStatus.finding_courier)
         )
             throw new UnauthorizedUserException("You are not authorized for this action");
+
+        try{
+            if(status.equals(OrderStatus.finding_courier)){
+                order.setDelivery(null);
+                delivery.getOrders().remove(order);
+            }else{
+                order.setDelivery(delivery);
+                delivery.addOrder(order);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            System.err.println("Error in add or remove order to delivery order list");
+        }
         
-        order.setDelivery(delivery);
         order.setStatus(status);
         order.setUpdatedAt(LocalDateTime.now());
-        delivery.addOrder(order);
 
         orderDao.update(order);
         userDao.update(delivery);

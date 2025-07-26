@@ -9,7 +9,7 @@ public enum OrderStatus {
     cancelled,
     finding_courier,
     on_the_way,
-    completed, accepted, rejected, served;
+    completed, accepted, rejected, served, unpaid;
 
     public static OrderStatus strToStatus(String str) {
         if (str == null) {

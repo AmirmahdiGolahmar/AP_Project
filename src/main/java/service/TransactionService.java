@@ -85,6 +85,11 @@ public class TransactionService {
             }
             transaction.setPaymentStatus(PaymentStatus.success);
             order.setPaid(true);
+            order.setStatus(OrderStatus.completed);
+            for(CartItem cartItem : order.getCartItems()) {
+                Item item = cartItem.getItem();
+                item.subtractSupplyCount(cartItem.getQuantity());
+            }
         }catch(ForbiddenException e){
             transaction.setPaymentStatus(PaymentStatus.failed);
         }

@@ -29,6 +29,7 @@ public class OrderDto {
     String status;
     String created_at;
     String updated_at;
+    Boolean is_paid;
 
     public OrderDto(Order order) {
         this.setId(order.getId());
@@ -70,6 +71,7 @@ public class OrderDto {
         this.setStatus(order.getStatus().toString());
         this.setCreated_at(TimeToString(order.getCreatedAt()));
         this.setUpdated_at(TimeToString(order.getUpdatedAt()));
+        this.is_paid = order.isPaid();
     }
 
     static class ItemHelper{

@@ -49,7 +49,7 @@ public class TransactionControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "invalid path")));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
@@ -70,7 +70,7 @@ public class TransactionControllerHttpServer {
                 URI uri = exchange.getRequestURI();
                 String path = uri.getPath();
 
-                if ("POST".equalsIgnoreCase(method) && "/wallet/topUp".equals(path)) {
+                if ("POST".equalsIgnoreCase(method) && "/wallet/top-up".equals(path)) {
                     handleTopUp(exchange);
                     return;
                 }
@@ -80,7 +80,7 @@ public class TransactionControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "invalid path")));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
@@ -91,7 +91,7 @@ public class TransactionControllerHttpServer {
             User user = authorize(exchange, UserRole.CUSTOMER);
             AmountDto request = readRequestBody(exchange, AmountDto.class, gson);
             transactionService.topUp(user, request);
-            sendResponse(exchange, 200, gson.toJson("Wallet topped up successfully"));
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Wallet topped up successfully")));
         }
 
         private void handleGetBalance(HttpExchange exchange) throws IOException {
@@ -109,7 +109,7 @@ public class TransactionControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "invalid path")));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);

@@ -1,6 +1,8 @@
 package controller;
 
 import com.sun.net.httpserver.Filter;
+import dao.ItemDao;
+import dao.OrderDao;
 import service.MenuService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -145,7 +147,7 @@ public class CustomerControllerHttpServer {
                 }
                 Matcher matcher = Pattern.compile("/items/cart-items").matcher(uri.getPath());
                 if ("POST".equals(method) && matcher.matches()) {
-                    handelAddToCartItems(exchange, customer);
+                    handelModifyCartItems(exchange, customer);
                     return;
                 }
                 matcher = Pattern.compile("/items/(\\d+)/cart-item").matcher(uri.getPath());
@@ -163,15 +165,18 @@ public class CustomerControllerHttpServer {
         }
 
         private void handelGetCartItem(HttpExchange exchange, Customer customer, long itemId) throws IOException {
+
             Item item = validateItem(itemId, null);
+
             CartItemDto response =  customerService.getCartItemQuantity(customer, item);
+
             sendResponse(exchange, 200, gson.toJson(Map.of("Cart item", response)));
         }
 
-        private void handelAddToCartItems(HttpExchange exchange, Customer customer) throws IOException {
-            CartItemDto request = readRequestBody(exchange, CartItemDto.class, gson);
-            customerService.modifyCartItemQuantity(request, customer);
-            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Cart item added or modified")));
+        private void handelModifyCartItems(HttpExchange exchange, Customer customer) throws IOException {
+            CartItemDto cartItem = readRequestBody(exchange, CartItemDto.class, gson);
+            customerService.modifyCartItemQuantity(cartItem, customer);
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Pre order modified")));
         }
 
         private void handleSearchItem(HttpExchange exchange) throws IOException {

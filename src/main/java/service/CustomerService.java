@@ -169,7 +169,7 @@ public class CustomerService {
             Item item = it.get();
             if(item.getSupply() < ci.getQuantity()) throw new InvalidInputException("Supply isn't enough");
             if(ci.getQuantity() > 0){
-                item.subtractSupplyCount(ci.getQuantity());
+                //item.subtractSupplyCount(ci.getQuantity());
                 CartItem cartItem = new CartItem();
                 cartItem.setQuantity(ci.getQuantity());
                 cartItem.setItem(item);
@@ -182,12 +182,12 @@ public class CustomerService {
         Order order;
         if(coupon == null){
             order = new Order(cartItems, request.getDelivery_address(),
-                    customer, restaurant, LocalDateTime.now(), LocalDateTime.now(), OrderStatus.submitted);
+                    customer, restaurant, LocalDateTime.now(), LocalDateTime.now(), OrderStatus.unpaid);
         }else{
-            coupon.subtractUserCount();
-            couponDao.update(coupon);
+            //coupon.subtractUserCount();
+            //couponDao.update(coupon);
             order = new Order(cartItems, request.getDelivery_address(),
-                    customer, restaurant, LocalDateTime.now(), LocalDateTime.now(), coupon, OrderStatus.submitted);
+                    customer, restaurant, LocalDateTime.now(), LocalDateTime.now(), coupon, OrderStatus.unpaid);
         }
 
         orderDao.save(order);
@@ -206,7 +206,7 @@ public class CustomerService {
         String vendorFilter = (vendor == null || vendor.isBlank()) ? "" : vendor.toLowerCase();
 
         List<Order> allOrders = orderDao.findAll().stream()
-                .filter(o -> o.getCustomer().getId().equals(customer.getId())).collect(Collectors.toList());
+                .filter(o -> o.getCustomer().getId().equals(customer.getId())).toList();
 
         List<String> searchFields = List.of("deliveryAddress", "coupon.code", "status",
                 "delivery.fullName", "restaurant.name", "createdAt", "updatedAt");
@@ -324,43 +324,62 @@ public class CustomerService {
         return  restaurant.getItems().stream().map(ItemDto::new).toList();
     }
 
-    public void modifyCartItemQuantity(CartItemDto request, Customer customer) {
-        Customer cust = (Customer) customerDao.findByIdLoadCartItems(customer.getId());
-        List<CartItem> cartItems = cust.getCartItems();
-
-        Item item = itemDao.findById((long)request.getItem_id());
-
-        for (CartItem cartItem : cartItems) {
-            if (cartItem.getItem().getId() == (item.getId())) {
-                int num = cartItem.getQuantity() + request.getQuantity();
-                if (num == 0) {
-                    cartItemDao.delete(cartItem.getId());
-                } else if(num < item.getSupply()){
-                    cartItem.setQuantity(num);
-                    cartItemDao.update(cartItem);
+    public void modifyCartItemQuantity(CartItemDto cartItem, Customer customer) {
+        Item item = new ItemDao().findById(cartItem.getItem_id());
+        Order order = new OrderDao().findAll().stream().filter(
+                o -> o.getCustomer().getId() == customer.getId() &&
+                o.getStatus().equals(OrderStatus.unpaid) &&
+                o.getRestaurant().getId().equals(item.getRestaurant().getId())
+                ).findFirst().orElse(null);
+        if(order == null && cartItem.getQuantity() > 0) {
+            OrderRegistrationRequest orderDto = new OrderRegistrationRequest();
+            orderDto.getItems().add(cartItem);
+            Restaurant restaurant = item.getRestaurant();
+            orderDto.setVendor_id(restaurant.getId());
+            Coupon coupon = null;
+            addOrder(orderDto, customer, restaurant, coupon);
+        }if(order == null && cartItem.getQuantity() < 0) {
+            return;
+        } else{
+            List<CartItem> cartItems = order.getCartItems();
+            for (CartItem ci : cartItems) {
+                if (ci.getItem().getId() == (item.getId())) {
+                    int num = ci.getQuantity() + cartItem.getQuantity();
+                    if (num == 0) {
+                        cartItems.remove(ci);
+                    } else if(num <= item.getSupply()){
+                        ci.setQuantity(num);
+                    }
+                    if(cartItems.isEmpty()){
+                        orderDao.delete(order.getId());
+                    }else {
+                        orderDao.update(order);
+                    }
+                    return;
                 }
-                return;
             }
+            CartItem newCartItem = new CartItem();
+            newCartItem.setItem(item);
+            newCartItem.setQuantity(cartItem.getQuantity());
+            newCartItem.setUser(customer);
+            cartItems.add(newCartItem);
+            orderDao.update(order);
         }
 
-        if(request.getQuantity() > 0 && item.getSupply() > 0){
-            CartItem cartItem = new CartItem();
-            cartItem.setItem(item);
-            cartItem.setQuantity(1);
-            cartItem.setUser(cust);
-            cust.getCartItems().add(cartItem);
-            cartItemDao.save(cartItem);
-        }
     }
 
     public CartItemDto getCartItemQuantity(Customer customer, Item item) {
-        Customer cust = (Customer) customerDao.findByIdLoadCartItems(customer.getId());
+        //Customer cust = (Customer) customerDao.findByIdLoadCartItems(customer.getId());
 
-        return cust.getCartItems().stream()
-                .filter(c -> c.getItem().getId().equals(item.getId()))
-                .findFirst()
-                .map(CartItemDto::new)
-                .orElse(new CartItemDto(item.getId(), 0));
+        Order order = orderDao.findAll().stream().filter(o ->
+                o.getCustomer().getId().equals(customer.getId()) &&
+                        o.getStatus().equals(OrderStatus.unpaid) &&
+                        o.getRestaurant().getId().equals(item.getRestaurant().getId())
+        ).findFirst().orElse(null);
+
+        if(order == null) return new CartItemDto(item.getId(), 0);
+        CartItem cartItem = order.getCartItems().stream().filter(o -> o.getItem().getId().equals(item.getId())).findFirst().orElse(null);
+        if(cartItem == null) return new CartItemDto(item.getId(), 0);
+        else return new CartItemDto(cartItem.getItem().getId(), cartItem.getQuantity());
     }
-
 }
