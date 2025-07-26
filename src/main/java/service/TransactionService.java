@@ -65,6 +65,7 @@ public class TransactionService {
         if(!order.getCustomer().getId().equals(user.getId())) throw new ForbiddenException("You can't pay for this order");
 
         Seller seller = order.getRestaurant().getSeller();
+        Delivery delivery = order.getDelivery();
 
         PaymentMethod method = PaymentMethod.strToStatus(request.getMethod());
 
@@ -77,15 +78,15 @@ public class TransactionService {
         try{
             if(method.equals(PaymentMethod.wallet)){
                 user.withdraw(order.getPayPrice());
-                seller.deposit(order.getPayPrice());
             }
             if(method.equals(PaymentMethod.online)){
                 onlinePay();
-                seller.deposit(order.getPayPrice());
             }
+            seller.deposit((long)(order.getPayPrice() - 1.25*order.getRestaurant().getAdditionalFee()));
+
             transaction.setPaymentStatus(PaymentStatus.success);
             order.setPaid(true);
-            order.setStatus(OrderStatus.completed);
+            order.setStatus(OrderStatus.submitted);
             for(CartItem cartItem : order.getCartItems()) {
                 Item item = cartItem.getItem();
                 item.subtractSupplyCount(cartItem.getQuantity());

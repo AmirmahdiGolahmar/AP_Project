@@ -96,9 +96,9 @@ public class Order {
         double additionalTaxFee = restaurant.getAdditionalFee() == null ? 0.0 : restaurant.getAdditionalFee();
 
         if(taxFee > 0 && taxFee <= 1 && additionalTaxFee > 0 && additionalTaxFee <= 1)
-            price = (long)  (getRawPrice() * (restaurant.getTaxFee() + restaurant.getAdditionalFee()));
+            price = (long)  (getRawPrice() * (restaurant.getTaxFee() + 1.25*restaurant.getAdditionalFee()));
         else
-            price = (long) (getRawPrice() + restaurant.getTaxFee() + restaurant.getAdditionalFee());
+            price = (long) (getRawPrice() + restaurant.getTaxFee() + 1.25*restaurant.getAdditionalFee());
 
        if(coupon == null){
            return price;

@@ -10,6 +10,7 @@ import dao.*;
 import dto.*;
 import entity.Coupon;
 import entity.Item;
+import entity.Order;
 import entity.Restaurant;
 import exception.NotFoundException;
 import service.RestaurantService;
@@ -80,6 +81,11 @@ public class DataProvider {
                             handleGetItem(exchange, itemId);
                     } else if (path.matches("/dt/coupons") && method.equals("GET")) {
                         handleGetCoupons(exchange);
+                    } else if (path.matches("/dt/order.(\\d+)") && method.equals("GET")) {
+                        matcher = Pattern.compile("/dt/order/(\\d+)").matcher(path);
+                        Long orderId = null;
+                        if (matcher.find()) orderId = Long.parseLong(matcher.group(1));
+                        handleGetOrder(exchange, orderId);
                     }
                     else {
                         sendResponse(exchange, 404, gson.toJson(Map.of("error", "Not found")));
@@ -91,6 +97,12 @@ public class DataProvider {
                     expHandler(e, exchange, gson);
                 }
             });
+        }
+
+        private void handleGetOrder(HttpExchange exchange, Long orderId) throws IOException {
+            Order order = orderDao.findById(orderId);
+            OrderDto orderDto = new OrderDto(order);
+            sendResponse(exchange, 200, gson.toJson(orderDto));
         }
 
         private void handleGetCoupons(HttpExchange exchange) throws IOException {

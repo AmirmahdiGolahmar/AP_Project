@@ -114,7 +114,7 @@ public class UserService {
         user.setMobile(request.getMobile());
         if(request.getEmail() != null)  user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
-        if(request.getProfileImageBase64() != null) user.setPhoto(request.getProfileImageBase64());
+        if(request.getProfileImageBase64() != null && !request.getProfileImageBase64().isEmpty()) user.setPhoto(request.getProfileImageBase64());
         if(request.getBank_info() != null){
             if(request.getBank_info().getBank_name() != null) user.setBankName(request.getBank_info().getBank_name());
             if(request.getBank_info().getAccount_number() != null) user.setAccountNumber(request.getBank_info().getAccount_number());

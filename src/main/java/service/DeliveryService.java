@@ -66,6 +66,10 @@ public class DeliveryService {
             e.printStackTrace();
             System.err.println("Error in add or remove order to delivery order list");
         }
+
+        if(status.equals(OrderStatus.completed)){
+            delivery.deposit((long)((long).25*order.getRestaurant().getAdditionalFee()));
+        }
         
         order.setStatus(status);
         order.setUpdatedAt(LocalDateTime.now());
