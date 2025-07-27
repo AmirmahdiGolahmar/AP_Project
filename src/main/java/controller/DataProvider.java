@@ -81,6 +81,11 @@ public class DataProvider {
                             handleGetItem(exchange, itemId);
                     } else if (path.matches("/dt/coupons") && method.equals("GET")) {
                         handleGetCoupons(exchange);
+                    } else if (path.matches("/dt/coupons/(\\d+)") && method.equals("GET")) {
+                        matcher = Pattern.compile("/dt/coupons/(\\d+)").matcher(path);
+                        Long couponId = null;
+                        if (matcher.find()) couponId = Long.parseLong(matcher.group(1));
+                        handleGetCoupon(exchange, couponId);
                     } else if (path.matches("/dt/order.(\\d+)") && method.equals("GET")) {
                         matcher = Pattern.compile("/dt/order/(\\d+)").matcher(path);
                         Long orderId = null;
@@ -97,6 +102,13 @@ public class DataProvider {
                     expHandler(e, exchange, gson);
                 }
             });
+        }
+
+        private void handleGetCoupon(HttpExchange exchange, Long couponId) throws IOException {
+            Coupon coupon = couponDao.findById(couponId);
+            if (coupon == null) throw new NotFoundException("Coupon not found");
+            CouponDto couponDto = new CouponDto(coupon);
+            sendResponse(exchange, 200, gson.toJson(Map.of("Coupon details", couponDto)));
         }
 
         private void handleGetOrder(HttpExchange exchange, Long orderId) throws IOException {

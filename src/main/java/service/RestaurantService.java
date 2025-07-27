@@ -3,6 +3,8 @@ import dao.*;
 import dto.*;
 import entity.*;
 import exception.AlreadyExistsException;
+import exception.ForbiddenException;
+import exception.NotFoundException;
 import util.SearchUtil;
 
 import java.time.LocalDateTime;
@@ -16,6 +18,7 @@ public class RestaurantService {
     private final RestaurantDao restaurantDao;
     private final OrderDao orderDao;
     private final UserDao userDao;
+    private final CouponDao couponDao;
     private final ItemRatingDao itemRatingDao;
 
     public RestaurantService() {
@@ -23,6 +26,7 @@ public class RestaurantService {
         this.orderDao = new OrderDao();
         this.userDao = new UserDao();
         this.itemRatingDao = new ItemRatingDao();
+        this.couponDao = new CouponDao();
     }
 
     public Restaurant createRestaurant(RestaurantRegistrationRequest request, Seller seller) {
@@ -138,5 +142,19 @@ public class RestaurantService {
         }
 
         return response;
+    }
+
+    public void applyCouponToOrder(Long orderId, String couponCode) {
+        Order order = orderDao.findById(orderId);
+        if (order == null) throw new NotFoundException("Order not found");
+        Coupon coupon = couponDao.findAll().stream().filter(c -> c.getCode().equalsIgnoreCase(couponCode)).findFirst().orElse(null);
+        if (coupon == null) throw new NotFoundException("Coupon not found");
+
+        if(order.getCoupon() != null) throw new ForbiddenException("You have already applied one coupon for this order");
+        else{
+            order.setCoupon(coupon);
+            orderDao.update(order);
+        }
+
     }
 }

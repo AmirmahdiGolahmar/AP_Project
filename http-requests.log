@@ -1,0 +1,1280 @@
+----  HTTP Response  ----
+Time   : 2025-07-28 02:23:30
+Body   : {
+  "error": "Forbidden request",
+  "message": "You have already applied one coupon for this order"
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-28 02:23:58
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:00
+Method : GET
+URI    : /favorites
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:00
+Body   : {
+  "List of favorite restaurants": [
+    {
+      "id": 3,
+      "seller_id": 6,
+      "name": "restaurant3-seller2_new",
+      "address": "Tehran-change",
+      "phone": "02100000023",
+      "logoBase64": "IMAGE-change",
+      "tax_fee": 20.0,
+      "additional_fee": 100.0
+    },
+    {
+      "id": 1,
+      "seller_id": 3,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 30.0,
+      "additional_fee": 200.0
+    },
+    {
+      "id": 2,
+      "seller_id": 3,
+      "name": "restaurant2-seller1",
+      "address": "Tehran",
+      "phone": "02100000012",
+      "tax_fee": 50.0,
+      "additional_fee": 60.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:00
+Method : GET
+URI    : /dt/user/6
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:00
+Body   : {
+  "id": 6,
+  "full_name": "seller2",
+  "phone": "09190000002",
+  "email": "seller2@gmail.com",
+  "role": "seller",
+  "address": "Iran, Tehran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:00
+Method : GET
+URI    : /dt/user/3
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:00
+Body   : {
+  "id": 3,
+  "full_name": "seller1",
+  "phone": "09190000001",
+  "email": "seler1@gmail.com",
+  "role": "seller",
+  "address": "shiraz",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:00
+Method : GET
+URI    : /dt/user/3
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:00
+Body   : {
+  "id": 3,
+  "full_name": "seller1",
+  "phone": "09190000001",
+  "email": "seler1@gmail.com",
+  "role": "seller",
+  "address": "shiraz",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:00
+Method : GET
+URI    : /favorites
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:00
+Body   : {
+  "List of favorite restaurants": [
+    {
+      "id": 3,
+      "seller_id": 6,
+      "name": "restaurant3-seller2_new",
+      "address": "Tehran-change",
+      "phone": "02100000023",
+      "logoBase64": "IMAGE-change",
+      "tax_fee": 20.0,
+      "additional_fee": 100.0
+    },
+    {
+      "id": 1,
+      "seller_id": 3,
+      "name": "restaurant1-seller1",
+      "address": "Tehran, tajrish",
+      "phone": "02100000011",
+      "logoBase64": "IMAGE",
+      "tax_fee": 30.0,
+      "additional_fee": 200.0
+    },
+    {
+      "id": 2,
+      "seller_id": 3,
+      "name": "restaurant2-seller1",
+      "address": "Tehran",
+      "phone": "02100000012",
+      "tax_fee": 50.0,
+      "additional_fee": 60.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:00
+Method : GET
+URI    : /dt/user/6
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:00
+Body   : {
+  "id": 6,
+  "full_name": "seller2",
+  "phone": "09190000002",
+  "email": "seller2@gmail.com",
+  "role": "seller",
+  "address": "Iran, Tehran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:00
+Method : GET
+URI    : /dt/user/3
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:01
+Body   : {
+  "id": 3,
+  "full_name": "seller1",
+  "phone": "09190000001",
+  "email": "seler1@gmail.com",
+  "role": "seller",
+  "address": "shiraz",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:01
+Method : GET
+URI    : /dt/user/3
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:01
+Body   : {
+  "id": 3,
+  "full_name": "seller1",
+  "phone": "09190000001",
+  "email": "seler1@gmail.com",
+  "role": "seller",
+  "address": "shiraz",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:02
+Method : GET
+URI    : /orders/history
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:02
+Body   : {
+  "List of past orders": [
+    {
+      "id": 11,
+      "delivery_address": "Tehran, tajrish",
+      "customer_id": 1,
+      "vendor_id": 1,
+      "coupon_id": 2,
+      "items": [
+        {
+          "item_id": 1,
+          "quantity": 2
+        }
+      ],
+      "raw_price": 150,
+      "tax_fee": 30.0,
+      "additional_fee": 200.0,
+      "courier_fee": 50.0,
+      "pay_price": 420,
+      "courier_id": 4,
+      "status": "completed",
+      "created_at": "2025-07-25 11:01:33",
+      "updated_at": "2025-07-27 18:42:43",
+      "is_paid": true
+    },
+    {
+      "id": 12,
+      "delivery_address": "Tehran, tajrish",
+      "customer_id": 1,
+      "vendor_id": 1,
+      "items": [
+        {
+          "item_id": 2,
+          "quantity": 4
+        }
+      ],
+      "raw_price": 144,
+      "tax_fee": 30.0,
+      "additional_fee": 200.0,
+      "courier_fee": 50.0,
+      "pay_price": 424,
+      "courier_id": 4,
+      "status": "completed",
+      "created_at": "2025-07-25 11:46:16",
+      "updated_at": "2025-07-27 18:42:28",
+      "is_paid": true
+    },
+    {
+      "id": 13,
+      "delivery_address": "Tehran, pasdaran",
+      "customer_id": 1,
+      "vendor_id": 2,
+      "items": [
+        {
+          "item_id": 6,
+          "quantity": 4
+        }
+      ],
+      "raw_price": 600,
+      "tax_fee": 50.0,
+      "additional_fee": 60.0,
+      "courier_fee": 15.0,
+      "pay_price": 725,
+      "courier_id": 4,
+      "status": "completed",
+      "created_at": "2025-07-25 11:47:09",
+      "updated_at": "2025-07-27 18:42:47",
+      "is_paid": true
+    },
+    {
+      "id": 14,
+      "delivery_address": "Tehran, pasdaran",
+      "customer_id": 1,
+      "vendor_id": 2,
+      "items": [
+        {
+          "item_id": 6,
+          "quantity": 3
+        }
+      ],
+      "raw_price": 450,
+      "tax_fee": 50.0,
+      "additional_fee": 60.0,
+      "courier_fee": 15.0,
+      "pay_price": 575,
+      "status": "submitted",
+      "created_at": "2025-07-25 11:47:27",
+      "updated_at": "2025-07-25 11:47:27",
+      "is_paid": true
+    },
+    {
+      "id": 15,
+      "delivery_address": "Tehran, velenjak",
+      "customer_id": 1,
+      "vendor_id": 2,
+      "coupon_id": 1,
+      "items": [
+        {
+          "item_id": 8,
+          "quantity": 3
+        },
+        {
+          "item_id": 6,
+          "quantity": 5
+        }
+      ],
+      "raw_price": 1290,
+      "tax_fee": 50.0,
+      "additional_fee": 60.0,
+      "courier_fee": 15.0,
+      "pay_price": 566,
+      "status": "submitted",
+      "created_at": "2025-07-25 11:48:31",
+      "updated_at": "2025-07-25 11:48:31",
+      "is_paid": true
+    },
+    {
+      "id": 45,
+      "customer_id": 1,
+      "vendor_id": 1,
+      "items": [
+        {
+          "item_id": 3,
+          "quantity": 2
+        },
+        {
+          "item_id": 1,
+          "quantity": 1
+        }
+      ],
+      "raw_price": 235,
+      "tax_fee": 30.0,
+      "additional_fee": 200.0,
+      "courier_fee": 50.0,
+      "pay_price": 515,
+      "status": "submitted",
+      "created_at": "2025-07-26 18:29:24",
+      "updated_at": "2025-07-27 15:57:17",
+      "is_paid": true
+    },
+    {
+      "id": 46,
+      "customer_id": 1,
+      "vendor_id": 3,
+      "items": [
+        {
+          "item_id": 6,
+          "quantity": 1
+        },
+        {
+          "item_id": 7,
+          "quantity": 1
+        }
+      ],
+      "raw_price": 280,
+      "tax_fee": 20.0,
+      "additional_fee": 100.0,
+      "courier_fee": 25.0,
+      "pay_price": 425,
+      "status": "submitted",
+      "created_at": "2025-07-26 20:24:14",
+      "updated_at": "2025-07-26 20:24:14",
+      "is_paid": true
+    },
+    {
+      "id": 48,
+      "customer_id": 1,
+      "vendor_id": 1,
+      "items": [
+        {
+          "item_id": 1,
+          "quantity": 2
+        },
+        {
+          "item_id": 2,
+          "quantity": 1
+        },
+        {
+          "item_id": 3,
+          "quantity": 3
+        }
+      ],
+      "raw_price": 426,
+      "tax_fee": 30.0,
+      "additional_fee": 200.0,
+      "courier_fee": 50.0,
+      "pay_price": 706,
+      "status": "submitted",
+      "created_at": "2025-07-27 01:15:18",
+      "updated_at": "2025-07-27 15:57:17",
+      "is_paid": true
+    },
+    {
+      "id": 49,
+      "customer_id": 1,
+      "vendor_id": 1,
+      "coupon_id": 1,
+      "items": [
+        {
+          "item_id": 1,
+          "quantity": 3
+        },
+        {
+          "item_id": 2,
+          "quantity": 1
+        }
+      ],
+      "raw_price": 261,
+      "tax_fee": 30.0,
+      "additional_fee": 200.0,
+      "courier_fee": 50.0,
+      "pay_price": 216,
+      "status": "submitted",
+      "created_at": "2025-07-27 15:55:16",
+      "updated_at": "2025-07-27 15:57:17",
+      "is_paid": false
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:02
+Method : GET
+URI    : /dt/user/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:02
+Body   : {
+  "id": 1,
+  "full_name": "customer1",
+  "phone": "09120000001",
+  "email": "customer1@gmail.com",
+  "role": "buyer",
+  "address": "Tehran, Iran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:02
+Method : GET
+URI    : /dt/user/4
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:02
+Body   : {
+  "id": 4,
+  "full_name": "delivery1",
+  "phone": "09220000001",
+  "email": "delivery1@gmail.com",
+  "role": "courier",
+  "address": "Iran, Tehran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:02
+Method : GET
+URI    : /dt/restaurant/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:02
+Body   : {
+  "id": 1,
+  "seller_id": 3,
+  "name": "restaurant1-seller1",
+  "address": "Tehran, tajrish",
+  "phone": "02100000011",
+  "logoBase64": "IMAGE",
+  "tax_fee": 30.0,
+  "additional_fee": 200.0
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:02
+Method : GET
+URI    : /dt/item/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:02
+Body   : {
+  "id": 1,
+  "name": "item1",
+  "photo": "image1",
+  "description": "description1",
+  "price": 75.0,
+  "supply": 3,
+  "keywords": [
+    "item1",
+    "food1"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:02
+Method : GET
+URI    : /dt/coupons/2
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:02
+Body   : {
+  "Coupon details": {
+    "id": 2,
+    "code": "coupon_code_2",
+    "type": "fixed",
+    "value": 10,
+    "min_price": 100,
+    "user_count": 0,
+    "start_date": "2025-07-22",
+    "end_date": "2025-07-25"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:02
+Method : GET
+URI    : /dt/user/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:02
+Body   : {
+  "id": 1,
+  "full_name": "customer1",
+  "phone": "09120000001",
+  "email": "customer1@gmail.com",
+  "role": "buyer",
+  "address": "Tehran, Iran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/user/4
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 4,
+  "full_name": "delivery1",
+  "phone": "09220000001",
+  "email": "delivery1@gmail.com",
+  "role": "courier",
+  "address": "Iran, Tehran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/restaurant/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "seller_id": 3,
+  "name": "restaurant1-seller1",
+  "address": "Tehran, tajrish",
+  "phone": "02100000011",
+  "logoBase64": "IMAGE",
+  "tax_fee": 30.0,
+  "additional_fee": 200.0
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/2
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 2,
+  "name": "item2",
+  "description": "description2",
+  "price": 36.0,
+  "supply": 3,
+  "keywords": [
+    "item2",
+    "food2"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/user/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "full_name": "customer1",
+  "phone": "09120000001",
+  "email": "customer1@gmail.com",
+  "role": "buyer",
+  "address": "Tehran, Iran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/user/4
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 4,
+  "full_name": "delivery1",
+  "phone": "09220000001",
+  "email": "delivery1@gmail.com",
+  "role": "courier",
+  "address": "Iran, Tehran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/restaurant/2
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 2,
+  "seller_id": 3,
+  "name": "restaurant2-seller1",
+  "address": "Tehran",
+  "phone": "02100000012",
+  "tax_fee": 50.0,
+  "additional_fee": 60.0
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/6
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 6,
+  "name": "item5",
+  "photo": "image5",
+  "description": "description5",
+  "price": 150.0,
+  "supply": 1,
+  "keywords": [
+    "item5",
+    "food5"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/user/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "full_name": "customer1",
+  "phone": "09120000001",
+  "email": "customer1@gmail.com",
+  "role": "buyer",
+  "address": "Tehran, Iran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/restaurant/2
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 2,
+  "seller_id": 3,
+  "name": "restaurant2-seller1",
+  "address": "Tehran",
+  "phone": "02100000012",
+  "tax_fee": 50.0,
+  "additional_fee": 60.0
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/6
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 6,
+  "name": "item5",
+  "photo": "image5",
+  "description": "description5",
+  "price": 150.0,
+  "supply": 1,
+  "keywords": [
+    "item5",
+    "food5"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/user/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "full_name": "customer1",
+  "phone": "09120000001",
+  "email": "customer1@gmail.com",
+  "role": "buyer",
+  "address": "Tehran, Iran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/restaurant/2
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 2,
+  "seller_id": 3,
+  "name": "restaurant2-seller1",
+  "address": "Tehran",
+  "phone": "02100000012",
+  "tax_fee": 50.0,
+  "additional_fee": 60.0
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/8
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 8,
+  "name": "item3",
+  "description": "description3",
+  "price": 180.0,
+  "supply": 9,
+  "keywords": [
+    "item3",
+    "food3",
+    "3"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/6
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 6,
+  "name": "item5",
+  "photo": "image5",
+  "description": "description5",
+  "price": 150.0,
+  "supply": 1,
+  "keywords": [
+    "item5",
+    "food5"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/coupons/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "Coupon details": {
+    "id": 1,
+    "code": "coupon_code_1",
+    "type": "percent",
+    "value": 60,
+    "min_price": 10,
+    "user_count": 3,
+    "start_date": "2025-07-22",
+    "end_date": "2025-07-25"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/user/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "full_name": "customer1",
+  "phone": "09120000001",
+  "email": "customer1@gmail.com",
+  "role": "buyer",
+  "address": "Tehran, Iran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/restaurant/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "seller_id": 3,
+  "name": "restaurant1-seller1",
+  "address": "Tehran, tajrish",
+  "phone": "02100000011",
+  "logoBase64": "IMAGE",
+  "tax_fee": 30.0,
+  "additional_fee": 200.0
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/3
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 3,
+  "name": "item3",
+  "description": "description3",
+  "price": 80.0,
+  "supply": 8,
+  "keywords": [
+    "item3",
+    "food3",
+    "3"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "name": "item1",
+  "photo": "image1",
+  "description": "description1",
+  "price": 75.0,
+  "supply": 3,
+  "keywords": [
+    "item1",
+    "food1"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/user/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "full_name": "customer1",
+  "phone": "09120000001",
+  "email": "customer1@gmail.com",
+  "role": "buyer",
+  "address": "Tehran, Iran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/restaurant/3
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 3,
+  "seller_id": 6,
+  "name": "restaurant3-seller2_new",
+  "address": "Tehran-change",
+  "phone": "02100000023",
+  "logoBase64": "IMAGE-change",
+  "tax_fee": 20.0,
+  "additional_fee": 100.0
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/6
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 6,
+  "name": "item5",
+  "photo": "image5",
+  "description": "description5",
+  "price": 150.0,
+  "supply": 1,
+  "keywords": [
+    "item5",
+    "food5"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/7
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 7,
+  "name": "item6",
+  "photo": "image6",
+  "description": "description6-new",
+  "price": 130.0,
+  "supply": 6,
+  "keywords": [
+    "item1",
+    "food1",
+    "item1-update"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/user/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "full_name": "customer1",
+  "phone": "09120000001",
+  "email": "customer1@gmail.com",
+  "role": "buyer",
+  "address": "Tehran, Iran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/restaurant/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "seller_id": 3,
+  "name": "restaurant1-seller1",
+  "address": "Tehran, tajrish",
+  "phone": "02100000011",
+  "logoBase64": "IMAGE",
+  "tax_fee": 30.0,
+  "additional_fee": 200.0
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "name": "item1",
+  "photo": "image1",
+  "description": "description1",
+  "price": 75.0,
+  "supply": 3,
+  "keywords": [
+    "item1",
+    "food1"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/2
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 2,
+  "name": "item2",
+  "description": "description2",
+  "price": 36.0,
+  "supply": 3,
+  "keywords": [
+    "item2",
+    "food2"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/3
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 3,
+  "name": "item3",
+  "description": "description3",
+  "price": 80.0,
+  "supply": 8,
+  "keywords": [
+    "item3",
+    "food3",
+    "3"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/user/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "full_name": "customer1",
+  "phone": "09120000001",
+  "email": "customer1@gmail.com",
+  "role": "buyer",
+  "address": "Tehran, Iran",
+  "bank_info": {
+    "bank_name": "mellat",
+    "account_number": "12345"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/restaurant/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "seller_id": 3,
+  "name": "restaurant1-seller1",
+  "address": "Tehran, tajrish",
+  "phone": "02100000011",
+  "logoBase64": "IMAGE",
+  "tax_fee": 30.0,
+  "additional_fee": 200.0
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 1,
+  "name": "item1",
+  "photo": "image1",
+  "description": "description1",
+  "price": 75.0,
+  "supply": 3,
+  "keywords": [
+    "item1",
+    "food1"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/item/2
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "id": 2,
+  "name": "item2",
+  "description": "description2",
+  "price": 36.0,
+  "supply": 3,
+  "keywords": [
+    "item2",
+    "food2"
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:03
+Method : GET
+URI    : /dt/coupons/1
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:03
+Body   : {
+  "Coupon details": {
+    "id": 1,
+    "code": "coupon_code_1",
+    "type": "percent",
+    "value": 60,
+    "min_price": 10,
+    "user_count": 3,
+    "start_date": "2025-07-22",
+    "end_date": "2025-07-25"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:09
+Method : GET
+URI    : /coupons?coupon_code=coupon_code_2
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:10
+Body   : {
+  "Coupon details": {
+    "id": 2,
+    "code": "coupon_code_2",
+    "type": "fixed",
+    "value": 10,
+    "min_price": 100,
+    "user_count": 0,
+    "start_date": "2025-07-22",
+    "end_date": "2025-07-25"
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-28 02:25:10
+Method : POST
+URI    : /coupons/apply
+Body   : {
+  "coupon_code": "coupon_code_2",
+  "order_id": 49
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-28 02:25:10
+Body   : {
+  "message": "You have already applied one coupon for this order",
+  "error": "Forbidden request"
+}
+-----------------------

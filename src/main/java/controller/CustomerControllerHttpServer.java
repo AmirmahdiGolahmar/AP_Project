@@ -3,12 +3,15 @@ package controller;
 import com.sun.net.httpserver.Filter;
 import dao.ItemDao;
 import dao.OrderDao;
+import lombok.Getter;
+import lombok.Setter;
 import service.MenuService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.*;
 import entity.*;
 import service.CustomerService;
+import service.RestaurantService;
 import util.LocalDateTimeAdapter;
 
 import java.io.IOException;
@@ -34,6 +37,7 @@ public class CustomerControllerHttpServer {
 
     private static final CustomerService customerService = new CustomerService();
     private static final MenuService menuService = new MenuService();
+    private static final RestaurantService restaurantService = new RestaurantService();
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .serializeNulls()
@@ -158,7 +162,7 @@ public class CustomerControllerHttpServer {
                 }
 
 
-                sendResponse(exchange, 404, errorContent);
+                sendResponse(exchange, 404, gson.toJson(errorContent));
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
             }
@@ -201,15 +205,27 @@ public class CustomerControllerHttpServer {
                 String path = uri.getPath();
                 Customer customer = authorize(exchange, UserRole.CUSTOMER);
 
-                if ("GET".equalsIgnoreCase(method)) {
+                if ("GET".equalsIgnoreCase(method)&& "/coupons".equals(path)) {
                     handleCouponDetails(exchange);
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                Matcher matcher = Pattern.compile("/coupons/apply").matcher(path);
+                if ("POST".equalsIgnoreCase(method) && matcher.find()) {
+                    handleApplyCoupon(exchange, matcher);
+                    return;
+                }
+
+                sendResponse(exchange, 404, gson.toJson(errorContent));
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
             }
+        }
+
+        private void handleApplyCoupon(HttpExchange exchange, Matcher matcher) throws IOException {
+            CouponApplyDto request = readRequestBody(exchange, CouponApplyDto.class, gson);
+            restaurantService.applyCouponToOrder(request.getOrder_id(), request.getCoupon_code());
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Coupon applied successfully")));
         }
 
         private void handleCouponDetails(HttpExchange exchange) throws IOException {
@@ -244,7 +260,7 @@ public class CustomerControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(errorContent));
 
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
