@@ -38,11 +38,12 @@ public class DeliveryService {
         ).map(OrderDto::new).toList();
     }
 
-    public OrderDto changeOrderStatus(Delivery delivery, Long order_id, String newStaus) {
+    public OrderDto changeOrderStatus(Delivery del, Long order_id, String newStaus) {
 
         Order order = orderDao.findById(order_id);
         if(order == null) throw new NotFoundException("This order doesn't exist.");
 
+        Delivery delivery = deliveryDao.findById(del.getId());
 
         if(order.getDelivery() != null && (order.getDelivery().getId() != delivery.getId()))
             throw new ForbiddenException("This Order has already accepted.");
@@ -60,6 +61,7 @@ public class DeliveryService {
                 delivery.getOrders().remove(order);
             }else{
                 order.setDelivery(delivery);
+                delivery.getOrders().removeIf(o -> o.getId().equals(order.getId()));
                 delivery.addOrder(order);
             }
         }catch(Exception e){
@@ -68,7 +70,7 @@ public class DeliveryService {
         }
 
         if(status.equals(OrderStatus.completed)){
-            delivery.deposit((long)((long).25*order.getRestaurant().getAdditionalFee()));
+            delivery.deposit((long)(.25*(order.getRestaurant().getAdditionalFee())));
         }
         
         order.setStatus(status);

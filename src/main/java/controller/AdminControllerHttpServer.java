@@ -146,7 +146,7 @@ public class AdminControllerHttpServer {
             String method = getQueryParam(exchange, "method");
             String status = getQueryParam(exchange, "status");
 
-            List<PaymentReceiptDto> txs = adminService.searchTransaction(search, user, method, status);
+            List<TransactionDto> txs = adminService.searchTransaction(search, user, method, status);
             sendResponse(exchange, 200, gson.toJson(Map.of("List of financial transactions", txs)));
         }
     }
@@ -185,7 +185,7 @@ public class AdminControllerHttpServer {
                     return;
                 }
 
-                sendResponse(exchange, 404, "Invalid path");
+                sendResponse(exchange, 404, gson.toJson(Map.of("message", "Invalid path")));
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
             }

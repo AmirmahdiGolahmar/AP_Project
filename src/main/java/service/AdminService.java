@@ -130,7 +130,7 @@ public class AdminService {
         return result.stream().map(OrderDto::new).toList();
     }
 
-    public List<PaymentReceiptDto> searchTransaction(String search, String user, String method, String status) {
+    public List<TransactionDto> searchTransaction(String search, String user, String method, String status) {
 
         String searchFilter = (search == null || search.isBlank()) ? "" : search.toLowerCase();
         String userFilter = (user == null || user.isBlank()) ? "" : user.toLowerCase();
@@ -150,7 +150,7 @@ public class AdminService {
         List<Transaction> result =
                 SearchUtil.search(allTransactions, Transaction.class, searchFilter, searchFields, filters);
 
-        return result.stream().map(PaymentReceiptDto::new).toList();
+        return result.stream().map(TransactionDto::new).toList();
     }
 
     public void removeUser(Long userId) {

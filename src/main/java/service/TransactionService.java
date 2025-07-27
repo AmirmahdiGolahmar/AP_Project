@@ -43,11 +43,16 @@ public class TransactionService {
         if(user.getBankInfo() == null) throw new ForbiddenException("Complete your bank info first");
         else bankInfoValidator(user.getBankInfo());
 
-        List<Transaction> allTransactions = transactionDao.findAll().stream().filter(
+        List<Transaction> allTransactions = transactionDao.findAll().stream()
+                .filter(
                 t -> t.getSender().getId().equals(user.getId()) ||
-                        t.getOrder().getRestaurant().getSeller().getId().equals(user.getId())
-        ).toList();
+                        t.getOrder().getRestaurant().getSeller().getId().equals(user.getId()) ||
+                        (t.getOrder().getDelivery() != null &&
+                                t.getOrder().getDelivery().getId().equals(user.getId())
+                    )).toList();
+
         return allTransactions.stream().map(TransactionDto::new).toList();
+
     }
 
     public PaymentReceiptDto pay(PaymentRequestDto request, User user) {

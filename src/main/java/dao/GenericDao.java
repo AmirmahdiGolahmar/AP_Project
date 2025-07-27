@@ -64,7 +64,8 @@ public abstract class GenericDao<T> {
         try {
             session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
-            session.update(entity);
+            //session.update(entity);
+            session.merge(entity);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
