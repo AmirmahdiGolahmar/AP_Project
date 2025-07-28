@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +34,10 @@ import static util.validator.RestaurantValidator.*;
 import static util.validator.SellerValidator.matchSellerRestaurant;
 
 public class RestaurantControllerHttpServer implements HttpHandler {
+    private final Executor executor;
+    public RestaurantControllerHttpServer(Executor executor) {
+        this.executor = executor;
+    }
 
     private static final RestaurantService restaurantService = new RestaurantService();
     private static final ItemService itemService = new ItemService();
@@ -46,108 +51,113 @@ public class RestaurantControllerHttpServer implements HttpHandler {
         URI uri = exchange.getRequestURI();
         String path = uri.getPath();
         String method = exchange.getRequestMethod();
+        executor.execute(() -> {
+            try {
+                Matcher matcher;
 
-        try {
-            Matcher matcher;
+                /*User*/
+                String token = extractToken(exchange);
+                Claims claims = JwtUtil.validateToken(token);
+                Long userId = Long.parseLong(claims.getSubject());
+                Seller seller = (Seller) authorizeUser(userId, UserRole.SELLER);
 
-            /*User*/
-            String token = extractToken(exchange);
-            Claims claims = JwtUtil.validateToken(token);
-            Long userId = Long.parseLong(claims.getSubject());
-            Seller seller = (Seller) authorizeUser(userId, UserRole.SELLER);
+                /*Role*/
+                if (!"seller".equalsIgnoreCase(claims.get("role").toString())) {
+                    sendResponse(exchange, 403, gson.toJson(Map.of("error", "Only sellers can create restaurants")));
+                    return;
+                }
 
-            /*Role*/
-            if (!"seller".equalsIgnoreCase(claims.get("role").toString())) {
-                sendResponse(exchange, 403, gson.toJson(Map.of("error", "Only sellers can create restaurants")));
-                return;
-            }
-
-            /*Restaurant*/  /*Match Seller and Restaurant*/
-            Long restaurantId = null;
-            Restaurant restaurant = null;
-            matcher = Pattern.compile("/restaurants/(\\d+)").matcher(path);
-            if (matcher.find()) {
-                restaurantId = Long.parseLong(matcher.group(1));
-                restaurant = validateRestaurant(restaurantId);
-                matchSellerRestaurant(seller, restaurant);
-            }
-
-
-            /*item*/
-            Long itemId = null;
-            Item item = null;
-            matcher = Pattern.compile("/item/(\\d+)").matcher(path);
-            if (matcher.find()) {
-                itemId = Long.parseLong(matcher.group(1));
-                item = validateItem(itemId, restaurant);
-            }
+                /*Restaurant*/  /*Match Seller and Restaurant*/
+                Long restaurantId = null;
+                Restaurant restaurant = null;
+                matcher = Pattern.compile("/restaurants/(\\d+)").matcher(path);
+                if (matcher.find()) {
+                    restaurantId = Long.parseLong(matcher.group(1));
+                    restaurant = validateRestaurant(restaurantId);
+                    matchSellerRestaurant(seller, restaurant);
+                }
 
 
-            /*Menu*/
-            String menuTitle = null;
-            matcher = Pattern.compile("/menu/(.+)/(\\d+)").matcher(path);
-            if(matcher.find()){
-                menuTitle = matcher.group(1);
-                itemId = Long.parseLong(matcher.group(2));
-                item = validateItem(itemId, restaurant);
-            }
+                /*item*/
+                Long itemId = null;
+                Item item = null;
+                matcher = Pattern.compile("/item/(\\d+)").matcher(path);
+                if (matcher.find()) {
+                    itemId = Long.parseLong(matcher.group(1));
+                    item = validateItem(itemId, restaurant);
+                }
 
-            matcher = Pattern.compile("/menu/(.+)").matcher(path);;
-            if (matcher.find() && menuTitle == null) {
-                menuTitle = matcher.group(1);
-            }
 
-            /*Order*/
-            Long orderId = null;
-            Order order = null;
-            matcher = Pattern.compile("/orders/(\\d+)").matcher(path);
-            if (matcher.find()) {
-                orderId = Long.parseLong(matcher.group(1));
-                order = new OrderDao().findById(orderId);
-                if (order == null)
-                    throw new NotFoundException("This order does not exist");
-            }
+                /*Menu*/
+                String menuTitle = null;
+                matcher = Pattern.compile("/menu/(.+)/(\\d+)").matcher(path);
+                if(matcher.find()){
+                    menuTitle = matcher.group(1);
+                    itemId = Long.parseLong(matcher.group(2));
+                    item = validateItem(itemId, restaurant);
+                }
 
-            /*Routing*/
-            if (path.equals("/restaurants") && method.equals("POST")) {
-                handleCreateRestaurant(exchange, seller);
-            } else if (path.equals("/restaurants/mine") && method.equals("GET")) {
-                handleGetMyRestaurants(exchange, seller);
-            } else if (path.matches("/restaurants/\\d+") && method.equals("PUT")) {
-                handleUpdateRestaurant(exchange, restaurant);
-            }else if (path.matches("/restaurants/\\d+/items") && method.equals("GET")) {
+                matcher = Pattern.compile("/menu/(.+)").matcher(path);;
+                if (matcher.find() && menuTitle == null) {
+                    menuTitle = matcher.group(1);
+                }
+
+                /*Order*/
+                Long orderId = null;
+                Order order = null;
+                matcher = Pattern.compile("/orders/(\\d+)").matcher(path);
+                if (matcher.find()) {
+                    orderId = Long.parseLong(matcher.group(1));
+                    order = new OrderDao().findById(orderId);
+                    if (order == null)
+                        throw new NotFoundException("This order does not exist");
+                }
+
+                /*Routing*/
+                if (path.equals("/restaurants") && method.equals("POST")) {
+                    handleCreateRestaurant(exchange, seller);
+                } else if (path.equals("/restaurants/mine") && method.equals("GET")) {
+                    handleGetMyRestaurants(exchange, seller);
+                } else if (path.matches("/restaurants/\\d+") && method.equals("PUT")) {
+                    handleUpdateRestaurant(exchange, restaurant);
+                }else if (path.matches("/restaurants/\\d+/items") && method.equals("GET")) {
                     handleGetItems(exchange, restaurant);
-            } else if (path.matches("/restaurants/\\d+/item") && method.equals("POST")) {
-                handleAddItem(exchange, restaurant);
-            } else if (path.matches("/restaurants/\\d+/item/\\d+") && method.equals("PUT")) {
-                handleEditItem(exchange, restaurant, item);
-            } else if (path.matches("/restaurants/\\d+/item/\\d+") && method.equals("DELETE")) {
-                handleDeleteItem(exchange, restaurant, item);
-            } else if (path.matches("/restaurants/\\d+/menus") && method.equals("GET")) {
-                handleGetMenus(exchange, restaurant);
-            } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("GET")) {
-                handleGetMenu(exchange, restaurant, menuTitle);
-            } else if (path.matches("/restaurants/\\d+/menu") && method.equals("POST")) {
-                handleAddMenu(exchange, restaurant);
-            } else if (path.matches("/restaurants/\\d+/menu/.+/\\d+") && method.equals("DELETE")) {
-                handleDeleteItemFromMenu(exchange, restaurant, menuTitle, item);
-            } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("DELETE")) {
-                handleDeleteMenu(exchange, restaurant, menuTitle);
-            } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("PUT")) {
-                handleAddItemToMenu(exchange, restaurant, menuTitle);
-            } else if (path.matches("/restaurants/\\d+/orders") && method.equals("GET")) {
-                handleGetRestaurantOrders(exchange, restaurant);
-            } else if (path.matches("/restaurants/orders/\\d+") && method.equals("PUT")) {
-                handleChangeOrderStatus(exchange, order);
-            } else {
-                sendResponse(exchange, 404, gson.toJson(Map.of("error", "Invalid path")));
+                } else if (path.matches("/restaurants/\\d+/item") && method.equals("POST")) {
+                    handleAddItem(exchange, restaurant);
+                } else if (path.matches("/restaurants/\\d+/item/\\d+") && method.equals("PUT")) {
+                    handleEditItem(exchange, restaurant, item);
+                } else if (path.matches("/restaurants/\\d+/item/\\d+") && method.equals("DELETE")) {
+                    handleDeleteItem(exchange, restaurant, item);
+                } else if (path.matches("/restaurants/\\d+/menus") && method.equals("GET")) {
+                    handleGetMenus(exchange, restaurant);
+                } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("GET")) {
+                    handleGetMenu(exchange, restaurant, menuTitle);
+                } else if (path.matches("/restaurants/\\d+/menu") && method.equals("POST")) {
+                    handleAddMenu(exchange, restaurant);
+                } else if (path.matches("/restaurants/\\d+/menu/.+/\\d+") && method.equals("DELETE")) {
+                    handleDeleteItemFromMenu(exchange, restaurant, menuTitle, item);
+                } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("DELETE")) {
+                    handleDeleteMenu(exchange, restaurant, menuTitle);
+                } else if (path.matches("/restaurants/\\d+/menu/.+") && method.equals("PUT")) {
+                    handleAddItemToMenu(exchange, restaurant, menuTitle);
+                } else if (path.matches("/restaurants/\\d+/orders") && method.equals("GET")) {
+                    handleGetRestaurantOrders(exchange, restaurant);
+                } else if (path.matches("/restaurants/orders/\\d+") && method.equals("PUT")) {
+                    handleChangeOrderStatus(exchange, order);
+                } else {
+                    sendResponse(exchange, 404, gson.toJson(Map.of("error", "Invalid path")));
+                }
+            } catch (NullPointerException e) {
+                handleNullPointerException(e);
+                try {
+                    sendResponse(exchange, 500, gson.toJson(Map.of("error", "Internal Server Error")));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } catch (Exception e) {
+                expHandler(e, exchange, gson);
             }
-        } catch (NullPointerException e) {
-            handleNullPointerException(e);
-            sendResponse(exchange, 500, gson.toJson(Map.of("error", "Internal Server Error")));
-        } catch (Exception e) {
-            expHandler(e, exchange, gson);
-        }
+        });
     }
 
     private void handleGetMenu(HttpExchange exchange, Restaurant restaurant, String menuTitle) throws IOException {

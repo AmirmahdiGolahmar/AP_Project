@@ -18,6 +18,7 @@ public class ItemDto {
     Double price;
     Integer supply;
     List<String> keywords;
+    Integer rating = 0;
 
     public ItemDto(Item item) {
         this.id = item.getId();
@@ -27,6 +28,7 @@ public class ItemDto {
         this.price = item.getPrice();
         this.supply = item.getSupply();
         this.keywords = item.getKeywords();
+        this.rating = (int)(double)item.getRating();
     }
 
     public ItemDto() {

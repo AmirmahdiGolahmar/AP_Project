@@ -26,5 +26,6 @@ public class ItemSellerViewDto {
         this.price = item.getPrice();
         this.supply = item.getSupply();
         this.keywords = item.getKeywords();
+        this.rating = item.getRating();
     }
 }

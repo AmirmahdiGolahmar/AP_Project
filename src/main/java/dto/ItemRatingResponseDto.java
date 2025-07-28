@@ -2,6 +2,7 @@ package dto;
 
 import static util.LocalDateTimeAdapter.TimeToString;
 
+import java.io.IOException;
 import java.util.List;
 
 import entity.ItemRating;
@@ -21,7 +22,7 @@ public class ItemRatingResponseDto {
     Long userId;
     String created_at;
 
-    public ItemRatingResponseDto(ItemRating itemRating){
+    public ItemRatingResponseDto(ItemRating itemRating) throws IOException {
         this.id = itemRating.getId();
         this.item_id = itemRating.getItem().getId();
         this.rating = itemRating.getRating();

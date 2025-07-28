@@ -71,14 +71,32 @@ public class DataProvider {
                         handleGetUserData(exchange, userId);
                     } else if (path.matches("/dt/restaurant/\\d+") && method.equals("GET")) {
                         matcher = Pattern.compile("/dt/restaurant/(\\d+)").matcher(path);
-                        Long restaurantId = null;
+                        Long restaurantId;
                         if (matcher.find()) restaurantId = Long.parseLong(matcher.group(1));
-                        handleGetRestaurant(exchange, restaurantId);
+                        else {
+                            restaurantId = null;
+                        }
+                        executor.execute(() -> {
+                            try {
+                                handleGetRestaurant(exchange, restaurantId);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
                     }else if (path.matches("/dt/item/\\d+") && method.equals("GET")) {
                             matcher = Pattern.compile("/dt/item/(\\d+)").matcher(path);
-                            Long itemId = null;
+                            Long itemId;
                             if (matcher.find()) itemId = Long.parseLong(matcher.group(1));
-                            handleGetItem(exchange, itemId);
+                            else {
+                                itemId = null;
+                            }
+                        executor.execute(() -> {
+                            try {
+                                handleGetItem(exchange, itemId);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
                     } else if (path.matches("/dt/coupons") && method.equals("GET")) {
                         handleGetCoupons(exchange);
                     } else if (path.matches("/dt/coupons/(\\d+)") && method.equals("GET")) {
@@ -88,9 +106,18 @@ public class DataProvider {
                         handleGetCoupon(exchange, couponId);
                     } else if (path.matches("/dt/order.(\\d+)") && method.equals("GET")) {
                         matcher = Pattern.compile("/dt/order/(\\d+)").matcher(path);
-                        Long orderId = null;
+                        Long orderId;
                         if (matcher.find()) orderId = Long.parseLong(matcher.group(1));
-                        handleGetOrder(exchange, orderId);
+                        else {
+                            orderId = null;
+                        }
+                        executor.execute(() -> {
+                            try {
+                                handleGetOrder(exchange, orderId);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
                     }
                     else {
                         sendResponse(exchange, 404, gson.toJson(Map.of("error", "Not found")));

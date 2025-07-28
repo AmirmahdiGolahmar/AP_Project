@@ -16,6 +16,7 @@ import util.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -54,11 +55,11 @@ public class CustomerControllerHttpServer {
 
     public static void init(HttpServer server, List<Filter> filters, Executor executor) {
         server.createContext("/vendors", new VendorsHandler(executor)).getFilters().addAll(filters);
-        server.createContext("/items", new ItemsHandler()).getFilters().addAll(filters);
-        server.createContext("/coupons", new CouponsHandler()).getFilters().addAll(filters);;
-        server.createContext("/orders", new OrdersHandler()).getFilters().addAll(filters);;
-        server.createContext("/favorites", new FavoritesHandler()).getFilters().addAll(filters);;
-        server.createContext("/ratings", new RatingsHandler()).getFilters().addAll(filters);
+        server.createContext("/items", new ItemsHandler(executor)).getFilters().addAll(filters);
+        server.createContext("/coupons", new CouponsHandler(executor)).getFilters().addAll(filters);;
+        server.createContext("/orders", new OrdersHandler(executor)).getFilters().addAll(filters);;
+        server.createContext("/favorites", new FavoritesHandler(executor)).getFilters().addAll(filters);;
+        server.createContext("/ratings", new RatingsHandler(executor)).getFilters().addAll(filters);
     }
 
     static class VendorsHandler implements HttpHandler {
@@ -100,7 +101,7 @@ public class CustomerControllerHttpServer {
                         return;
                     }
 
-                    sendResponse(exchange, 404, errorContent);
+                    sendResponse(exchange, 404, gson.toJson(errorContent));
                 } catch (Exception e) {
                     expHandler(e, exchange, gson);
                 } finally {
@@ -138,34 +139,41 @@ public class CustomerControllerHttpServer {
     }
 
     static class ItemsHandler implements HttpHandler {
+        private final Executor executor;
+
+        ItemsHandler(Executor executor) {
+            this.executor = executor;
+        }
         public void handle(HttpExchange exchange) throws IOException {
-            try {
-                String method = exchange.getRequestMethod();
-                URI uri = exchange.getRequestURI();
-                String path = uri.getPath();
-                Customer customer = authorize(exchange, UserRole.CUSTOMER);
+            executor.execute(() -> {
+                try {
+                    String method = exchange.getRequestMethod();
+                    URI uri = exchange.getRequestURI();
+                    String path = uri.getPath();
+                    Customer customer = authorize(exchange, UserRole.CUSTOMER);
 
-                if ("POST".equalsIgnoreCase(method) && "/items".equals(path)) {
-                    handleSearchItem(exchange);
-                    return;
-                }
-                Matcher matcher = Pattern.compile("/items/cart-items").matcher(uri.getPath());
-                if ("POST".equals(method) && matcher.matches()) {
-                    handelModifyCartItems(exchange, customer);
-                    return;
-                }
-                matcher = Pattern.compile("/items/(\\d+)/cart-item").matcher(uri.getPath());
-                if ("GET".equals(method) && matcher.matches()) {
-                    long itemId = Long.parseLong(matcher.group(1));
-                    handelGetCartItem(exchange, customer, itemId);
-                    return;
-                }
+                    if ("POST".equalsIgnoreCase(method) && "/items".equals(path)) {
+                        handleSearchItem(exchange);
+                        return;
+                    }
+                    Matcher matcher = Pattern.compile("/items/cart-items").matcher(uri.getPath());
+                    if ("POST".equals(method) && matcher.matches()) {
+                        handelModifyCartItems(exchange, customer);
+                        return;
+                    }
+                    matcher = Pattern.compile("/items/(\\d+)/cart-item").matcher(uri.getPath());
+                    if ("GET".equals(method) && matcher.matches()) {
+                        long itemId = Long.parseLong(matcher.group(1));
+                        handelGetCartItem(exchange, customer, itemId);
+                        return;
+                    }
 
 
-                sendResponse(exchange, 404, gson.toJson(errorContent));
-            } catch (Exception e) {
-                expHandler(e, exchange, gson);
-            }
+                    sendResponse(exchange, 404, gson.toJson(errorContent));
+                } catch (Exception e) {
+                    expHandler(e, exchange, gson);
+                }
+            });
         }
 
         private void handelGetCartItem(HttpExchange exchange, Customer customer, long itemId) throws IOException {
@@ -198,28 +206,36 @@ public class CustomerControllerHttpServer {
     }
 
     static class CouponsHandler implements HttpHandler {
+        private final Executor executor;
+
+        CouponsHandler(Executor executor) {
+            this.executor = executor;
+        }
+
         public void handle(HttpExchange exchange) throws IOException {
-            try {
-                String method = exchange.getRequestMethod();
-                URI uri = exchange.getRequestURI();
-                String path = uri.getPath();
-                Customer customer = authorize(exchange, UserRole.CUSTOMER);
+            executor.execute(() -> {
+                try {
+                    String method = exchange.getRequestMethod();
+                    URI uri = exchange.getRequestURI();
+                    String path = uri.getPath();
+                    Customer customer = authorize(exchange, UserRole.CUSTOMER);
 
-                if ("GET".equalsIgnoreCase(method)&& "/coupons".equals(path)) {
-                    handleCouponDetails(exchange);
-                    return;
+                    if ("GET".equalsIgnoreCase(method)&& "/coupons".equals(path)) {
+                        handleCouponDetails(exchange);
+                        return;
+                    }
+
+                    Matcher matcher = Pattern.compile("/coupons/apply").matcher(path);
+                    if ("POST".equalsIgnoreCase(method) && matcher.find()) {
+                        handleApplyCoupon(exchange, matcher);
+                        return;
+                    }
+
+                    sendResponse(exchange, 404, gson.toJson(errorContent));
+                } catch (Exception e) {
+                    expHandler(e, exchange, gson);
                 }
-
-                Matcher matcher = Pattern.compile("/coupons/apply").matcher(path);
-                if ("POST".equalsIgnoreCase(method) && matcher.find()) {
-                    handleApplyCoupon(exchange, matcher);
-                    return;
-                }
-
-                sendResponse(exchange, 404, gson.toJson(errorContent));
-            } catch (Exception e) {
-                expHandler(e, exchange, gson);
-            }
+            });
         }
 
         private void handleApplyCoupon(HttpExchange exchange, Matcher matcher) throws IOException {
@@ -237,34 +253,41 @@ public class CustomerControllerHttpServer {
     }
 
     static class OrdersHandler implements HttpHandler {
+        private final Executor executor;
+
+        OrdersHandler(Executor executor) {
+            this.executor = executor;
+        }
         public void handle(HttpExchange exchange) throws IOException {
-            try {
-                String method = exchange.getRequestMethod();
-                URI uri = exchange.getRequestURI();
-                String path = uri.getPath();
-                Customer customer = authorize(exchange, UserRole.CUSTOMER);
+            executor.execute(() -> {
+                try {
+                    String method = exchange.getRequestMethod();
+                    URI uri = exchange.getRequestURI();
+                    String path = uri.getPath();
+                    Customer customer = authorize(exchange, UserRole.CUSTOMER);
 
-                if ("POST".equalsIgnoreCase(method) && "/orders".equals(path)) {
-                    handleAddOrder(exchange,  customer);
-                    return;
+                    if ("POST".equalsIgnoreCase(method) && "/orders".equals(path)) {
+                        handleAddOrder(exchange,  customer);
+                        return;
+                    }
+
+                    if ("GET".equals(method) && "/orders/history".equals(path)) {
+                        handleSearchOrder(exchange, customer);
+                        return;
+                    }
+
+                    Matcher matcher = Pattern.compile("/orders/([0-9]+)").matcher(path);
+                    if ("GET".equals(method) && matcher.matches()) {
+                        handleGetOrder(exchange, matcher);
+                        return;
+                    }
+
+                    sendResponse(exchange, 404, gson.toJson(errorContent));
+
+                } catch (Exception e) {
+                    expHandler(e, exchange, gson);
                 }
-
-                if ("GET".equals(method) && "/orders/history".equals(path)) {
-                    handleSearchOrder(exchange, customer);
-                    return;
-                }
-
-                Matcher matcher = Pattern.compile("/orders/([0-9]+)").matcher(path);
-                if ("GET".equals(method) && matcher.matches()) {
-                    handleGetOrder(exchange, matcher);
-                    return;
-                }
-
-                sendResponse(exchange, 404, gson.toJson(errorContent));
-
-            } catch (Exception e) {
-                expHandler(e, exchange, gson);
-            }
+            });
         }
 
         private void handleAddOrder(HttpExchange exchange, Customer customer) throws IOException {
@@ -292,36 +315,43 @@ public class CustomerControllerHttpServer {
     }
 
     static class FavoritesHandler implements HttpHandler {
+        private final Executor executor;
+
+        FavoritesHandler(Executor executor) {
+            this.executor = executor;
+        }
         public void handle(HttpExchange exchange) throws IOException {
-            try {
-                String method = exchange.getRequestMethod();
-                URI uri = exchange.getRequestURI();
-                String path = uri.getPath();
-                User user = authorize(exchange, UserRole.CUSTOMER);
+            executor.execute(() -> {
+                try {
+                    String method = exchange.getRequestMethod();
+                    URI uri = exchange.getRequestURI();
+                    String path = uri.getPath();
+                    User user = authorize(exchange, UserRole.CUSTOMER);
 
-                Matcher matcher = Pattern.compile("/favorites/([0-9]+)").matcher(path);
-                if (matcher.matches()) {
-                    long restaurantId = Long.parseLong(matcher.group(1));
-                    Restaurant restaurant = validateRestaurant(restaurantId);
+                    Matcher matcher = Pattern.compile("/favorites/([0-9]+)").matcher(path);
+                    if (matcher.matches()) {
+                        long restaurantId = Long.parseLong(matcher.group(1));
+                        Restaurant restaurant = validateRestaurant(restaurantId);
 
-                    if ("PUT".equals(method)) {
-                        handelAddToFavorite(exchange ,user, restaurant);
-                        return;
-                    } else if ("DELETE".equals(method)) {
-                        handleRemoveFromFavorite(exchange ,user, restaurant);
+                        if ("PUT".equals(method)) {
+                            handelAddToFavorite(exchange ,user, restaurant);
+                            return;
+                        } else if ("DELETE".equals(method)) {
+                            handleRemoveFromFavorite(exchange ,user, restaurant);
+                            return;
+                        }
+                    }
+
+                    if ("GET".equals(method) && "/favorites".equals(path)) {
+                        handleGetFavorites(exchange, user);
                         return;
                     }
-                }
 
-                if ("GET".equals(method) && "/favorites".equals(path)) {
-                    handleGetFavorites(exchange, user);
-                    return;
+                    sendResponse(exchange, 404, errorContent);
+                } catch (Exception e) {
+                    expHandler(e, exchange, gson);
                 }
-
-                sendResponse(exchange, 404, errorContent);
-            } catch (Exception e) {
-                expHandler(e, exchange, gson);
-            }
+            });
         }
 
         private void handelAddToFavorite(HttpExchange exchange, User user, Restaurant restaurant) throws IOException {
@@ -341,51 +371,72 @@ public class CustomerControllerHttpServer {
     }
 
     static class RatingsHandler implements HttpHandler {
+        private final Executor executor;
+
+        RatingsHandler(Executor executor) {
+            this.executor = executor;
+        }
         public void handle(HttpExchange exchange) throws IOException {
-            try {
-                String method = exchange.getRequestMethod();
-                URI uri = exchange.getRequestURI();
-                String path = uri.getPath();
-                User user = authorize(exchange, UserRole.CUSTOMER);
+            executor.execute(() -> {
+                try {
+                    String method = exchange.getRequestMethod();
+                    URI uri = exchange.getRequestURI();
+                    String path = uri.getPath();
+                    User user = authorize(exchange, UserRole.CUSTOMER);
 
-                if ("POST".equals(method) && "/ratings".equals(path)) {
-                    handleAddRating(exchange, user);
-                    return;
-                }
-
-                Matcher matcher = Pattern.compile("/ratings/items/([0-9]+)").matcher(path);
-                if ("GET".equals(method) && matcher.matches()) {
-                    handleViewRatings(exchange, matcher);
-                    return;
-                }
-
-                Matcher matcherRating = Pattern.compile("/ratings/([0-9]+)").matcher(path);
-                if (matcherRating.matches()) {
-                    long ratingId = Long.parseLong(matcherRating.group(1));
-                    if ("GET".equals(method)) {
-                        handleGetRating(exchange, ratingId);
-                        return;
-                    } else if ("DELETE".equals(method)) {
-                        handleDeleteRating(exchange, ratingId);
-                        return;
-                    } else if ("PUT".equals(method)) {
-                        handleEditRating(exchange, user, ratingId);
+                    if ("POST".equals(method) && "/ratings".equals(path)) {
+                        handleAddRating(exchange, user);
                         return;
                     }
+
+                    Matcher matcher = Pattern.compile("/ratings/items/([0-9]+)").matcher(path);
+                    if ("GET".equals(method) && matcher.matches()) {
+                        handleViewRatings(exchange, matcher);
+                        return;
+                    }
+
+                    Matcher matcherRating = Pattern.compile("/ratings/([0-9]+)").matcher(path);
+                    if (matcherRating.matches()) {
+                        long ratingId = Long.parseLong(matcherRating.group(1));
+                        if ("GET".equals(method)) {
+                            handleGetRating(exchange, ratingId);
+                            return;
+                        } else if ("DELETE".equals(method)) {
+                            handleDeleteRating(exchange, ratingId);
+                            return;
+                        } else if ("PUT".equals(method)) {
+                            handleEditRating(exchange, user, ratingId);
+                            return;
+                        }
+                    }
+
+                    matcher = Pattern.compile("/ratings/order/([0-9]+)").matcher(path);
+                    if (matcher.matches()) {
+                        long orderId = Long.parseLong(matcher.group(1));
+                        if ("GET".equals(method)) {
+                            handleGetRatingByOrderId(exchange, orderId);
+                            return;
+                        }
+                    }
+
+                    sendResponse(exchange, 404, gson.toJson(errorContent));
+
+                } catch (Exception e) {
+                    expHandler(e, exchange, gson);
                 }
+            });
+        }
 
-                sendResponse(exchange, 404, "Invalid path");
-
-            } catch (Exception e) {
-                expHandler(e, exchange, gson);
-            }
+        private void handleGetRatingByOrderId(HttpExchange exchange, Long orderId) throws IOException {
+            OrderRatingDto response = customerService.getOrderRating(orderId);
+            sendResponse(exchange, 200, gson.toJson(Map.of("Order rating", response)));
         }
 
         private void handleAddRating(HttpExchange exchange, User user) throws IOException {
             OrderRatingDto request = readRequestBody(exchange, OrderRatingDto.class, gson);
             validateRatingRegistrationRequest(request);
             customerService.submitOrderRating(request, user);
-            sendResponse(exchange, 200, gson.toJson("Rating submitted"));
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Rating submitted")));
         }
 
         private void handleViewRatings(HttpExchange exchange, Matcher matcher) throws IOException {
@@ -401,12 +452,12 @@ public class CustomerControllerHttpServer {
 
         private void handleDeleteRating(HttpExchange exchange, long ratingId) throws IOException {
             customerService.deleteRating(ratingId);
-            sendResponse(exchange, 200, gson.toJson("Rating deleted"));
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "Rating deleted")));
         }
 
         private void handleEditRating(HttpExchange exchange, User user, long ratingId) throws IOException {
-            ItemRatingRequestDto request = readRequestBody(exchange, ItemRatingRequestDto.class, gson);
-            customerService.updateItemRating(request, user, ratingId);
+            OrderRatingDto request = readRequestBody(exchange, OrderRatingDto.class, gson);
+            customerService.updateOrderRating(request, user, ratingId);
             sendResponse(exchange, 200, gson.toJson(Map.of("Rating updated", request)));
         }
     }

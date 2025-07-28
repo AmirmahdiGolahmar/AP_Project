@@ -6,6 +6,7 @@ import entity.*;
 import exception.*;
 import util.SearchUtil;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -237,7 +238,7 @@ public class CustomerService {
         return u.getFavoriteRestaurants().stream().map(RestaurantDto::new).toList();
     }
 
-    public void submitOrderRating(OrderRatingDto request, User user) {
+    public void submitOrderRating(OrderRatingDto request, User user) throws IOException {
         Order order = orderDao.findById(request.getOrder_id());
         if (order == null) {
             throw new NotFoundException("Order not found");
@@ -249,7 +250,7 @@ public class CustomerService {
         //Submit order rating
         OrderRating rating = new OrderRating();
         rating.setComment(request.getComment());
-        rating.setImageBase64(request.getImageBase64() == null ? null : request.getImageBase64());
+        if(request.getImageBase64() != null)    rating.setImageBase64(request.getImageBase64(), order.getId());
         rating.setRating(request.getRating());
         rating.setOrder(order);
         rating.setCreatedAt(LocalDateTime.now());
@@ -262,12 +263,12 @@ public class CustomerService {
             ItemRating itemRating = new ItemRating();
             itemRating.setRating(request.getRating());
             itemRating.setComment(request.getComment());
-            itemRating.setImageBase64(request.getImageBase64());
             itemRating.setCreatedAt(LocalDateTime.now());
             itemRating.setItem(item);
             itemRating.setUser(user);
-
             itemRatingDao.save(itemRating);
+            if(request.getImageBase64() != null)    itemRating.setImageBase64(request.getImageBase64());
+            itemRatingDao.update(itemRating);
         }
 
         orderDao.update(order);
@@ -278,8 +279,16 @@ public class CustomerService {
         if(item == null) throw new NotFoundException("This item doesn't exist");
 
         List<ItemRatingResponseDto> itemsRating = itemRatingDao.findAll().stream()
-            .filter(i -> i.getItem().getId().equals(itemId))
-            .map(ItemRatingResponseDto::new).toList();
+                .filter(i -> i.getItem().getId().equals(itemId))
+                .map(i -> {
+                    try {
+                        return new ItemRatingResponseDto(i);  // this constructor throws IOException
+                    } catch (IOException e) {
+                        throw new RuntimeException(e); // or handle differently
+                    }
+                })
+                .toList();
+
 
         ItemRatingAvgResponseDto response = new ItemRatingAvgResponseDto();
         response.setAvg_rating( itemsRating.stream()
@@ -291,7 +300,7 @@ public class CustomerService {
         return response;
     }
 
-    public ItemRatingResponseDto getItemRating(Long itemId){
+    public ItemRatingResponseDto getItemRating(Long itemId) throws IOException {
         ItemRating itemRating = itemRatingDao.findById(itemId);
         if(itemRating == null) throw new NotFoundException("This rating doesn't exist");
         return new ItemRatingResponseDto(itemRating);
@@ -303,7 +312,7 @@ public class CustomerService {
         itemRatingDao.delete(itemId);
     }
 
-    public void updateItemRating(ItemRatingRequestDto request, User user, long ratingId) {
+    public void updateItemRating(ItemRatingRequestDto request, User user, long ratingId) throws IOException {
         if(request == null) throw new InvalidInputException("Invalid request");
 
         ItemRating itemRating = itemRatingDao.findById(ratingId);
@@ -381,5 +390,34 @@ public class CustomerService {
         CartItem cartItem = order.getCartItems().stream().filter(o -> o.getItem().getId().equals(item.getId())).findFirst().orElse(null);
         if(cartItem == null) return new CartItemDto(item.getId(), 0);
         else return new CartItemDto(cartItem.getItem().getId(), cartItem.getQuantity());
+    }
+
+    public OrderRatingDto getOrderRating(Long orderId) throws IOException {
+        Order order = orderDao.findById(orderId);
+        if(order == null) throw new NotFoundException("This order doesn't exist");
+        if(order.getRating() != null){
+            OrderRating orderRating = order.getRating();
+            OrderRatingDto orderRatingDto = new OrderRatingDto();
+            orderRatingDto.setOrder_id(order.getId());
+            orderRatingDto.setRating(orderRating.getRating());
+            orderRatingDto.setComment(orderRating.getComment());
+            orderRatingDto.setImageBase64(orderRating.getImageBase64());
+            return orderRatingDto;
+        }else{
+            throw new  NotFoundException("This rating doesn't exist");
+        }
+
+    }
+
+    public void updateOrderRating(OrderRatingDto request, User user, long ratingId) throws IOException {
+        if(request == null) throw new InvalidInputException("Request is null");
+        Order order = orderDao.findById(request.getOrder_id());
+        if(order == null) throw new NotFoundException("This order doesn't exist");
+        OrderRating orderRating = order.getRating();
+        orderRating.setRating(request.getRating());
+        if(!request.getComment().isEmpty())orderRating.setComment(request.getComment());
+        if(!request.getImageBase64().isEmpty()) orderRating.setImageBase64(request.getImageBase64(), order.getId());
+        order.setRating(orderRating);
+        orderDao.update(order);
     }
 }

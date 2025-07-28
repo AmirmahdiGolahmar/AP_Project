@@ -19,7 +19,7 @@ import java.util.logging.LogManager;
 import static util.Log.LogUtil.startLogging;
 
 public class Main {
-    private static final ExecutorService executor = Executors.newFixedThreadPool(10);
+    private static final ExecutorService executor = Executors.newFixedThreadPool(30);
 
 
     public static void main(String[] args) throws IOException {
@@ -35,7 +35,7 @@ public class Main {
 
         DataProvider.init(server, filters, executor);
 
-        server.createContext("/restaurants", new RestaurantControllerHttpServer()).getFilters().addAll(filters);
+        server.createContext("/restaurants", new RestaurantControllerHttpServer(executor)).getFilters().addAll(filters);
 
         CustomerControllerHttpServer.init(server, filters, executor);
 
