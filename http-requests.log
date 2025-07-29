@@ -1,0 +1,1049 @@
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-29 15:36:41
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:41
+Method : GET
+URI    : /restaurants/6/items
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:41
+Body   : {
+  "Restaurant items": [
+    {
+      "id": 16,
+      "name": "berun",
+      "description": "hamash gooshte",
+      "price": 30.0,
+      "supply": 50,
+      "keywords": [
+        "beryn"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 17,
+      "name": "mast",
+      "description": "mast",
+      "price": 5.0,
+      "supply": 50,
+      "keywords": [
+        "mast",
+        "charb"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 18,
+      "name": "piyaz",
+      "description": "piyaz",
+      "price": 2.0,
+      "supply": 10,
+      "keywords": [
+        "piyaz"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 19,
+      "name": "khorshtmast",
+      "description": "zarde !",
+      "price": 12.0,
+      "supply": 30,
+      "keywords": [
+        "khorsht",
+        "mast"
+      ],
+      "rating": 0.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:41
+Method : GET
+URI    : /restaurants/6/items
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:41
+Body   : {
+  "Restaurant items": [
+    {
+      "id": 16,
+      "name": "berun",
+      "description": "hamash gooshte",
+      "price": 30.0,
+      "supply": 50,
+      "keywords": [
+        "beryn"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 17,
+      "name": "mast",
+      "description": "mast",
+      "price": 5.0,
+      "supply": 50,
+      "keywords": [
+        "mast",
+        "charb"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 18,
+      "name": "piyaz",
+      "description": "piyaz",
+      "price": 2.0,
+      "supply": 10,
+      "keywords": [
+        "piyaz"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 19,
+      "name": "khorshtmast",
+      "description": "zarde !",
+      "price": 12.0,
+      "supply": 30,
+      "keywords": [
+        "khorsht",
+        "mast"
+      ],
+      "rating": 0.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:42
+Method : GET
+URI    : /restaurants/6/menus
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:42
+Body   : {
+  "Restaurant menus": [
+    {
+      "title": "berun",
+      "items": [
+        {
+          "id": 16,
+          "name": "berun",
+          "description": "hamash gooshte",
+          "price": 30.0,
+          "supply": 50,
+          "keywords": [
+            "beryn"
+          ],
+          "rating": 0
+        },
+        {
+          "id": 17,
+          "name": "mast",
+          "description": "mast",
+          "price": 5.0,
+          "supply": 50,
+          "keywords": [
+            "mast",
+            "charb"
+          ],
+          "rating": 0
+        },
+        {
+          "id": 19,
+          "name": "khorshtmast",
+          "description": "zarde !",
+          "price": 12.0,
+          "supply": 30,
+          "keywords": [
+            "khorsht",
+            "mast"
+          ],
+          "rating": 0
+        }
+      ]
+    },
+    {
+      "title": "pish ghaza",
+      "items": [
+        {
+          "id": 17,
+          "name": "mast",
+          "description": "mast",
+          "price": 5.0,
+          "supply": 50,
+          "keywords": [
+            "mast",
+            "charb"
+          ],
+          "rating": 0
+        },
+        {
+          "id": 17,
+          "name": "mast",
+          "description": "mast",
+          "price": 5.0,
+          "supply": 50,
+          "keywords": [
+            "mast",
+            "charb"
+          ],
+          "rating": 0
+        },
+        {
+          "id": 18,
+          "name": "piyaz",
+          "description": "piyaz",
+          "price": 2.0,
+          "supply": 10,
+          "keywords": [
+            "piyaz"
+          ],
+          "rating": 0
+        },
+        {
+          "id": 19,
+          "name": "khorshtmast",
+          "description": "zarde !",
+          "price": 12.0,
+          "supply": 30,
+          "keywords": [
+            "khorsht",
+            "mast"
+          ],
+          "rating": 0
+        }
+      ]
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:42
+Method : GET
+URI    : /restaurants/6/menu/berun
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:42
+Body   : {
+  "menu": {
+    "title": "berun",
+    "items": [
+      {
+        "id": 16,
+        "name": "berun",
+        "description": "hamash gooshte",
+        "price": 30.0,
+        "supply": 50,
+        "keywords": [
+          "beryn"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 19,
+        "name": "khorshtmast",
+        "description": "zarde !",
+        "price": 12.0,
+        "supply": 30,
+        "keywords": [
+          "khorsht",
+          "mast"
+        ],
+        "rating": 0
+      }
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:42
+Method : GET
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:42
+Body   : {
+  "menu": {
+    "title": "pish ghaza",
+    "items": [
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 18,
+        "name": "piyaz",
+        "description": "piyaz",
+        "price": 2.0,
+        "supply": 10,
+        "keywords": [
+          "piyaz"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 19,
+        "name": "khorshtmast",
+        "description": "zarde !",
+        "price": 12.0,
+        "supply": 30,
+        "keywords": [
+          "khorsht",
+          "mast"
+        ],
+        "rating": 0
+      }
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:45
+Method : DELETE
+URI    : /restaurants/6/menu/pish%20ghaza/17
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:45
+Body   : {
+  "message": "Item removed from restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:46
+Method : DELETE
+URI    : /restaurants/6/menu/pish%20ghaza/18
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:46
+Body   : {
+  "message": "Item removed from restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:48
+Method : DELETE
+URI    : /restaurants/6/menu/pish%20ghaza/17
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:48
+Body   : {
+  "message": "Item removed from restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:49
+Method : DELETE
+URI    : /restaurants/6/menu/pish%20ghaza/19
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:49
+Body   : {
+  "message": "Item removed from restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:50
+Method : GET
+URI    : /restaurants/6/items
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:50
+Body   : {
+  "Restaurant items": [
+    {
+      "id": 16,
+      "name": "berun",
+      "description": "hamash gooshte",
+      "price": 30.0,
+      "supply": 50,
+      "keywords": [
+        "beryn"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 17,
+      "name": "mast",
+      "description": "mast",
+      "price": 5.0,
+      "supply": 50,
+      "keywords": [
+        "mast",
+        "charb"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 18,
+      "name": "piyaz",
+      "description": "piyaz",
+      "price": 2.0,
+      "supply": 10,
+      "keywords": [
+        "piyaz"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 19,
+      "name": "khorshtmast",
+      "description": "zarde !",
+      "price": 12.0,
+      "supply": 30,
+      "keywords": [
+        "khorsht",
+        "mast"
+      ],
+      "rating": 0.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:51
+Method : GET
+URI    : /restaurants/6/menus
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:51
+Body   : {
+  "Restaurant menus": [
+    {
+      "title": "berun",
+      "items": [
+        {
+          "id": 16,
+          "name": "berun",
+          "description": "hamash gooshte",
+          "price": 30.0,
+          "supply": 50,
+          "keywords": [
+            "beryn"
+          ],
+          "rating": 0
+        },
+        {
+          "id": 17,
+          "name": "mast",
+          "description": "mast",
+          "price": 5.0,
+          "supply": 50,
+          "keywords": [
+            "mast",
+            "charb"
+          ],
+          "rating": 0
+        },
+        {
+          "id": 19,
+          "name": "khorshtmast",
+          "description": "zarde !",
+          "price": 12.0,
+          "supply": 30,
+          "keywords": [
+            "khorsht",
+            "mast"
+          ],
+          "rating": 0
+        }
+      ]
+    },
+    {
+      "title": "pish ghaza",
+      "items": []
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:51
+Method : GET
+URI    : /restaurants/6/menu/berun
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:51
+Body   : {
+  "menu": {
+    "title": "berun",
+    "items": [
+      {
+        "id": 16,
+        "name": "berun",
+        "description": "hamash gooshte",
+        "price": 30.0,
+        "supply": 50,
+        "keywords": [
+          "beryn"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 19,
+        "name": "khorshtmast",
+        "description": "zarde !",
+        "price": 12.0,
+        "supply": 30,
+        "keywords": [
+          "khorsht",
+          "mast"
+        ],
+        "rating": 0
+      }
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:51
+Method : GET
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:51
+Body   : {
+  "menu": {
+    "title": "pish ghaza",
+    "items": []
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:52
+Method : GET
+URI    : /restaurants/6/items
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:52
+Body   : {
+  "Restaurant items": [
+    {
+      "id": 16,
+      "name": "berun",
+      "description": "hamash gooshte",
+      "price": 30.0,
+      "supply": 50,
+      "keywords": [
+        "beryn"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 17,
+      "name": "mast",
+      "description": "mast",
+      "price": 5.0,
+      "supply": 50,
+      "keywords": [
+        "mast",
+        "charb"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 18,
+      "name": "piyaz",
+      "description": "piyaz",
+      "price": 2.0,
+      "supply": 10,
+      "keywords": [
+        "piyaz"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 19,
+      "name": "khorshtmast",
+      "description": "zarde !",
+      "price": 12.0,
+      "supply": 30,
+      "keywords": [
+        "khorsht",
+        "mast"
+      ],
+      "rating": 0.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:57
+Method : PUT
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : {
+  "item_id": 17
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:57
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:57
+Method : PUT
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : {
+  "item_id": 18
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:57
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:57
+Method : PUT
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : {
+  "item_id": 19
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:57
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:57
+Method : GET
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:57
+Body   : {
+  "menu": {
+    "title": "pish ghaza",
+    "items": [
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 18,
+        "name": "piyaz",
+        "description": "piyaz",
+        "price": 2.0,
+        "supply": 10,
+        "keywords": [
+          "piyaz"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 19,
+        "name": "khorshtmast",
+        "description": "zarde !",
+        "price": 12.0,
+        "supply": 30,
+        "keywords": [
+          "khorsht",
+          "mast"
+        ],
+        "rating": 0
+      }
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:36:57
+Method : GET
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:36:57
+Body   : {
+  "menu": {
+    "title": "pish ghaza",
+    "items": [
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 18,
+        "name": "piyaz",
+        "description": "piyaz",
+        "price": 2.0,
+        "supply": 10,
+        "keywords": [
+          "piyaz"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 19,
+        "name": "khorshtmast",
+        "description": "zarde !",
+        "price": 12.0,
+        "supply": 30,
+        "keywords": [
+          "khorsht",
+          "mast"
+        ],
+        "rating": 0
+      }
+    ]
+  }
+}
+-----------------------
+HTTP server running on port 4567 ...
+Started Logging At   : 2025-07-29 15:41:31
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:34
+Method : DELETE
+URI    : /restaurants/6/menu/pish%20ghaza/17
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:34
+Body   : {
+  "message": "Item removed from restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:37
+Method : DELETE
+URI    : /restaurants/6/menu/pish%20ghaza/18
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:37
+Body   : {
+  "message": "Item removed from restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:38
+Method : DELETE
+URI    : /restaurants/6/menu/pish%20ghaza/17
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:39
+Body   : {
+  "message": "Item removed from restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:40
+Method : DELETE
+URI    : /restaurants/6/menu/pish%20ghaza/19
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:40
+Body   : {
+  "message": "Item removed from restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:43
+Method : GET
+URI    : /restaurants/6/items
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:43
+Body   : {
+  "Restaurant items": [
+    {
+      "id": 16,
+      "name": "berun",
+      "description": "hamash gooshte",
+      "price": 30.0,
+      "supply": 50,
+      "keywords": [
+        "beryn"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 17,
+      "name": "mast",
+      "description": "mast",
+      "price": 5.0,
+      "supply": 50,
+      "keywords": [
+        "mast",
+        "charb"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 18,
+      "name": "piyaz",
+      "description": "piyaz",
+      "price": 2.0,
+      "supply": 10,
+      "keywords": [
+        "piyaz"
+      ],
+      "rating": 0.0
+    },
+    {
+      "id": 19,
+      "name": "khorshtmast",
+      "description": "zarde !",
+      "price": 12.0,
+      "supply": 30,
+      "keywords": [
+        "khorsht",
+        "mast"
+      ],
+      "rating": 0.0
+    }
+  ]
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:45
+Method : PUT
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : {
+  "item_id": 17
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:45
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:45
+Method : PUT
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : {
+  "item_id": 18
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:45
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:45
+Method : PUT
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : {
+  "item_id": 19
+}
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:45
+Body   : {
+  "message": "Food item added to restaurant menu successfully"
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:45
+Method : GET
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:45
+Body   : {
+  "menu": {
+    "title": "pish ghaza",
+    "items": [
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 18,
+        "name": "piyaz",
+        "description": "piyaz",
+        "price": 2.0,
+        "supply": 10,
+        "keywords": [
+          "piyaz"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 19,
+        "name": "khorshtmast",
+        "description": "zarde !",
+        "price": 12.0,
+        "supply": 30,
+        "keywords": [
+          "khorsht",
+          "mast"
+        ],
+        "rating": 0
+      }
+    ]
+  }
+}
+-----------------------
+----  HTTP Request  ----
+Time   : 2025-07-29 15:41:45
+Method : GET
+URI    : /restaurants/6/menu/pish%20ghaza
+Body   : null
+-----------------------
+----  HTTP Response  ----
+Time   : 2025-07-29 15:41:45
+Body   : {
+  "menu": {
+    "title": "pish ghaza",
+    "items": [
+      {
+        "id": 17,
+        "name": "mast",
+        "description": "mast",
+        "price": 5.0,
+        "supply": 50,
+        "keywords": [
+          "mast",
+          "charb"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 18,
+        "name": "piyaz",
+        "description": "piyaz",
+        "price": 2.0,
+        "supply": 10,
+        "keywords": [
+          "piyaz"
+        ],
+        "rating": 0
+      },
+      {
+        "id": 19,
+        "name": "khorshtmast",
+        "description": "zarde !",
+        "price": 12.0,
+        "supply": 30,
+        "keywords": [
+          "khorsht",
+          "mast"
+        ],
+        "rating": 0
+      }
+    ]
+  }
+}
+-----------------------

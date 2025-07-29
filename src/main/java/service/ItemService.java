@@ -35,8 +35,14 @@ public class ItemService {
 
         restaurant.addItem(item);
         restaurantDao.update(restaurant);
-
-        return new ItemDto(item);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName(item.getName());
+        itemDto.setPhoto(item.getPhoto());
+        itemDto.setDescription(item.getDescription());
+        itemDto.setPrice(item.getPrice());
+        itemDto.setSupply(item.getSupply());
+        itemDto.setKeywords(item.getKeywords());
+        return itemDto;
     }
 
     public ItemDto editItem(Restaurant restaurant, Item item, ItemDto request) {

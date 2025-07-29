@@ -18,6 +18,7 @@ import util.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.FileSystemNotFoundException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -92,14 +93,14 @@ public class RestaurantControllerHttpServer implements HttpHandler {
                 String menuTitle = null;
                 matcher = Pattern.compile("/menu/(.+)/(\\d+)").matcher(path);
                 if(matcher.find()){
-                    menuTitle = matcher.group(1);
+                    menuTitle = matcher.group(1).replaceAll("%20", " ");
                     itemId = Long.parseLong(matcher.group(2));
                     item = validateItem(itemId, restaurant);
                 }
 
                 matcher = Pattern.compile("/menu/(.+)").matcher(path);;
                 if (matcher.find() && menuTitle == null) {
-                    menuTitle = matcher.group(1);
+                    menuTitle = matcher.group(1).replaceAll("%20", " ");
                 }
 
                 /*Order*/

@@ -12,8 +12,10 @@ import entity.Restaurant;
 import exception.AlreadyExistsException;
 import exception.NotFoundException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MenuService {
@@ -52,20 +54,25 @@ public class MenuService {
     }
 
     public void addItem(String title, Restaurant restaurant, ItemAddToMenuRequestDto request){
-
         Menu menu = restaurant.getMenus().stream().filter(m -> m.getTitle().equalsIgnoreCase(title))
                 .findFirst().orElseThrow(() -> new NotFoundException("This menu does not exist"));
 
         Item it = restaurant.getItems().stream().filter(i -> i.getId() == request.getItem_id())
                 .findFirst().orElseThrow(() -> new NotFoundException("This item does not exist"));
 
+        System.out.println("menu title : " + title + " item : " + it.getName());
+        System.out.println("menu items before add: ");
+        menu.getItems().forEach(i-> System.out.println(i.getName()));
+
         if(menu.getItems().stream().anyMatch(itm -> itm.getId() == it.getId()))
             throw new AlreadyExistsException("This item already exists in this menu");
 
         menu.addItem(it);
-
+        removeDuplicatesById(menu.getItems());
         menuDao.update(menu);
         restaurantDao.update(restaurant);
+        System.out.println("menu items after add : ");
+        menu.getItems().forEach(i-> System.out.println(i.getName()));
     }
 
     public void deleteItem(String menuTile, Item item, Restaurant restaurant){
@@ -87,8 +94,16 @@ public class MenuService {
     }
 
     public MenuDto getRestaurantMenu(Restaurant restaurant, String menuTitle) {
-        return menuDao.findAll().stream().filter(
-                m -> m.getRestaurant().getId().equals(restaurant.getId()) && m.getTitle().equalsIgnoreCase(menuTitle)
-        ).map(MenuDto::new).toList().get(0);
+        List<Menu> restaurantMenus = menuDao.findAll().stream().filter(m -> m.getRestaurant().getId().equals(restaurant.getId())).toList();
+        Menu target = restaurantMenus.stream().filter(
+                m -> m.getTitle().equalsIgnoreCase(menuTitle)
+        ).findFirst().orElse(null);
+        if(target == null){throw new NotFoundException("This menu does not exist");}
+        return new MenuDto(target);
+    }
+
+    public static void removeDuplicatesById(List<Item> items) {
+        Set<Long> seenIds = new HashSet<>();
+        items.removeIf(item -> !seenIds.add(item.getId()));
     }
 }
