@@ -99,6 +99,7 @@ public class MenuService {
                 m -> m.getTitle().equalsIgnoreCase(menuTitle)
         ).findFirst().orElse(null);
         if(target == null){throw new NotFoundException("This menu does not exist");}
+        removeDuplicatesById(target.getItems());
         return new MenuDto(target);
     }
 
