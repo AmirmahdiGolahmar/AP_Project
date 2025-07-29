@@ -48,18 +48,18 @@ public class UserService {
         ) throw new InvalidInputException(userRole.toString() + " must register bank name and account number");
 
         if (userRole == UserRole.CUSTOMER) {
-            Customer customer = new Customer(request.getMobile());
+            Customer customer = new Customer(request.getPhone());
             fillUserFields(customer, request);
             saveWithDuplicationCheck(customerDao, customer);
             return customer;
         } else if (userRole == UserRole.SELLER) {
-            Seller seller = new Seller(request.getMobile());
+            Seller seller = new Seller(request.getPhone());
             fillUserFields(seller, request);
             saveWithDuplicationCheck(sellerDao, seller);
             return seller;
 
         } else {
-            Delivery delivery = new Delivery(request.getMobile());
+            Delivery delivery = new Delivery(request.getPhone());
             fillUserFields(delivery, request);
             saveWithDuplicationCheck(deliveryDao, delivery);
             return delivery;
@@ -111,7 +111,7 @@ public class UserService {
         user.setRole(userRole);
         user.setPassword(request.getPassword());
         user.setFullName(request.getFull_name());
-        user.setMobile(request.getMobile());
+        user.setMobile(request.getPhone());
         if(request.getEmail() != null)  user.setEmail(request.getEmail());
         user.setAddress(request.getAddress());
         if(request.getProfileImageBase64() != null && !request.getProfileImageBase64().isEmpty()) user.setPhoto(request.getProfileImageBase64());

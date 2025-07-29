@@ -1,8 +1,8 @@
 package controller;
 
 import com.sun.net.httpserver.Filter;
-import dao.ItemDao;
-import dao.OrderDao;
+import exception.InvalidInputException;
+import exception.NotFoundException;
 import lombok.Getter;
 import lombok.Setter;
 import service.MenuService;
@@ -16,7 +16,6 @@ import util.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -282,12 +281,28 @@ public class CustomerControllerHttpServer {
                         return;
                     }
 
+                    matcher = Pattern.compile("/orders/([0-9]+)").matcher(path);
+                    if ("PUT".equals(method) && matcher.matches()) {
+                        handleUpdateOrderAddress(exchange, matcher);
+                        return;
+                    }
+
+
+
                     sendResponse(exchange, 404, gson.toJson(errorContent));
 
                 } catch (Exception e) {
                     expHandler(e, exchange, gson);
                 }
             });
+        }
+
+        private void handleUpdateOrderAddress(HttpExchange exchange, Matcher matcher) throws IOException {
+            Long orderId = Long.parseLong(matcher.group(1));
+            AddressUpdateDto request = readRequestBody(exchange, AddressUpdateDto.class, gson);
+            if(request == null || request.getAddress().isEmpty()) throw new InvalidInputException("invalid address");
+            customerService.updateOrderAddress(request.getAddress(), orderId);
+            sendResponse(exchange, 200, gson.toJson(Map.of("message", "address updated successfully")));
         }
 
         private void handleAddOrder(HttpExchange exchange, Customer customer) throws IOException {

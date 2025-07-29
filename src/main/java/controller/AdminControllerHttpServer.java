@@ -49,13 +49,19 @@ public class AdminControllerHttpServer {
                 authorize(exchange, UserRole.ADMIN);
 
                 Matcher matcher = Pattern.compile("/admin/users/([0-9]+)/status").matcher(path);
-                if (matcher.matches() && "PATCH".equalsIgnoreCase(method)) {
+                if (matcher.matches() && ("PATCH".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method))) {
                     handleChangeUserStatus(exchange, matcher);
                     return;
                 }
 
                 if ("GET".equalsIgnoreCase(method) && "/admin/users".equals(path)) {
                     handleGetUsers(exchange);
+                    return;
+                }
+
+                matcher = Pattern.compile("/admin/users/([0-9]+)/status").matcher(path);
+                if ("GET".equalsIgnoreCase(method) && matcher.matches()) {
+                    handelGetUserStatus(exchange, matcher);
                     return;
                 }
 
@@ -70,6 +76,12 @@ public class AdminControllerHttpServer {
             } catch (Exception e) {
                 expHandler(e, exchange, gson);
             }
+        }
+
+        private void handelGetUserStatus(HttpExchange exchange, Matcher matcher) throws IOException {
+            Long userId = Long.parseLong(matcher.group(1));
+            StatusDto response = adminService.getUserStatus(userId);
+            sendResponse(exchange, 200, gson.toJson(response));
         }
 
         private void handleDeleteUsers(HttpExchange exchange, Matcher matcher) throws IOException {

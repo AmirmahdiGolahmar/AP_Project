@@ -35,7 +35,9 @@ public class ItemService {
 
         restaurant.addItem(item);
         restaurantDao.update(restaurant);
-        ItemDto itemDto = new ItemDto();
+        Item fetchedItem = itemDao.findAll().stream().filter(i -> i.getName().equalsIgnoreCase(item.getName())).findFirst().orElse(null);
+        ItemDto itemDto = new ItemDto(fetchedItem);
+        if(fetchedItem != null) itemDto.setId(fetchedItem.getId());
         itemDto.setName(item.getName());
         itemDto.setPhoto(item.getPhoto());
         itemDto.setDescription(item.getDescription());

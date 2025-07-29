@@ -420,4 +420,11 @@ public class CustomerService {
         order.setRating(orderRating);
         orderDao.update(order);
     }
+
+    public void updateOrderAddress(String address, Long orderId) {
+        Order order = orderDao.findById(orderId);
+        if(order == null) throw new NotFoundException("This order doesn't exist");
+        order.setDeliveryAddress(address);
+        orderDao.update(order);
+    }
 }

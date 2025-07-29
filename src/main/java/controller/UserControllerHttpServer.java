@@ -2,7 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dao.AdminSeeder;
+import com.google.gson.JsonObject;
 import dto.*;
 import entity.User;
 import io.jsonwebtoken.Claims;
@@ -78,7 +78,7 @@ public class UserControllerHttpServer {
         private void handleRegister(HttpExchange exchange) throws IOException {
             UserRegistrationRequest request = readRequestBody(exchange, UserRegistrationRequest.class, gson);
             User user = userService.createUser(request);
-            User loggedInUser = userService.login(request.getMobile(), request.getPassword());
+            User loggedInUser = userService.login(request.getPhone(), request.getPassword());
             String token = JwtUtil.generateToken(loggedInUser.getId(), loggedInUser.getRole().toString());
 
             UserRegistrationResponse response = new UserRegistrationResponse();
@@ -91,8 +91,19 @@ public class UserControllerHttpServer {
         }
 
         private void handleLogin(HttpExchange exchange) throws IOException {
-            LoginRequest request = readRequestBody(exchange, LoginRequest.class, gson);
-            User user = userService.login(request.getMobile(), request.getPassword());
+            //LoginRequest request = readRequestBody(exchange, LoginRequest.class, gson);
+            //LoginRequestBackUpDto requestBackUpDto = readRequestBody(exchange, LoginRequestBackUpDto.class, gson);
+            InputStream inputStream = exchange.getRequestBody();
+            String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            JsonObject jsonObject = gson.fromJson(body, JsonObject.class);
+            String mobile;
+            if(jsonObject.has("phone")){
+                mobile = jsonObject.get("phone").getAsString();
+            }else{
+                mobile = jsonObject.get("mobile").getAsString();
+            }
+            String password = jsonObject.get("password").getAsString();
+            User user = userService.login(mobile, password);
             String token = JwtUtil.generateToken(user.getId(), user.getRole().toString());
 
             sendResponse(exchange, 200, gson.toJson(

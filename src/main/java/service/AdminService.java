@@ -158,4 +158,12 @@ public class AdminService {
         if (user == null) throw new NotFoundException("This user doesn't exists");
         userDao.delete(userId);
     }
+
+    public StatusDto getUserStatus(Long userId) {
+        User user = userDao.findById(userId);
+        if (user == null) throw new NotFoundException("This user doesn't exists");
+        StatusDto response = new StatusDto();
+        response.setStatus(user.getStatus().toString().toLowerCase());
+        return response;
+    }
 }

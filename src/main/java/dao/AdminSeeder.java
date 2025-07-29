@@ -20,7 +20,20 @@ public class AdminSeeder {
         if (existing == null) {
             User admin = new User();
             admin.setMobile(adminMobile);
-            admin.setPassword(PasswordHasher.hash(plainPassword));
+            admin.setPassword(plainPassword);
+            admin.setRole(UserRole.ADMIN);
+
+            userDao.save(admin);
+        }
+
+        adminMobile = "admin";
+        plainPassword = "admin";
+
+        existing = userDao.findByMobile(adminMobile);
+        if (existing == null) {
+            User admin = new User();
+            admin.setMobile(adminMobile);
+            admin.setPassword(plainPassword);
             admin.setRole(UserRole.ADMIN);
 
             userDao.save(admin);

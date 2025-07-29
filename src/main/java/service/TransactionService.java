@@ -68,6 +68,8 @@ public class TransactionService {
         if(order == null) throw new NotFoundException("This order does not exist");
         if(order.isPaid()) throw new ForbiddenException("This order is already paid");
         if(!order.getCustomer().getId().equals(user.getId())) throw new ForbiddenException("You can't pay for this order");
+        Long payPrice = order.getPayPrice();
+
 
         Seller seller = order.getRestaurant().getSeller();
         Delivery delivery = order.getDelivery();
@@ -79,10 +81,11 @@ public class TransactionService {
         transaction.setTimestamp(LocalDateTime.now());
         transaction.setSender(user);
         transaction.setOrder(order);
-
         try{
             if(method.equals(PaymentMethod.wallet)){
-                user.withdraw(order.getPayPrice());
+                if (user.getBankInfo().getBalance() < payPrice)
+                    throw new ForbiddenException("Insufficient balance");
+                user.withdraw(payPrice);
             }
             if(method.equals(PaymentMethod.online)){
                 onlinePay();
@@ -98,6 +101,7 @@ public class TransactionService {
             }
         }catch(ForbiddenException e){
             transaction.setPaymentStatus(PaymentStatus.failed);
+            throw new ForbiddenException(e.getMessage());
         }
         orderDao.update(order);
         transactionDao.save(transaction);

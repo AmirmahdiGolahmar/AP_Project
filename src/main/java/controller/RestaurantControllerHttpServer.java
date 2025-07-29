@@ -143,7 +143,7 @@ public class RestaurantControllerHttpServer implements HttpHandler {
                     handleAddItemToMenu(exchange, restaurant, menuTitle);
                 } else if (path.matches("/restaurants/\\d+/orders") && method.equals("GET")) {
                     handleGetRestaurantOrders(exchange, restaurant);
-                } else if (path.matches("/restaurants/orders/\\d+") && method.equals("PUT")) {
+                } else if (path.matches("/restaurants/orders/\\d+") && (method.equals("PUT") || method.equals("PATCH"))) {
                     handleChangeOrderStatus(exchange, order);
                 } else {
                     sendResponse(exchange, 404, gson.toJson(Map.of("error", "Invalid path")));

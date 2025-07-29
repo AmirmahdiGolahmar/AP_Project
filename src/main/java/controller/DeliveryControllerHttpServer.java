@@ -77,7 +77,7 @@ public class DeliveryControllerHttpServer {
                 String path = uri.getPath();
 
                 Matcher matcher = Pattern.compile("/deliveries/(\\d+)").matcher(path);
-                if (matcher.find() && "PUT".equalsIgnoreCase(method)) {
+                if (matcher.find() && ("PUT".equalsIgnoreCase(method) || "PATCH".equalsIgnoreCase(method)) ) {
                     handelChangeOrderStatus(exchange, matcher);
                     return;
                 }

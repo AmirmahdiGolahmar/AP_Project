@@ -1,7 +1,6 @@
 package util.validator;
 
 
-import entity.BankInfo;
 import exception.InvalidInputException;
 import dto.UserRegistrationRequest;
 
@@ -13,7 +12,7 @@ public class UserValidator {
         if(request == null) throw new InvalidInputException("Invalid request");
         passwordValidator(request.getPassword());
         fullNameValidator(request.getFull_name());
-        mobileValidator(request.getMobile());
+        mobileValidator(request.getPhone());
         if(request.getEmail() != null && !request.getEmail().isBlank()) emailValidator(request.getEmail());
         roleValidator(request.getRole());
         addressValidator(request.getAddress());
